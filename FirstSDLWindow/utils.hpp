@@ -9,23 +9,21 @@
 
 
 const int BLOCK_SIZE = 64;
-const int NB_NEURONES = 8;
-const int DIST_MAX_NEURONE = 16;
+const float GRAVITY = 8523.988f;
+const int FRAMERATE = 60;
 
-
-
-const SDL_Rect groundRectTop = { 0, -256, 1280, 28 };
-const SDL_Rect groundRectDown = { 0, 668, 1280, 336 };
+const SDL_Rect GROUND_RECT_TOP = { 0, -256, 1280, 28 };
+const SDL_Rect GROUND_RECT_BOTTOM = { 0, 668, 1280, 336 };
 
 
 enum Type {
-    FLOOR = -1,
+    AIR = -1,
     BLOCK,
     SPIKE,
-    AIR,
+    SPIKE_SMALL,
     YELLOW_ORB,
     PINK_ORB,
-    BLUE_ORB,
+    BLUE_ORB
 };
 
 enum Direction {
@@ -47,7 +45,7 @@ typedef struct obstacle {
     int direction;
     bool used = false;
     SDL_Rect hitbox;
-}obstacle_t;
+}Obstacle;
 
 
 typedef struct neurone {
@@ -57,7 +55,7 @@ typedef struct neurone {
     int type;
     bool activated;
     SDL_Rect rect;
-}neurone_t;
+}Neurone;
 
 
 static int generateRandomNumber(int a, int b) {
@@ -67,7 +65,7 @@ static int generateRandomNumber(int a, int b) {
     return distribution(gen);
 }
 
-static SDL_Texture* LoadTexture(const char* filePath, SDL_Renderer* renderer)
+static SDL_Texture* loadTexture(const char* filePath, SDL_Renderer* renderer)
 {
     SDL_Surface* surface = IMG_Load(filePath);
     if (!surface) {
@@ -86,9 +84,9 @@ static SDL_Texture* LoadTexture(const char* filePath, SDL_Renderer* renderer)
     return texture;
 }
 
-static bool checkCollision(const SDL_Rect& rectA, const SDL_Rect& rectB) {
-    if (rectA.x + rectA.w <= rectB.x || rectB.x + rectB.w <= rectA.x ||
-        rectA.y + rectA.h <= rectB.y || rectB.y + rectB.h <= rectA.y) {
+static bool checkCollision(const SDL_Rect& rect_a, const SDL_Rect& rect_b) {
+    if (rect_a.x + rect_a.w <= rect_b.x || rect_b.x + rect_b.w <= rect_a.x ||
+        rect_a.y + rect_a.h <= rect_b.y || rect_b.y + rect_b.h <= rect_a.y) {
         return false;
     }
     return true;
@@ -99,15 +97,14 @@ static int trouverIndexMax(const int tableau[], int taille) {
         return -1;
     }
 
-    int indexMax = 0;  
-
+    int id_max = 0;  
     for (int i = 1; i < taille; ++i) {
-        if (tableau[i] > tableau[indexMax]) {
-            indexMax = i;
+        if (tableau[i] > tableau[id_max]) {
+            id_max = i;
         }
     }
 
-    return indexMax;
+    return id_max;
 }
 
 static int trouverIndexMin(const int tableau[], int taille) {
@@ -115,13 +112,12 @@ static int trouverIndexMin(const int tableau[], int taille) {
         return -1;
     }
 
-    int indexMin = 0; 
-
+    int id_min = 0; 
     for (int i = 1; i < taille; ++i) {
-        if (tableau[i] < tableau[indexMin]) {
-            indexMin = i;
+        if (tableau[i] < tableau[id_min]) {
+            id_min = i;
         }
     }
 
-    return indexMin;
+    return id_min;
 }

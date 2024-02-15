@@ -1,112 +1,80 @@
 #include "Genetic.hpp"
 
-SDL_Renderer* Genetic::renderer = nullptr;
+SDL_Renderer* Genetic::_renderer = nullptr;
 
-void Genetic::setRenderer(SDL_Renderer* newRenderer)
+void Genetic::setRenderer(SDL_Renderer* renderer)
 {
-	renderer = newRenderer;
+	_renderer = renderer;
 }
 
-Genetic::Genetic(int nbCores) : nbCores(nbCores), currentExp(0)
+Genetic::Genetic(int nb_cores) : _current_brain_id(0)
 {
-	brains = new  Brain * [nbExp];
+	_brains = new Brain * [_NB_BRAINS];
 
-	for (int idExp = 0; idExp < nbExp; idExp++)
+	for (int id_brain = 0; id_brain < _NB_BRAINS; id_brain++)
 	{
-		int rdmNeurones = generateRandomNumber(nbNeuroneMin, nbNeuroneMax);
-		int rdmdistanceNeurone = generateRandomNumber(distanceNeuroneMin, distanceNeuroneMax);
-		brains[idExp] = new Brain(rdmNeurones, rdmdistanceNeurone);
-		scores[idExp] = -1;
+		_brains[id_brain] = new Brain(nb_cores);
+		_scores[id_brain] = -1;
 	}
 }
 
 Genetic::~Genetic()
 {
-	for (int idExp = 0; idExp < nbExp; idExp++)
+	for (int id_brain = 0; id_brain < _NB_BRAINS; id_brain++)
 	{
-		delete brains[idExp];
+		delete _brains[id_brain];
 	}
-	delete[] brains;
+	delete[] _brains;
 }
 
-void Genetic::updateBrainLists()
+void Genetic::update()
 {
-	int sortedId[nbExp];
+	int sorted_brain_id[_NB_BRAINS];
 
-	for (int idExp = 0; idExp < nbExp; idExp++)
+	for (int id_brain = 0; id_brain < _NB_BRAINS; id_brain++)
 	{
-		int indexMax = trouverIndexMax(scores, nbExp);
-		sortedId[idExp] = indexMax;
-		scores[indexMax] = -1;
+		int id_score_max = trouverIndexMax(_scores, _NB_BRAINS);
+		sorted_brain_id[id_brain] = id_score_max;
+		_scores[id_score_max] = -1;
 	}
 
-	for (int idExp = 0; idExp < nbExp; idExp++)
+
+	for (int id_brain = 1; id_brain < _NB_BRAINS; id_brain++)
 	{
-		delete brains[sortedId[idExp]];
-		brains[sortedId[idExp]] = new Brain(brains[sortedId[0]]);
-		alter(sortedId[idExp]);
+		
+		delete _brains[sorted_brain_id[id_brain]];
+		_brains[sorted_brain_id[id_brain]] = new Brain(_brains[sorted_brain_id[0]]);
+
+		alter(sorted_brain_id[id_brain]);
 	}
-
-}
-
-void Genetic::alter(int idExp)
-{
 	
-	int idCore = generateRandomNumber(0, nbCores - 1);
+}
 
-	int nbNeurones = sizeof(brains[idExp]->getNeurones()[idCore]);
+void Genetic::alter(int id_brain)
+{
+	int nb_cores = _brains[id_brain]->getNbCores();
+	int id_core = generateRandomNumber(0, nb_cores - 1);
+	int nb_neurones = _brains[id_brain]->getCores()[id_core]->getNbNeurones();
+	int dist_neurone = _brains[id_brain]->getCores()[id_core]->getDistNeurone();
+	int random = generateRandomNumber(0, 1); 
+	int id_neurone;
 
-	std::cout << "NBNEURONE : " << nbNeurones << std::endl;
-
-	int distanceNeurone = brains[idExp]->getDistNeurone();
-
-	int random = generateRandomNumber(1, 1); //////////////////////////////////////////////////////////////// PAS OUBLIER
-	int idNeurone;
-	neurone_t* currentNeurone;
-
-	std::cout << "alter...";
 	switch (random)
 	{
 	case 0:
-		//Changer completement le cerveau
-		int x, y, type;
-		bool reverse;
-		for (idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
-		{
-			currentNeurone = brains[idExp]->getNeurones()[idCore][idNeurone];
-			x = generateRandomNumber(0, distanceNeurone);
-			y = generateRandomNumber(-distanceNeurone / 2, distanceNeurone / 2);
-			reverse = (generateRandomNumber(0, 1) == 0);
-			type = generateRandomNumber(0, 1);
-
-			brains[idExp]->setNeurone(currentNeurone, x, y, type, reverse);
-		}
-
-
+		//Changer completement le coeur
+		_brains[id_brain]->resetCore(id_core);
 		break;
 	case 1:
-		//Changer un seul neurone
-
-		
-
-		idNeurone = generateRandomNumber(0, nbNeurones - 1);
-
-		std::cout << " finished in case 1" << std::endl;
-		
-		currentNeurone = brains[idExp]->getNeurones()[idCore][idNeurone];
-
-		x = generateRandomNumber(0, distanceNeurone);
-		y = generateRandomNumber(-distanceNeurone / 2, distanceNeurone / 2);
-
-		
-
-
+		//Changer un seul neurone // A CHANGER DANS CORE
+		int x, y, type;
+		bool reverse;
+		id_neurone = generateRandomNumber(0, nb_neurones - 1);
+		x = generateRandomNumber(0, dist_neurone);
+		y = generateRandomNumber(-dist_neurone / 2, dist_neurone / 2);
 		reverse = (generateRandomNumber(0, 1) == 0);
 		type = generateRandomNumber(0, 1);
-
-		brains[idExp]->setNeurone(currentNeurone, x, y, type, reverse);
-
-		
+		_brains[id_brain]->setNeurone(id_core, id_neurone, x, y, type, reverse);
 		break;
 	default:
 		break;
@@ -115,7 +83,7 @@ void Genetic::alter(int idExp)
 
 int Genetic::nextExp(int score)
 {
-	scores[currentExp] = score;
-	currentExp = (currentExp + 1) % nbExp;
-	return currentExp;
+	_scores[_current_brain_id] = score;
+	_current_brain_id = (_current_brain_id + 1) % _NB_BRAINS;
+	return _current_brain_id;
 }

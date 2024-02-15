@@ -9,19 +9,19 @@
 class Level
 {
 private:
-    static SDL_Renderer* renderer;
+    static SDL_Renderer* _renderer;
+    static SDL_Texture* _texture_block;
+    static SDL_Texture* _texture_spike;
+    static SDL_Texture* _texture_spike_small;
+    static SDL_Texture* _texture_yellow_orb;
+    static SDL_Texture* _texture_pink_orb;
+    static SDL_Texture* _texture_blue_orb;
 
-    static SDL_Texture* textureBlock;
-    static SDL_Texture* textureSpike;
-    static SDL_Texture* textureYellowOrb;
-    static SDL_Texture* texturePinkOrb;
-    static SDL_Texture* textureBlueOrb;
-
-    const char* filename;
-    int floor = 604;
-    int obstacleCount;
-    int speed = 13;
-    obstacle_t* obstacleList;
+    const char* _filename;
+    int _floor = 604;
+    int _nb_obstacles;
+    int _speed = 13;
+    Obstacle* _obstacles;
 
 
 
@@ -37,8 +37,8 @@ public:
     void render(bool hitboxes);
     void restart();
 
-    obstacle_t* getObstacleList() const { return obstacleList; }
-    int getObstacleCount() const { return obstacleCount; }
+    Obstacle* getObstacles() const { return _obstacles; }
+    int getNbObstacles() const { return _nb_obstacles; }
 };
 
 

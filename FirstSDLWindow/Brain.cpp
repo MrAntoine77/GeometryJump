@@ -3,354 +3,168 @@
 #include <iostream>
 #include <random>
 
-SDL_Renderer* Brain::renderer = nullptr;
+SDL_Renderer* Brain::_renderer = nullptr;
 
-SDL_Texture* Brain::textureNeuroneSpikeOn = nullptr;
-SDL_Texture* Brain::textureNeuroneSpikeOff = nullptr;
-SDL_Texture* Brain::textureNeuroneSquareOn = nullptr;
-SDL_Texture* Brain::textureNeuroneSquareOff = nullptr;
-SDL_Texture* Brain::textureNeuroneAirOn = nullptr;
-SDL_Texture* Brain::textureNeuroneAirOff = nullptr;
-SDL_Texture* Brain::textureNeuroneSpikeReverseOn = nullptr;
-SDL_Texture* Brain::textureNeuroneSpikeReverseOff = nullptr;
-SDL_Texture* Brain::textureNeuroneSquareReverseOn = nullptr;
-SDL_Texture* Brain::textureNeuroneSquareReverseOff = nullptr;
-SDL_Texture* Brain::textureNeuroneAirReverseOn = nullptr;
-SDL_Texture* Brain::textureNeuroneAirReverseOff = nullptr;
-
-void Brain::setRenderer(SDL_Renderer* newRenderer) {
-	renderer = newRenderer;
-	initTextures();
+void Brain::setRenderer(SDL_Renderer* renderer) {
+	_renderer = renderer;
+	Core::setRenderer(_renderer);
 }
 
-
-void Brain::initTextures()
+Brain::Brain(int nb_cores) :
+	_x(0), _y(0), _nb_cores(nb_cores)
 {
-	textureNeuroneSpikeOff = LoadTexture("Textures/Neurones/neurone_spike_off.png", renderer);
-	textureNeuroneSpikeOn = LoadTexture("Textures/Neurones/neurone_spike_on.png", renderer);
-	textureNeuroneSquareOff = LoadTexture("Textures/Neurones/neurone_square_off.png", renderer);
-	textureNeuroneSquareOn = LoadTexture("Textures/Neurones/neurone_square_on.png", renderer);
-	textureNeuroneSpikeReverseOff = LoadTexture("Textures/Neurones/neurone_spike_reverse_off.png", renderer);
-	textureNeuroneSpikeReverseOn = LoadTexture("Textures/Neurones/neurone_spike_reverse_on.png", renderer);
-	textureNeuroneSquareReverseOff = LoadTexture("Textures/Neurones/neurone_square_reverse_off.png", renderer);
-	textureNeuroneSquareReverseOn = LoadTexture("Textures/Neurones/neurone_square_reverse_on.png", renderer);
-	textureNeuroneAirOn = LoadTexture("Textures/Neurones/neurone_air_on.png", renderer);
-	textureNeuroneAirOff = LoadTexture("Textures/Neurones/neurone_air_off.png", renderer);
-	textureNeuroneAirReverseOn = LoadTexture("Textures/Neurones/neurone_air_reverse_on.png", renderer);
-	textureNeuroneAirReverseOff = LoadTexture("Textures/Neurones/neurone_air_reverse_off.png", renderer);
-}
-
-Brain::Brain(int nbNeurones, int distNeurone) :
-	posX(0), posY(0), activated(false), nbActivatedNeurones(0), nbCores(8), nbNeurones(nbNeurones), distNeurone(distNeurone)
-{
-	int x, y, type;
-	bool reverse;
-
-	neurones = new neurone_t * *[nbCores];
-	for (int idCore = 0; idCore < nbCores; idCore++)
+	_cores = new Core * [_nb_cores];
+	for (int id_core = 0; id_core < _nb_cores; id_core++)
 	{
-		neurones[idCore] = new neurone_t * [nbNeurones];
-		for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
-		{
-			neurones[idCore][idNeurone] = new neurone_t;
-
-			x = generateRandomNumber(0, distNeurone);
-			y = generateRandomNumber(-distNeurone / 2, distNeurone / 2);
-			reverse = (generateRandomNumber(0, 1) == 0);
-			type = generateRandomNumber(0, 2);
-
-			setNeurone(neurones[idCore][idNeurone], x, y, type, reverse);
-		}
+		_cores[id_core] = new Core();
 	}
-
-
 }
 
-Brain::Brain(Brain * src) : posX(0), posY(0), activated(false), nbActivatedNeurones(0)
+Brain::Brain(Brain * src) : 
+	_x(0), _y(0)
 {
-	nbNeurones = src->getNbNeurones();
-	distNeurone = src->getDistNeurone();
-
-	int x, y, type;
-	bool reverse;
-
-	neurones = new neurone_t * *[nbCores];
-	for (int idCore = 0; idCore < nbCores; idCore++)
+	_nb_cores = src->getNbCores();
+	_cores = new Core * [_nb_cores];
+	for (int id_core = 0; id_core < _nb_cores; id_core++)
 	{
-		neurones[idCore] = new neurone_t * [nbNeurones];
-		for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
-		{
-			neurones[idCore][idNeurone] = new neurone_t;
-
-			x = src->getNeurones()[idCore][idNeurone]->x;
-			y = src->getNeurones()[idCore][idNeurone]->y;
-			reverse = src->getNeurones()[idCore][idNeurone]->reverse;
-			type = src->getNeurones()[idCore][idNeurone]->type;
-
-			setNeurone(neurones[idCore][idNeurone], x, y, type, reverse);
-		}
+		_cores[id_core] = new Core(src->getCores()[id_core]);
 	}
-
-
-
 }
 
 
-Brain::Brain(const char* filename) : posX(0), posY(0), activated(false), nbActivatedNeurones(0)
+Brain::Brain(const char* filename) : 
+	_x(0), _y(0)
 {
+	_cores = nullptr;
 	std::ifstream file(filename);
 
+	Neurone*** neurones;
+
 	if (file.is_open()) {
-		file >> nbCores >> distNeurone;
-		std::cout << "Lecture nbCore : " << nbCores << " distNeurone : " << distNeurone << std::endl;
 
-		neurones = new neurone_t * *[nbCores];
-		for (int idCore = 0; idCore < nbCores; idCore++)
+		int dist_neurone, nb_neurones;
+		file >> _nb_cores;
+
+		neurones = new Neurone ** [_nb_cores];
+		_cores = new Core * [_nb_cores];
+
+
+		for (int id_core = 0; id_core < _nb_cores; id_core++)
 		{
-			file >> nbNeurones;
-			neurones[idCore] = new neurone_t * [nbNeurones];
-			for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
+			file >> nb_neurones >> dist_neurone;
+			neurones[id_core] = new Neurone * [nb_neurones];
+
+			int x, y, type;
+			bool reverse;
+
+			_cores[id_core] = new Core(nb_neurones, dist_neurone);
+
+			for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
 			{
-
-				int x, y, type;
-				bool reverse;
 				file >> x >> y >> type >> reverse;
-
-				setNeurone(neurones[idCore][idNeurone], x, y, type, reverse);
+				_cores[id_core]->setNeurone(id_neurone, x, y, type, reverse);
 			}
 		}
 		file.close();
 	}
 	else
 	{
+		_nb_cores = 0;
 		std::cerr << "Erreur ouverture fichier Brain::Brain(const char * filename) : " << filename << std::endl;
 	}
-	
 }
 
 void Brain::saveToFile(const char* filename)
 {
 	std::ofstream file(filename);
 	if (file.is_open()) {
-		file << nbCores << " " << distNeurone << std::endl;
+		int nb_neurones, dist_neurones;
 
-		for (int idCore = 0; idCore < nbCores; idCore++)
+		file << _nb_cores << std::endl;
+
+		for (int id_core = 0; id_core < _nb_cores; id_core++)
 		{
-			file << nbNeurones << std::endl;
+			nb_neurones = _cores[id_core]->getNbNeurones();
+			dist_neurones = _cores[id_core]->getDistNeurone();
+			file << nb_neurones << " " << dist_neurones << std::endl;
 
-			for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
+			for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
 			{
-				neurone_t* currentNeurone = neurones[idCore][idNeurone];
-
-
-				int x = currentNeurone->x;
-				int y = currentNeurone->y;
-				int type = currentNeurone->type;
-				bool reverse = currentNeurone->reverse;
+				int x = _cores[id_core]->getNeuroneAt(id_neurone)->x;
+				int y = _cores[id_core]->getNeuroneAt(id_neurone)->y;
+				int type = _cores[id_core]->getNeuroneAt(id_neurone)->type;
+				bool reverse = _cores[id_core]->getNeuroneAt(id_neurone)->reverse;
 
 				file << x << " " << y << " " << type << " " << reverse << std::endl;
 			}
 		}
+		file.close();
 	}
-	file.close();
+}
 
+void Brain::resetCore(int id_core)
+{
+	delete _cores[id_core];
+	_cores[id_core] = new Core();
 }
 
 
 Brain::~Brain()
 {
-	for (int idCore = 0; idCore < nbCores; idCore++)
+	for (int id_core = 0; id_core < _nb_cores; id_core++)
 	{
-		for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
-		{
-			delete neurones[idCore][idNeurone];
-		}
-		delete[] neurones[idCore];
+		delete _cores[id_core];
 	}
-	delete[] neurones;
-
-	//SDL_DestroyTexture(textureNeuroneSpikeOff);
-	//SDL_DestroyTexture(textureNeuroneSpikeOn);
-	//SDL_DestroyTexture(textureNeuroneSquareOff);
-	//SDL_DestroyTexture(textureNeuroneSquareOn);
-	//SDL_DestroyTexture(textureNeuroneSpikeReverseOff);
-	//SDL_DestroyTexture(textureNeuroneSpikeReverseOn);
-	//SDL_DestroyTexture(textureNeuroneSquareReverseOff);
-	//SDL_DestroyTexture(textureNeuroneSquareReverseOn);
-	//SDL_DestroyTexture(textureNeuroneAirOff);
-	//SDL_DestroyTexture(textureNeuroneAirOn);
-	//SDL_DestroyTexture(textureNeuroneAirReverseOff);
-	//SDL_DestroyTexture(textureNeuroneAirReverseOn);
+	delete[] _cores;
 }
 
-void Brain::update(obstacle_t* obstacleList, int obstacleCount)
+void Brain::update(Obstacle* obstacles, int nb_obstacles)
 {
-	for (int idCore = 0; idCore < nbCores; idCore++)
+	for (int id_core = 0; id_core < _nb_cores; id_core++)
 	{
-		for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
-		{
-			neurone_t* currentNeurone = neurones[idCore][idNeurone];
-
-			currentNeurone->rect = { (occupiedSpace * currentNeurone->x) + posX + originSpace, (occupiedSpace * currentNeurone->y) + posY + originSpace, hitboxSize, hitboxSize };
-
-
-
-			bool collision = false;
-			bool spikeCollision = false, blockCollision = false;
-
-			for (int idObstacle = 0; idObstacle < obstacleCount; idObstacle++)
-			{
-				
-
-				switch (obstacleList[idObstacle].type)
-				{
-				case BLOCK:
-					if (checkCollision(currentNeurone->rect, obstacleList[idObstacle].rect) || checkCollision(currentNeurone->rect, groundRectDown) || checkCollision(currentNeurone->rect, groundRectTop))
-					{
-						blockCollision = true;
-					}
-					break;
-				case SPIKE:
-					if (checkCollision(currentNeurone->rect, obstacleList[idObstacle].rect))
-					{
-						spikeCollision = true;
-					}
-					break;
-				default:
-					break;
-				}
-
-
-				if (blockCollision && spikeCollision) {
-					break;
-				}
-			}
-
-			switch (currentNeurone->type)
-			{
-			case BLOCK:
-				collision = blockCollision;
-				break;
-			case SPIKE:
-				collision = spikeCollision;
-				break;
-			case AIR:
-				collision = !(spikeCollision || blockCollision);
-				break;
-			default:
-				break;
-			}
-
-			currentNeurone->activated = (collision && !currentNeurone->reverse) || (!collision && currentNeurone->reverse);
-		}
-
-		nbActivatedNeurones = 0;
-
-		activated = true;
-		for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
-		{
-			neurone_t* currentNeurone = neurones[idCore][idNeurone];
-			if (!currentNeurone->activated)
-			{
-				activated = false;
-				nbActivatedNeurones++;
-			}
-		}
+		_cores[id_core]->update(obstacles, nb_obstacles, _x, _y);
 	}
 }
 
-
-void Brain::render(bool hitboxes, int idHighlightedCore)
+void Brain::render(bool hitboxes, int id_highlighted_core)
 {
 	if (hitboxes)
 	{
-		for (int idCore = 0; idCore < nbCores; idCore++)
+		for (int id_core = 0; id_core < _nb_cores; id_core++)
 		{
-			for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
+			if (id_core == id_highlighted_core)
 			{
-				neurone_t* currentNeurone = neurones[idCore][idNeurone];
-
-				SDL_Texture* pt = nullptr;
-				switch (currentNeurone->type)
-				{
-				case SPIKE:
-					pt = (currentNeurone->activated) ?
-						(currentNeurone->reverse ? textureNeuroneSpikeReverseOn : textureNeuroneSpikeOn) :
-						(currentNeurone->reverse ? textureNeuroneSpikeReverseOff : textureNeuroneSpikeOff);
-					break;
-
-				case BLOCK:
-					pt = (currentNeurone->activated) ?
-						(currentNeurone->reverse ? textureNeuroneSquareReverseOn : textureNeuroneSquareOn) :
-						(currentNeurone->reverse ? textureNeuroneSquareReverseOff : textureNeuroneSquareOff);
-					break;
-
-				case AIR:
-					pt = (currentNeurone->activated) ?
-						(currentNeurone->reverse ? textureNeuroneAirReverseOn : textureNeuroneAirOn) :
-						(currentNeurone->reverse ? textureNeuroneAirReverseOff : textureNeuroneAirOff);
-					break;
-
-				default:
-					break;
-				}
-
-				if (idCore != idHighlightedCore)
-				{
-					SDL_SetTextureAlphaMod(pt, 0);
-					SDL_RenderCopyEx(renderer, pt, NULL, &(currentNeurone->rect), 0, NULL, SDL_FLIP_NONE);
-					SDL_SetTextureAlphaMod(pt, 255);
-				}
-				else
-				{
-					SDL_RenderCopyEx(renderer, pt, NULL, &(currentNeurone->rect), 0, NULL, SDL_FLIP_NONE);
-				}
+				_cores[id_core]->render(hitboxes, true);
+			}
+			else
+			{
+				_cores[id_core]->render(hitboxes, false);
 			}
 		}
 	}
 }
 
-void Brain::setPos(int valX, int valY)
+void Brain::setPos(int x, int y)
 {
-	posX = valX;
-	posY = valY;
+	_x = x;
+	_y = y;
 }
 
-
-void Brain::setNeurone(neurone_t * neurone, int x, int y, int type, bool reverse)
+void Brain::setNeurone(int id_core, int id_neurone, int x, int y, int type, bool reverse)
 {
-	neurone->x = x;
-	neurone->y = y;
-	neurone->type = type;
-	neurone->reverse = reverse;
-	neurone->activated = false;
-	neurone->rect = { (occupiedSpace * x) + posX + originSpace, (occupiedSpace * y) + posY + originSpace, hitboxSize, hitboxSize };
-}
-
-
-
-void Brain::catchNeuroneValue(neurone_t * neurone, int& x, int& y, int& type, bool& reverse) const
-{
-	x = neurone->x;
-	y = neurone->y;
-	type = neurone->type;
-	reverse = neurone->reverse;
+	_cores[id_core]->setNeurone(id_neurone, x, y, type, reverse);
 }
 
 bool Brain::areCoreActivated() const
 {
-	bool activated = true;
+	bool activated = false;
 
-	for (int idCore = 0; idCore < nbCores; idCore++)
+	for (int id_core = 0; id_core < _nb_cores; id_core++)
 	{
-		activated = true;
-		for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
+		if (_cores[id_core]->isActivated())
 		{
-			if (neurones[idCore][idNeurone]->activated == false)
-			{
-				activated = false;
-				break;
-			}
+			activated = true;
+			break;
 		}
 	}
 	return activated;

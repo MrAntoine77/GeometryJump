@@ -1,21 +1,22 @@
 #include "Game.hpp"
 
 
-Game::Game(bool show_hitboxes, bool rendering) : show_hitboxes(show_hitboxes),  
-	rendering(rendering), jumpPressed(false), selectedLevel(0)
+Game::Game(bool show_hitboxes, bool rendering) : 
+	_show_hitboxes(show_hitboxes), _rendering(rendering), 
+	_jump_pressed(false), _selected_level(0), _best_score(0)
 {
 
 }
 
 Game::~Game()
 {
-	for (int idLevel = 0; idLevel < nbLevel; idLevel++)
+	for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 	{
-		delete levels[idLevel];
-		delete players[idLevel];
+		delete _levels[id_level];
+		delete _players[id_level];
 	}
-	delete[] levels;
-	delete[] players;
+	delete[] _levels;
+	delete[] _players;
 }
 
 void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
@@ -28,14 +29,14 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
 		std::cout << "Initialize..." << std::endl;
 
-		window = SDL_CreateWindow(title, x, y, w, h, flags);
-		if (window) {
+		_window = SDL_CreateWindow(title, x, y, w, h, flags);
+		if (_window) {
 			std::cout << "Window created" << std::endl;
 		}
 
-		renderer = SDL_CreateRenderer(window, -1, 0);
-		if (renderer) {
-			SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+		_renderer = SDL_CreateRenderer(_window, -1, 0);
+		if (_renderer) {
+			SDL_SetRenderDrawColor(_renderer, 200, 200, 200, 255);
 
 			setRenderer();
 
@@ -43,35 +44,22 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 		}
 
 
-		levels = new Level * [nbLevel];
-		players = new Player * [nbLevel];
+		_levels = new Level * [_NB_LEVELS];
+		_players = new Player * [_NB_LEVELS];
 
-
-		if (nbLevel == 5)
+		for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 		{
-			levels[0] = new Level("Levels/Level2.txt");
-			levels[1] = new Level("Levels/Level2.txt");
-			levels[2] = new Level("Levels/Level2.txt");
-			levels[3] = new Level("Levels/Level2.txt");
-			levels[4] = new Level("Levels/Level2.txt");
-			
-			players[0] = new Player(levels[0], false, TRAINING, 0, "Brains/brain_final.txt", "Textures/icon1.png");
-			players[1] = new Player(levels[1], false, TRAINING, 1, "Brains/brain_final.txt", "Textures/icon2.png");
-			players[2] = new Player(levels[2], false, TRAINING, 2, "Brains/brain_final.txt", "Textures/icon3.png");
-			players[3] = new Player(levels[3], false, TRAINING, 3, "Brains/brain_final.txt", "Textures/icon4.png");
-			players[4] = new Player(levels[4], false, TRAINING, 4, "Brains/brain_final.txt", "Textures/icon5.png");
-		}
-		else if (nbLevel == 1)
-		{
-			levels[0] = new Level("Levels/Level2.txt");
-			players[0] = new Player(levels[0], false, TRAINING, 0, "Brains/brain_final.txt", "Textures/icon1.png");
+			_levels[id_level] = new Level("Levels/Level2.txt");
+			_players[id_level] = new Player(_levels[id_level], false, TRAINING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
 		}
 
-		running = true;
+		std::cout << _NB_LEVELS << " players initialized" << std::endl;
+
+		_running = true;
 	} 
 	else 
 	{
-		running = false;
+		_running = false;
 	}
 }
 
@@ -84,67 +72,67 @@ void Game::handleEvents()
 	switch (event.type)
 	{
 	case SDL_QUIT:
-		running = false;
+		_running = false;
 		break;
 
 	case SDL_MOUSEBUTTONDOWN:
 		if (event.button.button == SDL_BUTTON_LEFT) {
-			jumpPressed = true;
+			_jump_pressed = true;
 		}
 		break;
 
 	case SDL_MOUSEBUTTONUP:
 		if (event.button.button == SDL_BUTTON_LEFT) {
-			jumpPressed = false;
+			_jump_pressed = false;
 		}
 		break;
 	case SDL_KEYDOWN:
 		switch (event.key.keysym.sym)
 		{
 		case SDLK_UP:
-			jumpPressed = true;
+			_jump_pressed = true;
 			break;
 		case SDLK_n:
-			selectedLevel = (selectedLevel + 1) % nbLevel;
-			std::cout << "Level " << selectedLevel << " selected" << std::endl;
+			_selected_level = (_selected_level + 1) % _NB_LEVELS;
+			std::cout << "Level " << _selected_level << " selected" << std::endl;
 			break;
 		case SDLK_RIGHT:
-			if (speed > 0)
+			if (_speed > 0)
 			{
-				speed--;
-				std::cout << "Speed : " << speed << std::endl;
+				_speed--;
+				std::cout << "Speed : " << _speed << std::endl;
 			}
 			break;
 
 		case SDLK_LEFT:
-			speed++;
-			std::cout << "Speed : " << speed << std::endl;
+			_speed++;
+			std::cout << "Speed : " << _speed << std::endl;
 			break;
 		case SDLK_KP_0:
-			speed = 0;
+			_speed = 0;
 			std::cout << "Speed : 0" << std::endl;
 			break;
 		case SDLK_KP_1:
-			speed = 17;
+			_speed = 17;
 			std::cout << "Speed : 17" << std::endl;
 			break;
 		case SDLK_F1:
-			players[selectedLevel]->showNextBrain();
+			_players[_selected_level]->showNextBrain();
 			break;
 		case SDLK_F5:
-			players[selectedLevel]->initMode(PLAYING);
+			_players[_selected_level]->initMode(PLAYING);
 			std::cout << "Playing mode activated" << std::endl;
 			break;
 		case SDLK_F6:
-			players[selectedLevel]->initMode(TESTING);
+			_players[_selected_level]->initMode(TESTING);
 			std::cout << "Testing mode activated" << std::endl;
 			break;
 		case SDLK_F7:
-			players[selectedLevel]->initMode(TRAINING);
+			_players[_selected_level]->initMode(TRAINING);
 			std::cout << "Training mode activated" << std::endl;
 			break;
 		case SDLK_h:
-			if (show_hitboxes)
+			if (_show_hitboxes)
 			{
 				std::cout << "Hitboxes hidden" << std::endl;
 			}
@@ -152,10 +140,10 @@ void Game::handleEvents()
 			{
 				std::cout << "Hitboxes shown" << std::endl;
 			}
-			show_hitboxes = !show_hitboxes;
+			_show_hitboxes = !_show_hitboxes;
 			break;
 		case SDLK_p:
-			if (pause)
+			if (_pause)
 			{
 				std::cout << "Continue" << std::endl;
 			}
@@ -163,25 +151,25 @@ void Game::handleEvents()
 			{
 				std::cout << "Pause" << std::endl;
 			}
-			pause = !pause;
+			_pause = !_pause;
 			break;
 		case SDLK_r:
-			if (rendering)
+			if (_rendering)
 			{
-				SDL_RenderClear(renderer);		
+				SDL_RenderClear(_renderer);		
 				SDL_Rect mask = { 0, 0, 1280, 720 };
-				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-				SDL_RenderFillRect(renderer, &mask);
+				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+				SDL_RenderFillRect(_renderer, &mask);
 
 				std::cout << "Render hidden" << std::endl;
 
-				SDL_RenderPresent(renderer);
+				SDL_RenderPresent(_renderer);
 			}
 			else
 			{
 				std::cout << "Render shown" << std::endl;
 			}
-			rendering = !rendering;
+			_rendering = !_rendering;
 			break;
 		default:
 			break;
@@ -191,7 +179,7 @@ void Game::handleEvents()
 		switch (event.key.keysym.sym)
 		{
 		case SDLK_UP:
-			jumpPressed = false;
+			_jump_pressed = false;
 			break;
 		default:
 			break;
@@ -199,23 +187,23 @@ void Game::handleEvents()
 	default:
 		break;
 	}
-	if (jumpPressed)
+	if (_jump_pressed)
 	{
-		players[selectedLevel]->jump();
+		_players[_selected_level]->jump();
 	}
-	for (int i = 0; i < nbLevel; i++)
+	for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 	{
-		players[i]->handleInput();
+		_players[id_level]->handleInput();
 	}
 }
 
 void Game::update() {
-	if (!pause) {
-		if (nbLevel > 1)
+	if (!_pause) {
+		if (_NB_LEVELS > 1)
 		{
 			std::vector<std::thread> threads;
 
-			for (int idLevel = 0; idLevel < nbLevel; ++idLevel) {
+			for (int idLevel = 0; idLevel < _NB_LEVELS; ++idLevel) {
 				threads.emplace_back(&Game::updatePlayerAndLevel, this, idLevel);
 			}
 
@@ -233,35 +221,38 @@ void Game::update() {
 
 void Game::render()
 {
-	if (rendering)
+	if (_rendering)
 	{
-		SDL_RenderClear(renderer);
+		SDL_RenderClear(_renderer);
 
 
-		levels[selectedLevel]->render(show_hitboxes);
-		players[selectedLevel]->render(show_hitboxes);
+		_levels[_selected_level]->render(_show_hitboxes);
+		_players[_selected_level]->render(_show_hitboxes);
 
-		SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
-		SDL_RenderPresent(renderer);
+		SDL_SetRenderDrawColor(_renderer, 200, 200, 200, 255);
+		SDL_RenderPresent(_renderer);
 
-		SDL_Delay(speed);
+		SDL_Delay(_speed);
 	}
 }
 
 void Game::clean()
 {
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(_window);
+	SDL_DestroyRenderer(_renderer);
 	SDL_Quit();
 	std::cout << "Game cleaned" << std::endl;
 }
 
 void Game::setRenderer()
 {
-	Level::setRenderer(renderer);
-	Player::setRenderer(renderer);
+	Level::setRenderer(_renderer);
+	Player::setRenderer(_renderer);
 }
 
-
-
+void Game::updatePlayerAndLevel(int id_level)
+{
+	_levels[id_level]->update();
+	_players[id_level]->update();
+}
 

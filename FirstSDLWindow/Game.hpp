@@ -10,46 +10,36 @@
 class Game
 {
 private:
-	static const int nbLevel = 1;
-	static const int maxScore = 479;
-
-	bool running = false;
-	bool pause = false;
-	bool show_hitboxes = true;
-	bool rendering;
-	bool jumpPressed;
-
-	SDL_Window* window = nullptr;
-	SDL_Renderer* renderer = nullptr;
-
-	Player** players = nullptr;
-	Level** levels = nullptr;
-
-	int selectedLevel;
+	static const int _NB_LEVELS = 5;
 
 
+	SDL_Window* _window = nullptr;
+	SDL_Renderer* _renderer = nullptr;
+	Player** _players = nullptr;
+	Level** _levels = nullptr;
+	int _best_score;
+	bool _running = false;
+	bool _pause = false;
+	bool _show_hitboxes = true;
+	bool _rendering;
+	bool _jump_pressed;
+	int _selected_level;
+	int _speed = 0;	//17
 
 public:
-	int speed = 0;	//17
+	
 	Game(bool show_hitboxes = false, bool rendering = true);
 	~Game();
 
 	void setRenderer();
-
-
 	void init(const char * title, int x, int y, int w, int h, bool fullscreen);
-
 	void handleEvents();
 	void update();
 	void render();
 	void clean();
 
-	bool isRunning() const { return running; }
-
+	bool isRunning() const { return _running; }
 
 private:
-	void updatePlayerAndLevel(int index) {
-        levels[index]->update();
-        players[index]->update();
-    }
+	void updatePlayerAndLevel(int id_level);
 };

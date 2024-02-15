@@ -12,62 +12,57 @@
 class Player
 {
 private:
-    static int nbCores;
-    static const int initX = 256;
-    static const int initY = 384;
+    static const int _NB_CORES = 8;
+    static const int _INIT_X = 256;
+    static const int _INIT_Y = 384;
 
-    static SDL_Renderer* renderer;
+    static SDL_Renderer* _renderer;
+    static int _best_score;
+    static int _id_best_score;
 
-    int idPlayer;
-    const char* brainName;
+    const char* _brain_filename;
 
-    SDL_Rect rect = {0, 0, 0, 0};
-    SDL_Rect hitboxFloor = { 0, 0, 0, 0 };
-    SDL_Rect hitboxDeath = { 0, 0, 0, 0 };
-    SDL_Rect hitboxMain = { 0, 0, 0, 0 };
+    SDL_Rect _rect = {0, 0, 0, 0};
+    SDL_Rect _hitbox_floor = { 0, 0, 0, 0 };
+    SDL_Rect _hitbox_death = { 0, 0, 0, 0 };
+    SDL_Rect _hitbox_main = { 0, 0, 0, 0 };
+    SDL_Texture* _texture; 
+    Level* _level;
+    Brain* _brain;
+    Genetic* _IA;
+    int _id_player;
+    int _rotation_angle;
+    int _selected_core;
+    float _y_velocity;
+    int _orb_nearly;
+    bool _antigravity;
+    int _score = 0;
+    bool _invincible;
+    int _mode;
+    int _best_current_score;
+    int _generation;
 
-    SDL_Texture* texture; 
-    Level* level;
-    Brain* brain;
-
-    Genetic* IA;
-
-    int rotationAngle;
-    int selectedCore;
-    float yVelocity;
-    int orbNearly;
-    bool antigravity;
-    int score = 0;
-    bool invincible;
-    int mode;
-    int maxScore;
-    int generation;
 
     
     
 public:
-    static void setRenderer(SDL_Renderer* newRenderer);
+    static void setRenderer(SDL_Renderer* renderer);
 
-    Player(Level* level, bool invincible, int mode = PLAYING, 
-        int idPlayer = 0, const char * brainName = nullptr, const char * texturePath = nullptr);
+    Player(Level* level, bool invincible, int mode = PLAYING, int id_player = 0, 
+        const char * brain_filename = nullptr, const char * texture_filename = nullptr);
     ~Player();
 
     void update(); 
     void handleInput();
     void render(bool hitboxes);
-
     void die();
     void jump();
     void showNextBrain();
     int checkHitboxObstacles();
     void updateHitboxes();
     
-    void setBrain(Brain* newBrain) { brain = newBrain; }
-    void setX(float x) { rect.x = static_cast<int>(x); }
-    void setY(float y) { rect.y = static_cast<int>(y); }
     void initMode(int val);
-
-    SDL_Rect getRect() const { return rect; }
-    int getScore() const { return score; }
-    int getMaxScore() const { return maxScore; }
+    void setX(float x) { _rect.x = static_cast<int>(x); }
+    void setY(float y) { _rect.y = static_cast<int>(y); }
+   ;
 };

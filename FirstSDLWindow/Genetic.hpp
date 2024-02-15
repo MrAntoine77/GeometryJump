@@ -1,6 +1,7 @@
 #pragma once
 #include "Brain.hpp"
 #include "utils.hpp"
+#include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <set>
@@ -9,32 +10,23 @@
 class Genetic
 {
 private:
-	static SDL_Renderer* renderer;
-	int nbCores;
+	static const int _NB_BRAINS = 64;	//multiple de 4
 
-	static const int nbExp = 64;	//multiple de 4
-	static const int nbNeuroneMin = 1;
-	static const int nbNeuroneMax = 8;
-	static const int distanceNeuroneMin = 3;
-	static const int distanceNeuroneMax = 12;
-
-	int scores[nbExp];
-	int currentExp;
-
-	Brain** brains;
-
+	static SDL_Renderer* _renderer;
 	
+	int _scores[_NB_BRAINS];
+	int _current_brain_id;
+	Brain** _brains;
 public:
-	static void setRenderer(SDL_Renderer * newRenderer);
+	static void setRenderer(SDL_Renderer * renderer);
 
-	Genetic(int nbCores);
+	Genetic(int nb_cores);
 	~Genetic();
 
-	void updateBrainLists();
+	void update();
 	void alter(int index);
 	int nextExp(int score);
 
-	Brain** getBrainLists() const { return brains; }
-	int getCurrentExp() const { return currentExp; }
+	Brain* getCurrentBrain() { return _brains[_current_brain_id]; }
 };
 
