@@ -41,9 +41,6 @@ private:
     int _mode;
     int _best_current_score;
     int _generation;
-
-
-    
     
 public:
     static void setRenderer(SDL_Renderer* renderer);

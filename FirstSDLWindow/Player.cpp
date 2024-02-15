@@ -243,6 +243,23 @@ int Player::checkHitboxObstacles() {
                 }
             }
             break;
+        case SLAB_UPPER:
+            if (checkCollision(_hitbox_death, hitbox_obstacle))
+            {
+                return -2;
+            }
+            if (checkCollision(_hitbox_floor, _level->getObstacles()[id_obstacle].hitbox))
+            {
+                if (_antigravity)
+                {
+                    return (_level->getObstacles()[id_obstacle].hitbox.y + _level->getObstacles()[id_obstacle].hitbox.h);
+                }
+                else
+                {
+                    return ((_level->getObstacles()[id_obstacle].hitbox.y) - BLOCK_SIZE);
+                }
+            }
+            break;
         case SPIKE:
             if (checkCollision(_hitbox_main, hitbox_obstacle))
             {

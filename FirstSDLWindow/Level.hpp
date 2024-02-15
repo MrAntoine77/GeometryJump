@@ -16,6 +16,7 @@ private:
     static SDL_Texture* _texture_yellow_orb;
     static SDL_Texture* _texture_pink_orb;
     static SDL_Texture* _texture_blue_orb;
+    static SDL_Texture* _texture_slab_upper;
 
     const char* _filename;
     int _floor = 604;

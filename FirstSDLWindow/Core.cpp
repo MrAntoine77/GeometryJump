@@ -80,7 +80,6 @@ Core::Core(Core* src) :
 	for (int id_neurone = 0; id_neurone < _nb_neurones; id_neurone++)
 	{
 		_neurones[id_neurone] = new Neurone;
-
 		_neurones[id_neurone]->x = src->getNeuroneAt(id_neurone)->x;
 		_neurones[id_neurone]->y = src->getNeuroneAt(id_neurone)->y;
 		_neurones[id_neurone]->type = src->getNeuroneAt(id_neurone)->type;
@@ -114,7 +113,6 @@ void Core::update(Obstacle* obstacles, int nb_obstacles, int brain_x, int brain_
 	{
 		Neurone* current_neurone = _neurones[id_neurone];
 		current_neurone->rect = { (_NEURONE_OCCUPIED_SPACE * current_neurone->x) + brain_x + _NEURONE_ORIGIN_SPACE, (_NEURONE_OCCUPIED_SPACE * current_neurone->y) + brain_y + _NEURONE_ORIGIN_SPACE, _NEURONE_HITBOX_SIZE, _NEURONE_HITBOX_SIZE };
-
 		bool collision = false, spike_collision = false, block_collision = false;
 
 		for (int id_obstacle = 0; id_obstacle < nb_obstacles; id_obstacle++)
@@ -122,6 +120,12 @@ void Core::update(Obstacle* obstacles, int nb_obstacles, int brain_x, int brain_
 			switch (obstacles[id_obstacle].type)
 			{
 			case BLOCK:
+				if (checkCollision(current_neurone->rect, obstacles[id_obstacle].rect) || checkCollision(current_neurone->rect, GROUND_RECT_BOTTOM) || checkCollision(current_neurone->rect, GROUND_RECT_TOP))
+				{
+					block_collision = true;
+				}
+				break;
+			case SLAB_UPPER:
 				if (checkCollision(current_neurone->rect, obstacles[id_obstacle].rect) || checkCollision(current_neurone->rect, GROUND_RECT_BOTTOM) || checkCollision(current_neurone->rect, GROUND_RECT_TOP))
 				{
 					block_collision = true;
@@ -151,6 +155,9 @@ void Core::update(Obstacle* obstacles, int nb_obstacles, int brain_x, int brain_
 		switch (current_neurone->type)
 		{
 		case BLOCK:
+			collision = block_collision;
+			break;
+		case SLAB_UPPER:
 			collision = block_collision;
 			break;
 		case SPIKE:
@@ -203,7 +210,11 @@ void Core::render(bool hitboxes, bool highlight)
 				(current_neurone->reverse ? _texture_neurone_block_reverse_on : _texture_neurone_block_on) :
 				(current_neurone->reverse ? _texture_neurone_block_reverse_off : _texture_neurone_block_off);
 			break;
-
+		case SLAB_UPPER:
+			pt_texture = (current_neurone->activated) ?
+				(current_neurone->reverse ? _texture_neurone_block_reverse_on : _texture_neurone_block_on) :
+				(current_neurone->reverse ? _texture_neurone_block_reverse_off : _texture_neurone_block_off);
+			break;
 		case AIR:
 			pt_texture = (current_neurone->activated) ?
 				(current_neurone->reverse ? _texture_neurone_air_reverse_on : _texture_neurone_air_on) :

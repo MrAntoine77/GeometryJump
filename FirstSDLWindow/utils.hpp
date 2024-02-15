@@ -23,7 +23,8 @@ enum Type {
     SPIKE_SMALL,
     YELLOW_ORB,
     PINK_ORB,
-    BLUE_ORB
+    BLUE_ORB,
+    SLAB_UPPER
 };
 
 enum Direction {
