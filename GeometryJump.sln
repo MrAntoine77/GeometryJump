@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GeometryJump", "FirstSDLWindow\FirstSDLWindow.vcxproj", "{FA246198-5D93-461A-B309-9442BE85DA2E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Éléments de solution", "Éléments de solution", "{19953341-557A-4C61-9719-DDAAA79C946B}"
+	ProjectSection(SolutionItems) = preProject
+		FirstSDLWindow\Brains\Brain1.txt = FirstSDLWindow\Brains\Brain1.txt
+		FirstSDLWindow\Textures\icon.png = FirstSDLWindow\Textures\icon.png
+		FirstSDLWindow\Levels\Level1.txt = FirstSDLWindow\Levels\Level1.txt
+		FirstSDLWindow\Levels\Level2.txt = FirstSDLWindow\Levels\Level2.txt
+		FirstSDLWindow\Brains\TrainedBrain.txt = FirstSDLWindow\Brains\TrainedBrain.txt
+		FirstSDLWindow\Levels\training1.txt = FirstSDLWindow\Levels\training1.txt
+		FirstSDLWindow\Levels\training2.txt = FirstSDLWindow\Levels\training2.txt
+		FirstSDLWindow\Levels\training3.txt = FirstSDLWindow\Levels\training3.txt
+		FirstSDLWindow\Levels\training4.txt = FirstSDLWindow\Levels\training4.txt
+		FirstSDLWindow\Levels\training5.txt = FirstSDLWindow\Levels\training5.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA246198-5D93-461A-B309-9442BE85DA2E}.Debug|x64.ActiveCfg = Debug|x64
+		{FA246198-5D93-461A-B309-9442BE85DA2E}.Debug|x64.Build.0 = Debug|x64
+		{FA246198-5D93-461A-B309-9442BE85DA2E}.Debug|x86.ActiveCfg = Debug|Win32
+		{FA246198-5D93-461A-B309-9442BE85DA2E}.Debug|x86.Build.0 = Debug|Win32
+		{FA246198-5D93-461A-B309-9442BE85DA2E}.Release|x64.ActiveCfg = Release|x64
+		{FA246198-5D93-461A-B309-9442BE85DA2E}.Release|x64.Build.0 = Release|x64
+		{FA246198-5D93-461A-B309-9442BE85DA2E}.Release|x86.ActiveCfg = Release|Win32
+		{FA246198-5D93-461A-B309-9442BE85DA2E}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3F15B3BC-A910-4E03-A0B8-8DBE81D2B2E8}
+	EndGlobalSection
+EndGlobal
