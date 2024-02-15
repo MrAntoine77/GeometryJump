@@ -12,7 +12,7 @@
 class Player
 {
 private:
-    static int nbBrains;
+    static int nbCores;
     static const int initX = 256;
     static const int initY = 384;
 
@@ -28,12 +28,12 @@ private:
 
     SDL_Texture* texture; 
     Level* level;
-    Brain** brainList;
+    Brain* brain;
 
     Genetic* IA;
 
     int rotationAngle;
-    int selectedBrain;
+    int selectedCore;
     float yVelocity;
     int orbNearly;
     bool antigravity;
@@ -61,11 +61,8 @@ public:
     void showNextBrain();
     int checkHitboxObstacles();
     void updateHitboxes();
-    bool areBrainsActivated() const;
-    void loadBrainsFromFile(const char* filename);
-    void saveBrainsToFile(const char* filename);
     
-    void setBrain(Brain** brain) { brainList = brain; }
+    void setBrain(Brain* newBrain) { brain = newBrain; }
     void setX(float x) { rect.x = static_cast<int>(x); }
     void setY(float y) { rect.y = static_cast<int>(y); }
     void initMode(int val);

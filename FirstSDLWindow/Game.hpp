@@ -10,7 +10,7 @@
 class Game
 {
 private:
-	static const int nbLevel = 5;
+	static const int nbLevel = 1;
 	static const int maxScore = 479;
 
 	bool running = false;

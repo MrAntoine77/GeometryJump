@@ -77,6 +77,7 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 
 void Game::handleEvents()
 {
+	
 	SDL_Event event;
 	SDL_PollEvent(&event);
 
@@ -210,15 +211,23 @@ void Game::handleEvents()
 
 void Game::update() {
 	if (!pause) {
-		std::vector<std::thread> threads;
+		if (nbLevel > 1)
+		{
+			std::vector<std::thread> threads;
 
-		for (int i = 0; i < nbLevel; ++i) {
-			threads.emplace_back(&Game::updatePlayerAndLevel, this, i);
+			for (int idLevel = 0; idLevel < nbLevel; ++idLevel) {
+				threads.emplace_back(&Game::updatePlayerAndLevel, this, idLevel);
+			}
+
+			for (auto& thread : threads) {
+				thread.join();
+			}
+		}
+		else
+		{
+			updatePlayerAndLevel(0);
 		}
 
-		for (auto& thread : threads) {
-			thread.join();
-		}
 	}
 }
 

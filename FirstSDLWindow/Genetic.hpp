@@ -10,7 +10,7 @@ class Genetic
 {
 private:
 	static SDL_Renderer* renderer;
-	int nbBrains;
+	int nbCores;
 
 	static const int nbExp = 64;	//multiple de 4
 	static const int nbNeuroneMin = 1;
@@ -21,20 +21,20 @@ private:
 	int scores[nbExp];
 	int currentExp;
 
-	Brain*** brainLists;
+	Brain** brains;
 
 	
 public:
 	static void setRenderer(SDL_Renderer * newRenderer);
 
-	Genetic(int nbBrains);
+	Genetic(int nbCores);
 	~Genetic();
 
 	void updateBrainLists();
 	void alter(int index);
 	int nextExp(int score);
 
-	Brain*** getBrainLists() const { return brainLists; }
+	Brain** getBrainLists() const { return brains; }
 	int getCurrentExp() const { return currentExp; }
 };
 

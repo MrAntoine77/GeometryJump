@@ -2,11 +2,13 @@
 
 #include <SDL.h>
 #include "SDL_image.h"
+#include <fstream>
 #include "utils.hpp"
 #include <cstdlib>
 #include <ctime>
 #include <set>
 #include <random>
+#include "Core.hpp"
 
 
 
@@ -32,41 +34,50 @@ private:
 	static SDL_Texture* textureNeuroneAirReverseOn;
 	static SDL_Texture* textureNeuroneAirReverseOff;
 
+
+	int nbCores;
+
+
 	int posX;
 	int posY;
 	int nbNeurones;
-	int distMaxNeurone;
+	int distNeurone;
 	int nbActivatedNeurones;
 	bool activated;
 
-	neurone_t** neurones;
+	Core** cores;
 	
 
 public:
 	static void setRenderer(SDL_Renderer* newRenderer);
 	static void initTextures();
 
-	Brain(int nbNeurones = 5, int distMaxNeurones = 5);
+	Brain(int nbNeurones = 8, int distNeurone = 16);
 	Brain(Brain * src);
+	Brain(const char* filename);
+
 	~Brain();
 
 	
 
 	void update(obstacle_t* obstacleList, int obstacleCount);
-	void render(bool hitboxes, bool alpha);
+	void render(bool hitboxes, int idHighlightedCore);
+	void saveToFile(const char* filename);
 
-	void catchNeuroneValue(int index, int& x, int& y, int& type, bool& reverse);
+
 
 	void setPos(int valX, int valY);
-	void setNeurone(int index, int x, int y, int type, bool reverse);
+	void setNeurone(neurone_t * neurone, int x, int y, int type, bool reverse);
 	void setNbNeurones(int val) { nbNeurones = val; }
 
-	int getDistMaxNeurones() { return distMaxNeurone; }
+	void catchNeuroneValue(neurone_t* neurone, int& x, int& y, int& type, bool& reverse) const;
+	bool areCoreActivated() const;
+	int getDistNeurone() { return distNeurone; }
 	bool isActivated() const { return activated; }
 	int getNbActivatedNeurones() const { return nbActivatedNeurones; }
 	int getNbNeurones() const { return nbNeurones; }
-	int getDistanceMaxNeurone() const { return distMaxNeurone; }
-	neurone_t** getNeurones() const { return neurones; }
+
+	neurone_t*** getNeurones() const { return neurones; }
 
 };
 

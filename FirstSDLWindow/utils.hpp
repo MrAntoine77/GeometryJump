@@ -9,6 +9,11 @@
 
 
 const int BLOCK_SIZE = 64;
+const int NB_NEURONES = 8;
+const int DIST_MAX_NEURONE = 16;
+
+
+
 const SDL_Rect groundRectTop = { 0, -256, 1280, 28 };
 const SDL_Rect groundRectDown = { 0, 668, 1280, 336 };
 

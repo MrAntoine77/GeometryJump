@@ -4,7 +4,7 @@ const float gravity = 8523.988f;
 const float blockSize = 64.0f;
 const int frameRate = 60;
 
-int Player::nbBrains = 8;
+int Player::nbCores = 8;
 SDL_Renderer* Player::renderer = nullptr;
 
 void Player::setRenderer(SDL_Renderer* newRenderer) {
@@ -17,11 +17,11 @@ void Player::setRenderer(SDL_Renderer* newRenderer) {
 Player::Player(Level* level, bool invincible, int mode, int idPlayer, 
     const char * brainName, const char * texturePath) :
     yVelocity(0.0f), rotationAngle(0), level(level), orbNearly(false), invincible(invincible),
-    selectedBrain(0), antigravity(false), mode(mode), maxScore(0), generation(0), 
+    selectedCore(0), antigravity(false), mode(mode), maxScore(0), generation(0), 
     idPlayer(idPlayer), brainName(brainName)
 {
 
-    IA = new Genetic(nbBrains);
+    IA = new Genetic(nbCores);
 
     initMode(mode);
 
@@ -46,11 +46,7 @@ Player::~Player()
 
     if (mode == TRAINING)
     {
-        for (int i = 0; i < nbBrains; i++)
-        {
-            delete brainList[i];
-        }
-        delete[] brainList;
+        delete brain;
         delete IA;
     }
 }
@@ -96,11 +92,8 @@ void Player::update()
 
 
     if( (mode == TRAINING) || (mode == TESTING) ){
-        for (int i = 0; i < nbBrains; i++)
-        {
-            brainList[i]->setPos(rect.x, rect.y);
-            brainList[i]->update(level->getObstacleList(), level->getObstacleCount());
-        }
+        brain->setPos(rect.x, rect.y);
+        brain->update(level->getObstacleList(), level->getObstacleCount());
     }
 
     updateHitboxes();
@@ -125,8 +118,11 @@ void Player::update()
 
 void Player::handleInput()
 {
-    if (((mode == TRAINING) || (mode == TESTING)) && areBrainsActivated()) {
-        if (areBrainsActivated())
+
+    bool brainActivated = brain->areCoreActivated();
+
+    if (((mode == TRAINING) || (mode == TESTING)) && brainActivated) {
+        if (brainActivated)
         {
             jump();
         }
@@ -158,12 +154,10 @@ void Player::render(bool hitboxes)
 
     if ( (mode == TRAINING) || (mode == TESTING) )
     {
-        for (int i = 0; i < nbBrains; i++)
-        {
 
-            brainList[i]->render(hitboxes, (i != selectedBrain));
+        brain->render(hitboxes, selectedCore);
 
-        }
+     
     }
 }
 
@@ -187,7 +181,7 @@ void Player::die()
         {
             maxScore = score;
             std::cout << "[" << idPlayer << "][" << generation << "] New max score : " << maxScore << ", brain saved" << std::endl;
-            saveBrainsToFile(brainName);
+            brain->saveToFile(brainName);
         }
 
 
@@ -344,83 +338,14 @@ void Player::jump()
     }
 }
 
-bool Player::areBrainsActivated() const
-{
-    for (int i = 0; i < nbBrains; i++)
-    {
-        if (brainList[i]->isActivated())
-        {
-            return true;
-        }
-    }
-    return false;
-}
 
 void Player::showNextBrain()
 {
     if ((mode == TRAINING) || (mode == TESTING))
     {
-        selectedBrain = (selectedBrain + 1 + nbBrains) % nbBrains;
-        std::cout << "Brain " << selectedBrain << " selected" << std::endl;
+        selectedCore = (selectedCore + 1) % nbCores;
+        std::cout << "Core " << selectedCore << " selected" << std::endl;
     }   
-}
-
-void Player::loadBrainsFromFile(const char* filename) {
-    
-    std::ifstream file(filename);
-
-    if (file.is_open()) {
-        int distMaxNeurone;
-        file >> nbBrains >> distMaxNeurone;
-        brainList = new Brain * [nbBrains];
-
-        for (int idBrain = 0; idBrain < nbBrains; idBrain++)
-        {
-            int nbNeurones;
-            
-            file >> nbNeurones;
-            brainList[idBrain] = new Brain(nbNeurones, distMaxNeurone);
-
-            for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
-            {
-                int x;
-                int y;
-                int type;
-                bool reverse;
-                file >> x >> y >> type >> reverse;
-
-                brainList[idBrain]->setNeurone(idNeurone, x, y, type, reverse);
-            }
-        }
-    }
-    file.close();
-}
-
-void Player::saveBrainsToFile(const char* filename) {
-    std::ofstream file(filename);
-    int max = 0;
-    if (file.is_open()) {
-        file << nbBrains << " " << brainList[0]->getDistanceMaxNeurone() << std::endl;
-
-        for (int idBrain = 0; idBrain < nbBrains; idBrain++)
-        {
-            int nbNeurones = brainList[idBrain]->getNbNeurones();
-            file << nbNeurones << std::endl;
-
-            for (int idNeurone = 0; idNeurone < nbNeurones; idNeurone++)
-            {
-                int x = 0;
-                int y = 0;
-                int type = 0;
-                bool reverse = 0;
-                
-                brainList[idBrain]->catchNeuroneValue(idNeurone, x, y, type, reverse);
-                file << x << " " << y << " " << type << " " << reverse << std::endl;
-            }
-        }
-    }
-    file.close();
-
 }
 
 void Player::initMode(int val) 
@@ -432,7 +357,8 @@ void Player::initMode(int val)
         setBrain(IA->getBrainLists()[IA->getCurrentExp()]);
         break;
     case TESTING:
-        loadBrainsFromFile(brainName);
+        delete brain;
+        brain = new Brain(brainName);
         break;
     default:
         break;
