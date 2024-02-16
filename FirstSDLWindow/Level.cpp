@@ -158,12 +158,11 @@ void Level::update()
 void Level::updatePlayer()
 {
     _player->update(_obstacles, _nb_obstacles);
-
     int collision_result = checkAllCollisions();
 
     if (collision_result == -1)
     {
-        //Sol non touché
+        
         _player->setGround(false);
         _player->setYVelocity(fmaxf(fminf(_player->getYVelocity() + (GRAVITY / FRAMERATE), 1500.0f), -1500.0f));
     }
@@ -173,7 +172,6 @@ void Level::updatePlayer()
         if (_player->getY() != new_y) {
             _player->setY(new_y);
         }
-
         _player->setGround(true);
         _player->setYVelocity(0.0f);
     }

@@ -26,8 +26,7 @@ private:
     int _floor = 604;
     int _nb_obstacles;
     int _speed = 13;
-    
-
+   
 public:
     static void setRenderer(SDL_Renderer* newRenderer);
     static void initTextures();

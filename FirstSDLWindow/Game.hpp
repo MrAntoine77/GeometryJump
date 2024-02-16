@@ -24,7 +24,7 @@ private:
 	bool _rendering;
 	bool _jump_pressed;
 	int _selected_level;
-	int _speed = 17;	//17
+	int _speed = 0;	//17
 
 public:
 	

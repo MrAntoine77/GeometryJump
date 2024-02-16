@@ -1,14 +1,28 @@
-#include "Game.hpp"
+#include <iostream>
+#include <ctime>
+#include "Game.hpp"  
 
 int main(int argc, char* argv[]) {
-	Game * game = new Game(true,true);
-	game->init("Geometry Jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, false);
-	while (game->isRunning()) {
-		game->handleEvents();
-		game->update();
-		game->render();
-	}
-	game->clean();
+    time_t currentTime = time(0);
+    struct tm now;
 
-	return 0;
+    if (localtime_s(&now, &currentTime) == 0) {
+        std::cout << "Heure actuelle : " << now.tm_hour << ":" << now.tm_min << ":" << now.tm_sec << std::endl;
+    }
+    else {
+        std::cerr << "Error getting local time" << std::endl;
+        return 1; 
+    }
+
+    Game* game = new Game(true, false);
+    game->init("Geometry Jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, false);
+
+    while (game->isRunning()) {
+        game->handleEvents();
+        game->update();
+        game->render();
+    }
+
+    game->clean();
+    return 0;
 }

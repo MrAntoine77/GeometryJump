@@ -53,23 +53,25 @@ void Genetic::alter(int id_brain)
 {
 	int nb_cores = _brains[id_brain]->getNbCores();
 	int id_core = generateRandomNumber(0, nb_cores - 1);
-	int nb_neurones = _brains[id_brain]->getCores()[id_core]->getNbNeurones();
-	int dist_neurone = _brains[id_brain]->getCores()[id_core]->getDistNeurone();
-	int random = generateRandomNumber(0, 2); 
-	int id_neurone;
+	
 
-	switch (random)
+	int nb_modifs = generateRandomNumber(1, 3);
+	for (int id_modif = 0; id_modif < nb_modifs; id_modif++)
 	{
-	case 0:
-		_brains[id_brain]->modifyRandomNeurone(id_core);
-		break;
-	case 1:
-		_brains[id_brain]->deleteRandomNeurone(id_core);	
-		break;
-	case 2:
-		_brains[id_brain]->addRandomNeurone(id_core);
-	default:
-		break;
+		int random = generateRandomNumber(0, 2);
+		switch (random)
+		{
+		case 0:
+			_brains[id_brain]->modifyRandomNeurone(id_core);
+			break;
+		case 1:
+			_brains[id_brain]->deleteRandomNeurone(id_core);
+			break;
+		case 2:
+			_brains[id_brain]->addRandomNeurone(id_core);
+		default:
+			break;
+		}
 	}
 }
 

@@ -212,7 +212,7 @@ void Core::render(bool hitboxes, bool highlight)
 
 		if (!highlight)
 		{
-			SDL_SetTextureAlphaMod(pt_texture, 64);
+			SDL_SetTextureAlphaMod(pt_texture, 0);
 			SDL_RenderCopyEx(_renderer, pt_texture, NULL, &(current_neurone->rect), 0, NULL, SDL_FLIP_NONE);
 			SDL_SetTextureAlphaMod(pt_texture, 255);
 		}

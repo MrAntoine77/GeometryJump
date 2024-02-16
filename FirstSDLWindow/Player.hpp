@@ -11,7 +11,7 @@
 class Player
 {
 private:
-    static const int _NB_CORES = 10;
+    static const int _NB_CORES = 6;
     static const int _INIT_X = 256;
     static const int _INIT_Y = 384;
 
@@ -40,6 +40,7 @@ private:
     int _best_current_score;
     int _generation;
     bool _ground;
+
     
 public:
     static void setRenderer(SDL_Renderer* renderer);
@@ -66,8 +67,7 @@ public:
     float getYVelocity() const { return _y_velocity; }
     int getY() { return _rect.y; }
     bool isInvincible() { return _invincible; }
-
-    
+    int getMode() const { return _mode; }
 
     void setGround(bool ground) { _ground = ground; }
     void initMode(int val);

@@ -10,7 +10,7 @@
 class Genetic
 {
 private:
-	static const int _NB_BRAINS = 64;	//multiple de 4
+	static const int _NB_BRAINS = 128;	//multiple de 4
 
 	static SDL_Renderer* _renderer;
 	
