@@ -49,7 +49,7 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 
 		for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 		{
-			_players[id_level] = new Player(false, TRAINING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
+			_players[id_level] = new Player(false, TESTING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
 			_levels[id_level] = new Level("Levels/Pseudo_Madness.txt", _players[id_level]);
 		}
 

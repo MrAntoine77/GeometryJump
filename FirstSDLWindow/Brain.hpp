@@ -34,10 +34,9 @@ public:
 	void update(Obstacle* obstacles, int nb_obstacles);
 	void render(bool hitboxes, int id_highlighted_core);
 
-	void resetCore(int id_core);
-	void deleteRandomNeurone(int id_core);
-	void addRandomNeurone(int id_core);
-	void modifyRandomNeurone(int id_core);
+	void deleteRandomNeurone(int id_core, int nb_modifs);
+	void addRandomNeurone(int id_core, int nb_modifs);
+	void modifyRandomNeurone(int id_core, int nb_modifs);
 
 	void saveToFile(const char* filename);
 	void setPos(int x, int y);

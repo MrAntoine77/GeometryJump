@@ -102,13 +102,6 @@ void Brain::saveToFile(const char* filename)
 	}
 }
 
-void Brain::resetCore(int id_core)
-{
-	delete _cores[id_core];
-	_cores[id_core] = new Core();
-}
-
-
 Brain::~Brain()
 {
 	for (int id_core = 0; id_core < _nb_cores; id_core++)
@@ -150,19 +143,28 @@ void Brain::setPos(int x, int y)
 	_y = y;
 }
 
-void Brain::deleteRandomNeurone(int id_core)
+void Brain::deleteRandomNeurone(int id_core, int nb_modifs)
 {
-	_cores[id_core]->deleteRandomNeurone();
+	for (int id_modif = 0; id_modif < nb_modifs; id_modif++)
+	{
+		_cores[id_core]->deleteRandomNeurone();
+	}
 }
 
-void Brain::modifyRandomNeurone(int id_core)
+void Brain::modifyRandomNeurone(int id_core, int nb_modifs)
 {
-	_cores[id_core]->modifyRandomNeurone();
+	for (int id_modif = 0; id_modif < nb_modifs; id_modif++)
+	{
+		_cores[id_core]->modifyRandomNeurone();
+	}
 }
 
-void Brain::addRandomNeurone(int id_core)
+void Brain::addRandomNeurone(int id_core, int nb_modifs)
 {
-	_cores[id_core]->deleteRandomNeurone();
+	for (int id_modif = 0; id_modif < nb_modifs; id_modif++)
+	{
+		_cores[id_core]->deleteRandomNeurone();
+	}
 }
 
 void Brain::setNeurone(int id_core, int id_neurone, int x, int y, int type, bool reverse)

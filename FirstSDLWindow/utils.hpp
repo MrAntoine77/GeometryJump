@@ -35,7 +35,7 @@ enum Direction {
     LEFT
 };
 
-enum Mode {
+enum Gamemode {
     TRAINING,
     TESTING,
     PLAYING
