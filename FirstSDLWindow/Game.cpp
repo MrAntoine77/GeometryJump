@@ -49,8 +49,8 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 
 		for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 		{
-			_levels[id_level] = new Level("Levels/Level2.txt");
-			_players[id_level] = new Player(_levels[id_level], false, TRAINING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
+			_levels[id_level] = new Level("Levels/Pseudo_Madness.txt");
+			_players[id_level] = new Player(_levels[id_level], false, PLAYING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
 		}
 
 		std::cout << _NB_LEVELS << " players initialized" << std::endl;
@@ -225,6 +225,11 @@ void Game::render()
 	{
 		SDL_RenderClear(_renderer);
 
+		if (_show_hitboxes)
+		{
+			SDL_SetRenderDrawColor(_renderer, 232, 232, 232, 255);
+			SDL_RenderFillRect(_renderer, &DIABLE_ZONE);
+		}
 
 		_levels[_selected_level]->render(_show_hitboxes);
 		_players[_selected_level]->render(_show_hitboxes);

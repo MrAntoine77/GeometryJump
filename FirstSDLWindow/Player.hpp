@@ -61,5 +61,4 @@ public:
     void initMode(int val);
     void setX(float x) { _rect.x = static_cast<int>(x); }
     void setY(float y) { _rect.y = static_cast<int>(y); }
-   ;
 };

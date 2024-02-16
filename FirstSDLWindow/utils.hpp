@@ -14,6 +14,7 @@ const int FRAMERATE = 60;
 
 const SDL_Rect GROUND_RECT_TOP = { 0, -256, 1280, 28 };
 const SDL_Rect GROUND_RECT_BOTTOM = { 0, 668, 1280, 336 };
+const SDL_Rect DIABLE_ZONE = { 192, 0, 192, 720 };
 
 
 enum Type {

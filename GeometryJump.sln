@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Éléments de solution", "�
 		FirstSDLWindow\Textures\icon.png = FirstSDLWindow\Textures\icon.png
 		FirstSDLWindow\Levels\Level1.txt = FirstSDLWindow\Levels\Level1.txt
 		FirstSDLWindow\Levels\Level2.txt = FirstSDLWindow\Levels\Level2.txt
+		FirstSDLWindow\Levels\Pseudo_Madness.txt = FirstSDLWindow\Levels\Pseudo_Madness.txt
 		FirstSDLWindow\Brains\TrainedBrain.txt = FirstSDLWindow\Brains\TrainedBrain.txt
 		FirstSDLWindow\Levels\training1.txt = FirstSDLWindow\Levels\training1.txt
 		FirstSDLWindow\Levels\training2.txt = FirstSDLWindow\Levels\training2.txt

@@ -10,7 +10,7 @@
 class Game
 {
 private:
-	static const int _NB_LEVELS = 5;
+	static const int _NB_LEVELS = 1;
 
 
 	SDL_Window* _window = nullptr;
@@ -24,7 +24,7 @@ private:
 	bool _rendering;
 	bool _jump_pressed;
 	int _selected_level;
-	int _speed = 0;	//17
+	int _speed = 17;	//17
 
 public:
 	

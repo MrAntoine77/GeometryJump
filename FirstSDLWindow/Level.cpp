@@ -50,6 +50,7 @@ void Level::loadObstaclesFromFile(const char* filename) {
             _obstacles[id_obstacle].rect.w = BLOCK_SIZE;
             _obstacles[id_obstacle].rect.h = BLOCK_SIZE;
 
+            //HITBOXES SETUP
             switch (_obstacles[id_obstacle].type)
             {
             case BLOCK:
@@ -95,11 +96,8 @@ void Level::loadObstaclesFromFile(const char* filename) {
                 break;
             }
 
-            int tmp;
             int tmp_h;
             int tmp_w;
-            int tmp_x;
-            int tmp_y;
             int delta_x;
             int delta_y;
             switch (_obstacles[id_obstacle].direction)

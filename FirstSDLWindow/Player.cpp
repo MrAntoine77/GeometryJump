@@ -67,25 +67,26 @@ void Player::update()
             _rotation_angle = (_rotation_angle + rotation_rate) % 360;
             _rect.y += static_cast<int>(_y_velocity / FRAMERATE);
         }
-
         updateHitboxes();
     }
+    
 
     int collision_result = checkHitboxObstacles();
-
     if (collision_result == -1)
     {
         _y_velocity += GRAVITY / FRAMERATE;
+        _y_velocity = fmaxf(fminf(_y_velocity, 1500.0f), -1500.0f);
     }
-
-    if (collision_result >= 0) {
+    else if (collision_result >= 0) {
         int new_y = (_antigravity) ? collision_result - 1 : collision_result + 1;
         if (_rect.y != new_y) {
             _rect.y = new_y;
         }
-
         updateHitboxes();
         _y_velocity = 0.0f;
+    }
+    if (collision_result == -2 && (_invincible == false)) {
+        die();
     }
 
 
@@ -94,10 +95,6 @@ void Player::update()
         _brain->update(_level->getObstacles(), _level->getNbObstacles());
     }
 
-    updateHitboxes();
-    if ((checkHitboxObstacles()) == -2 && (_invincible == false)) {
-        die();
-    }
 
     if (_y_velocity == 0.0f) {
         int angle_mod_90 = _rotation_angle % 90;
@@ -116,14 +113,8 @@ void Player::update()
 
 void Player::handleInput()
 {
-
-    bool is_brain_activated = _brain->areCoreActivated();
-
-    if (((_mode == TRAINING) || (_mode == TESTING)) && is_brain_activated) {
-        if (is_brain_activated)
-        {
-            jump();
-        }
+    if (((_mode == TRAINING) || (_mode == TESTING)) && _brain->areCoreActivated()) {
+        jump();
     }
 }
 
@@ -140,13 +131,13 @@ void Player::render(bool hitboxes)
 
     if (hitboxes)
     {
-        SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 32);
+        SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
         SDL_RenderDrawRect(_renderer, &_hitbox_floor);
 
-        SDL_SetRenderDrawColor(_renderer, 128, 255, 0, 32);
+        SDL_SetRenderDrawColor(_renderer, 128, 255, 0, 255);
         SDL_RenderDrawRect(_renderer, &_hitbox_death);
 
-        SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 32);
+        SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
         SDL_RenderDrawRect(_renderer, &_hitbox_main);
     }
 
@@ -159,6 +150,11 @@ void Player::render(bool hitboxes)
 
 void Player::die()
 {
+    if (_mode == PLAYING)
+    {
+        SDL_Delay(500);
+    }
+    
     _level->restart();
 
     _rect.x = _INIT_X;
@@ -214,118 +210,122 @@ int Player::checkHitboxObstacles() {
             return -2;
         }
     }
-    else
-    {
-        if (checkCollision(_hitbox_death, GROUND_RECT_TOP)) {
-            return -2;
-        }
-    }
+
+
+    int replace_y = -1;
+    int test = 0;
+
     for (int id_obstacle = 0; id_obstacle < _level->getNbObstacles(); id_obstacle++)
     {
-        int _type_obstacle = _level->getObstacles()[id_obstacle].type;
-        SDL_Rect hitbox_obstacle = _level->getObstacles()[id_obstacle].hitbox;
-        switch (_type_obstacle)
+        Obstacle current_obstacle = _level->getObstacles()[id_obstacle];
+        int obstacle_x = current_obstacle.hitbox.x;
+
+        if ((obstacle_x < 384) && (obstacle_x > 192))
         {
-        case BLOCK:
-            if (checkCollision(_hitbox_death, hitbox_obstacle))
+            int type_obstacle = current_obstacle.type;
+            SDL_Rect hitbox_obstacle = current_obstacle.hitbox;
+            switch (type_obstacle)
             {
-                return -2;
-            }
-            if (checkCollision(_hitbox_floor, _level->getObstacles()[id_obstacle].hitbox))
-            {
-                if (_antigravity)
+            case SPIKE:
+                if (checkCollision(_hitbox_main, hitbox_obstacle))
                 {
-                    return (_level->getObstacles()[id_obstacle].hitbox.y + _level->getObstacles()[id_obstacle].hitbox.h);
+                    return -2;
                 }
-                else
+                break;
+            case SPIKE_SMALL:
+                if (checkCollision(_hitbox_main, hitbox_obstacle))
                 {
-                    return ((_level->getObstacles()[id_obstacle].hitbox.y) - BLOCK_SIZE);
+                    return -2;
                 }
-            }
-            break;
-        case SLAB_UPPER:
-            if (checkCollision(_hitbox_death, hitbox_obstacle))
-            {
-                return -2;
-            }
-            if (checkCollision(_hitbox_floor, _level->getObstacles()[id_obstacle].hitbox))
-            {
-                if (_antigravity)
+                break;
+            case BLOCK:
+                if (checkCollision(_hitbox_floor, _level->getObstacles()[id_obstacle].hitbox))
                 {
-                    return (_level->getObstacles()[id_obstacle].hitbox.y + _level->getObstacles()[id_obstacle].hitbox.h);
+                    if (_antigravity)
+                    {
+                        replace_y = (_level->getObstacles()[id_obstacle].hitbox.y + _level->getObstacles()[id_obstacle].hitbox.h);
+                    }
+                    else
+                    {
+                        replace_y = ((_level->getObstacles()[id_obstacle].hitbox.y) - BLOCK_SIZE);
+                    }
                 }
-                else
+                if (checkCollision(_hitbox_death, hitbox_obstacle))
                 {
-                    return ((_level->getObstacles()[id_obstacle].hitbox.y) - BLOCK_SIZE);
+                    return -2;
                 }
+                break;
+            case SLAB_UPPER:
+                if (checkCollision(_hitbox_floor, _level->getObstacles()[id_obstacle].hitbox))
+                {
+                    if (_antigravity)
+                    {
+                        replace_y = (_level->getObstacles()[id_obstacle].hitbox.y + _level->getObstacles()[id_obstacle].hitbox.h);
+                    }
+                    else
+                    {
+                        replace_y = ((_level->getObstacles()[id_obstacle].hitbox.y) - BLOCK_SIZE);
+                    }
+                }
+                if (checkCollision(_hitbox_death, hitbox_obstacle))
+                {
+                     return -2;
+                }
+                break;
+            case YELLOW_ORB:
+                if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
+                {
+                    _orb_nearly = id_obstacle;
+                }
+                break;
+            case PINK_ORB:
+                if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
+                {
+                    _orb_nearly = id_obstacle;
+                }
+                break;
+            case BLUE_ORB:
+                if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
+                {
+                    _orb_nearly = id_obstacle;
+                }
+                break;
+            default:
+                break;
             }
-            break;
-        case SPIKE:
-            if (checkCollision(_hitbox_main, hitbox_obstacle))
-            {
-                return -2;
-            }
-            break;
-        case SPIKE_SMALL:
-            if (checkCollision(_hitbox_main, hitbox_obstacle))
-            {
-                return -2;
-            }
-            break;
-        case YELLOW_ORB:
-            if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
-            {
-                _orb_nearly = id_obstacle;
-            }
-            break;
-        case PINK_ORB:
-            if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
-            {
-                _orb_nearly = id_obstacle;
-            }
-            break;
-        case BLUE_ORB:
-            if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
-            {
-                _orb_nearly = id_obstacle;
-            }
-            break;
-        default:
-            break;
         }
     }
-
 
     if (_antigravity)
     {
         if (checkCollision(_hitbox_floor, GROUND_RECT_TOP)) {
-            return 28;
+            replace_y = 28;
         }
     }
     else
     {
         if (checkCollision(_hitbox_floor, GROUND_RECT_BOTTOM)) {
-            return 604;
+            replace_y = 604;
         }
     }
 
 
-    return -1;
+    return replace_y;
 }
 
 void Player::updateHitboxes()
 {
+    _hitbox_main = _rect;
     if (_antigravity)
     {
-        _hitbox_main = _rect;
-        _hitbox_death = { _rect.x, _rect.y + 30, _rect.w, 46 };
-        _hitbox_floor = { _rect.x + 1, _rect.y, BLOCK_SIZE - 2, 10 };
+        _hitbox_death = { _rect.x, _rect.y + 24, _rect.w, 40 };
+        _hitbox_floor = { _rect.x + 1, _rect.y, BLOCK_SIZE - 2, 16 };
     }
     else
     {
-        _hitbox_main = _rect;
-        _hitbox_death = { _rect.x, _rect.y, _rect.w, 46 };
-        _hitbox_floor = { _rect.x + 1, _rect.y + 54, BLOCK_SIZE - 2, 10 };
+       
+        _hitbox_death = { _rect.x, _rect.y, _rect.w, 40 };
+        _hitbox_floor = { _rect.x + 1, _rect.y + 48, BLOCK_SIZE - 2, 16 };
     }
 }
 
