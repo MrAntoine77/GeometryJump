@@ -39,7 +39,7 @@ public:
 	void render();
 	void clean();
 	bool isRunning() const { return _running; }
-	void init(const char* title, int x, int y, int w, int h, bool fullscreen);
+	void init(std::string title, int x, int y, int w, int h, bool fullscreen);
 
 private:
 	void setRenderer();

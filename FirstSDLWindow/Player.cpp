@@ -14,14 +14,14 @@ void Player::setRenderer(SDL_Renderer* renderer) {
 }
 
 
-Player::Player(bool invincible, int mode, int idPlayer, const char * brain_filename, const char * texture_filename) :
-    _y_velocity(0.0f), _rotation_angle(0), _orb_nearly(false), _invincible(invincible),_selected_core(0), _antigravity(false),
-    _mode(mode), _best_current_score(0), _generation(0), _id_player(idPlayer), _brain_filename(brain_filename), _score(0), 
-    _ground(false)
+Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string brain_filename, std::string texture_filename) :
+    _y_velocity(0.0f), _rotation_angle(0), _orb_nearly(ObstacleType::AIR), _invincible(invincible),_selected_core(0), _antigravity(false),
+    _gamemode(gamemode), _best_current_score(0), _generation(0), _id_player(idPlayer), _brain_filename(brain_filename), _score(0), 
+    _on_ground(false)
 {
     _IA = new Genetic(_NB_CORES);
 
-    initMode(_mode);
+    initMode(_gamemode);
 
     _rect.x = _INIT_X;
     _rect.y = _INIT_Y;
@@ -30,7 +30,7 @@ Player::Player(bool invincible, int mode, int idPlayer, const char * brain_filen
 
     updateHitboxes();
 
-    _texture = loadTexture(texture_filename, _renderer);
+    _texture = loadTexture(texture_filename.c_str(), _renderer);
 
     if (!_texture) {
         std::cerr << "Erreur lors du chargement de la texture du joueur: " << SDL_GetError() << std::endl;
@@ -41,7 +41,7 @@ Player::~Player()
 {
     SDL_DestroyTexture(_texture);
 
-    if (_mode == TRAINING)
+    if (_gamemode == Gamemode::TRAINING)
     {
         delete _brain;
         delete _IA;
@@ -70,7 +70,7 @@ void Player::update(Obstacle* obstacles, int nb_obstacles)
     updateHitboxes();
 
 
-    if ((_mode == TRAINING) || (_mode == TESTING)) {
+    if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) {
         _brain->setPos(_rect.x, _rect.y);
         _brain->update(obstacles, nb_obstacles);
     }
@@ -92,7 +92,7 @@ void Player::update(Obstacle* obstacles, int nb_obstacles)
 
 void Player::handleInput()
 {
-    if (((_mode == TRAINING) || (_mode == TESTING)) && _brain->areCoreActivated()) {
+    if (((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) && _brain->areCoreActivated()) {
         jump();
     }
 }
@@ -120,7 +120,7 @@ void Player::render(bool hitboxes)
         SDL_RenderDrawRect(_renderer, &_hitbox_main);
     }
 
-    if ( (_mode == TRAINING) || (_mode == TESTING) )
+    if ( (_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING) )
     {
 
         _brain->render(hitboxes, _selected_core);
@@ -129,7 +129,7 @@ void Player::render(bool hitboxes)
 
 void Player::die()
 {
-    if (_mode == TRAINING)
+    if (_gamemode == Gamemode::TRAINING)
     {
         _brain->updateNbTotalNeurone();
         _score -= _brain->getNbTotalNeurones();
@@ -140,7 +140,7 @@ void Player::die()
         }
     }   
 
-    if (_mode == PLAYING)
+    if (_gamemode == Gamemode::PLAYING)
     {
         SDL_Delay(500);
     }
@@ -155,7 +155,7 @@ void Player::die()
     _antigravity = false;
 
 
-    if (_mode == TRAINING)
+    if (_gamemode == Gamemode::TRAINING)
     {
         if (_score > _best_current_score)
         {
@@ -207,17 +207,17 @@ void Player::updateHitboxes()
 
 void Player::jump()
 {
-    if (_orb_nearly != 0)
+    if (_orb_nearly != ObstacleType::AIR)
     {
         switch (_orb_nearly)
         {
-        case YELLOW_ORB:
+        case ObstacleType::YELLOW_ORB:
             _y_velocity = -sqrt(2.0f * GRAVITY * BLOCK_SIZE * 2.1f);
             break;
-        case PINK_ORB:
+        case ObstacleType::PINK_ORB:
             _y_velocity = -sqrt(2.0f * GRAVITY * BLOCK_SIZE * 1.1f);
             break;
-        case BLUE_ORB:
+        case ObstacleType::BLUE_ORB:
             _y_velocity = -_y_velocity;
             _antigravity = !_antigravity;
             updateHitboxes();
@@ -226,7 +226,7 @@ void Player::jump()
             break;
         }
     }
-    else if((_y_velocity == 0.0f) && _ground)
+    else if((_y_velocity == 0.0f) && _on_ground)
     {
         _y_velocity = -sqrt(2.0f * GRAVITY * BLOCK_SIZE * 2.0f);
     }
@@ -235,23 +235,23 @@ void Player::jump()
 
 void Player::showNextBrain()
 {
-    if ((_mode == TRAINING) || (_mode == TESTING))
+    if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
     {
         _selected_core = (_selected_core + 1) % _NB_CORES;
         std::cout << "Core " << _selected_core << " selected" << std::endl;
     }   
 }
 
-void Player::initMode(int val) 
+void Player::initMode(Gamemode gamemode) 
 {
-    _mode = val;
-    switch (_mode)
+    _gamemode = gamemode;
+    switch (_gamemode)
     {
-    case TRAINING:
+    case Gamemode::TRAINING:
         delete _brain;
         _brain = _IA->getCurrentBrain();
         break;
-    case TESTING:
+    case Gamemode::TESTING:
         delete _brain;
         _brain = new Brain(_brain_filename);
         break;

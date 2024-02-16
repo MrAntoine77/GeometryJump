@@ -45,7 +45,7 @@ public:
 	void render(bool hitboxes, bool highlight);
 
 
-	void setNeurone(int id_neurone, int x, int y, int type, bool reverse);
+	void setNeurone(int id_neurone, int x, int y, ObstacleType type, bool reverse);
 	void deleteRandomNeurone();
 	void addRandomNeurone();
 	void modifyRandomNeurone();
@@ -55,6 +55,6 @@ public:
 	int getDistNeurone() const { return _dist_neurone; }
 	Neurone* getNeuroneAt(int id_neurone) { return _neurones[id_neurone]; }
 private:
-	int generateNeuroneType();
+	ObstacleType generateRandomObstacleType();
 };
 

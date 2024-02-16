@@ -19,7 +19,7 @@ private:
     static int _best_score;
     static int _id_best_score;
 
-    const char* _brain_filename;
+    std::string _brain_filename;
 
     SDL_Rect _rect = {0, 0, 0, 0};
     SDL_Rect _hitbox_floor = { 0, 0, 0, 0 };
@@ -32,21 +32,21 @@ private:
     int _rotation_angle;
     int _selected_core;
     float _y_velocity;
-    int _orb_nearly;
+    ObstacleType _orb_nearly;
     bool _antigravity;
     int _score = 0;
     bool _invincible;
-    int _mode;
+    Gamemode _gamemode;
     int _best_current_score;
     int _generation;
-    bool _ground;
+    bool _on_ground;
 
     
 public:
     static void setRenderer(SDL_Renderer* renderer);
 
-    Player(bool invincible, int mode = PLAYING, int id_player = 0, 
-        const char * brain_filename = nullptr, const char * texture_filename = nullptr);
+    Player(bool invincible, Gamemode gamemode = Gamemode::PLAYING, int id_player = 0, 
+        std::string brain_filename = "", std::string texture_filename = "");
     ~Player();
 
     void update(Obstacle* obstacles, int nb_obstacles);
@@ -67,11 +67,11 @@ public:
     float getYVelocity() const { return _y_velocity; }
     int getY() { return _rect.y; }
     bool isInvincible() { return _invincible; }
-    int getMode() const { return _mode; }
+    Gamemode getMode() const { return _gamemode; }
 
-    void setGround(bool ground) { _ground = ground; }
-    void initMode(int val);
+    void setGround(bool on_ground) { _on_ground = on_ground; }
+    void initMode(Gamemode gamemode);
     void setYVelocity(float y_velocity) { _y_velocity = y_velocity; }
     void setY(int y) { _rect.y = y; }
-    void setOrbNearly(int orb_nearly) { _orb_nearly = orb_nearly; }
+    void setOrbNearly(ObstacleType orb_nearly) { _orb_nearly = orb_nearly; }
 };

@@ -32,7 +32,7 @@ Brain::Brain(Brain * src) :
 }
 
 
-Brain::Brain(const char* filename) : 
+Brain::Brain(std::string filename) : 
 	_x(0), _y(0), _nb_total_neurones(0)
 {
 	_cores = nullptr;
@@ -54,7 +54,8 @@ Brain::Brain(const char* filename) :
 			file >> nb_neurones >> dist_neurone;
 			neurones[id_core] = new Neurone * [nb_neurones];
 
-			int x, y, type;
+			int type;
+			int x, y;
 			bool reverse;
 
 			_cores[id_core] = new Core(nb_neurones, dist_neurone);
@@ -62,7 +63,7 @@ Brain::Brain(const char* filename) :
 			for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
 			{
 				file >> x >> y >> type >> reverse;
-				_cores[id_core]->setNeurone(id_neurone, x, y, type, reverse);
+				_cores[id_core]->setNeurone(id_neurone, x, y, (ObstacleType)type, reverse);
 			}
 		}
 		file.close();
@@ -74,7 +75,7 @@ Brain::Brain(const char* filename) :
 	}
 }
 
-void Brain::saveToFile(const char* filename)
+void Brain::saveToFile(std::string filename)
 {
 	std::ofstream file(filename);
 	if (file.is_open()) {
@@ -92,10 +93,10 @@ void Brain::saveToFile(const char* filename)
 			{
 				int x = _cores[id_core]->getNeuroneAt(id_neurone)->x;
 				int y = _cores[id_core]->getNeuroneAt(id_neurone)->y;
-				int type = _cores[id_core]->getNeuroneAt(id_neurone)->type;
+				ObstacleType type = _cores[id_core]->getNeuroneAt(id_neurone)->type;
 				bool reverse = _cores[id_core]->getNeuroneAt(id_neurone)->reverse;
 
-				file << x << " " << y << " " << type << " " << reverse << std::endl;
+				file << x << " " << y << " " << (int)type << " " << reverse << std::endl;
 			}
 		}
 		file.close();
@@ -167,7 +168,7 @@ void Brain::addRandomNeurone(int id_core, int nb_modifs)
 	}
 }
 
-void Brain::setNeurone(int id_core, int id_neurone, int x, int y, int type, bool reverse)
+void Brain::setNeurone(int id_core, int id_neurone, int x, int y, ObstacleType type, bool reverse)
 {
 	_cores[id_core]->setNeurone(id_neurone, x, y, type, reverse);
 }

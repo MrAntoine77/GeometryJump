@@ -24,7 +24,7 @@ static const int NB_BLOCKS_X_MAX = 512;
 static const int NB_BLOCKS_Y_MAX = 16;
 
 
-enum Type_Obstacle {
+enum class ObstacleType {
     AIR = -1,
     BLOCK,
     SPIKE,
@@ -35,36 +35,36 @@ enum Type_Obstacle {
     SLAB_UPPER
 };
 
-enum Direction {
+enum class Direction {
     UP,
     RIGHT,
     DOWN,
     LEFT
 };
 
-enum Gamemode {
+enum class Gamemode {
     TRAINING,
     TESTING,
     PLAYING
 };
 
-typedef struct obstacle {
-    int type;
+struct Obstacle {
+    ObstacleType type;
     SDL_Rect rect;
-    int direction;
+    Direction direction;
     bool used = false;
     SDL_Rect hitbox;
-}Obstacle;
+};
 
 
-typedef struct neurone {
+struct Neurone {
     int x;
     int y;
     bool reverse;
-    int type;
+    ObstacleType type;
     bool activated;
     SDL_Rect rect;
-}Neurone;
+};
 
 
 static int generateRandomNumber(int a, int b) {
@@ -129,4 +129,29 @@ static int trouverIndexMin(const int tableau[], int taille) {
     }
 
     return id_min;
+}
+inline Direction rightRotation(Direction rotation_obstacle)
+{
+    return (Direction)(((int)rotation_obstacle + 1) % 4);
+}
+
+inline Direction leftRotation(Direction rotation_obstacle)
+{
+    switch (rotation_obstacle)
+    {
+    case Direction::UP:
+        return Direction::LEFT;
+        break;
+    case Direction::RIGHT:
+        return Direction::UP;
+        break;
+    case Direction::DOWN:
+        return Direction::RIGHT;
+        break;
+    case Direction::LEFT:
+        return Direction::DOWN;
+        break;
+    default:
+        break;
+    }
 }

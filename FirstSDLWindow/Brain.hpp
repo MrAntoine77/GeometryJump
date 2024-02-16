@@ -28,7 +28,7 @@ public:
 
 	Brain(int nb_cores);
 	Brain(Brain * src);
-	Brain(const char* filename);
+	Brain(std::string);
 	~Brain();
 
 	void update(Obstacle* obstacles, int nb_obstacles);
@@ -38,9 +38,9 @@ public:
 	void addRandomNeurone(int id_core, int nb_modifs);
 	void modifyRandomNeurone(int id_core, int nb_modifs);
 
-	void saveToFile(const char* filename);
+	void saveToFile(std::string filename);
 	void setPos(int x, int y);
-	void setNeurone(int id_core, int id_neurone, int x, int y, int type, bool reverse);
+	void setNeurone(int id_core, int id_neurone, int x, int y, ObstacleType type, bool reverse);
 	void updateNbTotalNeurone();
 
 	int getNbTotalNeurones() { return _nb_total_neurones; }

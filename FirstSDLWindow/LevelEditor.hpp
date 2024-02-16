@@ -23,29 +23,24 @@ private:
     int _mouse_y;
     int _pos_grid_x;
     int _pos_grid_y;
-
-
     int _nb_blocks;
-
     int _step;
-
-
-    int _id_obstacle;
-    int _rotation_obstacle;
+    ObstacleType _id_obstacle;
+    Direction _rotation_obstacle;
 
     SDL_Rect _rect;
-    const char* _filename;
+    std::string _filename;
 public:
-    static void setRenderer(SDL_Renderer* newRenderer);
+    static void setRenderer(SDL_Renderer* renderer);
     static void initTextures();
 
-    LevelEditor(const char * filename);
+    LevelEditor(std::string filename);
     ~LevelEditor();
 
     void handleInput();
     void update();
     void render();
-    void renderObstacle(SDL_Rect rect, int id_obstacle, int rotation);
+    void renderObstacle(SDL_Rect rect, ObstacleType id_obstacle, Direction rotation);
 
 
     void nextIdObstacle();

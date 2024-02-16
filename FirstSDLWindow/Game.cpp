@@ -23,7 +23,7 @@ Game::~Game()
 	}
 }
 
-void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
+void Game::init(std::string title, int x, int y, int w, int h, bool fullscreen)
 {
 	int flags = 0;
 	if (fullscreen) {
@@ -33,7 +33,7 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
 		std::cout << "Initialize..." << std::endl;
 
-		_window = SDL_CreateWindow(title, x, y, w, h, flags);
+		_window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
 		if (_window) {
 			std::cout << "Window created" << std::endl;
 		}
@@ -55,8 +55,8 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 
 			for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 			{
-				_players[id_level] = new Player(false, PLAYING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
-				_levels[id_level] = new Level("Levels/created_level.txt", _players[id_level]);
+				_players[id_level] = new Player(false, Gamemode::TRAINING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
+				_levels[id_level] = new Level("Levels/Pseudo_Madness.txt", _players[id_level]);
 			}
 
 			std::cout << _NB_LEVELS << " players initialized" << std::endl;
@@ -121,11 +121,11 @@ void Game::handleEvents()
 				_speed++;
 				std::cout << "Speed : " << _speed << std::endl;
 				break;
-			case SDLK_KP_0:
+			case SDLK_v:
 				_speed = 0;
 				std::cout << "Speed : 0" << std::endl;
 				break;
-			case SDLK_KP_1:
+			case SDLK_b:
 				_speed = 17;
 				std::cout << "Speed : 17" << std::endl;
 				break;
@@ -133,15 +133,15 @@ void Game::handleEvents()
 				_players[_selected_level]->showNextBrain();
 				break;
 			case SDLK_F5:
-				_players[_selected_level]->initMode(PLAYING);
+				_players[_selected_level]->initMode(Gamemode::PLAYING);
 				std::cout << "Playing mode activated" << std::endl;
 				break;
 			case SDLK_F6:
-				_players[_selected_level]->initMode(TESTING);
+				_players[_selected_level]->initMode(Gamemode::TESTING);
 				std::cout << "Testing mode activated" << std::endl;
 				break;
 			case SDLK_F7:
-				_players[_selected_level]->initMode(TRAINING);
+				_players[_selected_level]->initMode(Gamemode::TRAINING);
 				std::cout << "Training mode activated" << std::endl;
 				break;
 			case SDLK_h:

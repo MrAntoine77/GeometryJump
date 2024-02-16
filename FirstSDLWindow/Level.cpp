@@ -26,7 +26,7 @@ void Level::initTextures()
     _texture_slab_upper = loadTexture("Textures/slab_upper.png", _renderer);
 }
 
-Level::Level(const char* filename, Player* player) : 
+Level::Level(std::string filename, Player* player) : 
     _filename(filename), _player(player)
 {
     loadObstaclesFromFile(filename);
@@ -36,7 +36,7 @@ Level::~Level() {
     delete[] _obstacles;
 }
 
-void Level::loadObstaclesFromFile(const char* filename) {
+void Level::loadObstaclesFromFile(std::string filename) {
     std::ifstream file(filename);
 
     if (file.is_open()) {
@@ -45,7 +45,13 @@ void Level::loadObstaclesFromFile(const char* filename) {
         _obstacles = new Obstacle[_nb_obstacles];
 
         for (int id_obstacle = 0; id_obstacle < _nb_obstacles; id_obstacle++) {
-            file >> _obstacles[id_obstacle].type >> _obstacles[id_obstacle].rect.x >> _obstacles[id_obstacle].rect.y >> _obstacles[id_obstacle].direction;
+            int type, direction;
+
+
+            file >> type >> _obstacles[id_obstacle].rect.x >> _obstacles[id_obstacle].rect.y >> direction;
+            
+            _obstacles[id_obstacle].direction = (Direction)direction;
+            _obstacles[id_obstacle].type = (ObstacleType)type;
             _obstacles[id_obstacle].rect.x = (_obstacles[id_obstacle].rect.x * BLOCK_SIZE) + 128;
             _obstacles[id_obstacle].rect.y = _floor - (_obstacles[id_obstacle].rect.y * BLOCK_SIZE);
             _obstacles[id_obstacle].rect.w = BLOCK_SIZE;
@@ -54,40 +60,40 @@ void Level::loadObstaclesFromFile(const char* filename) {
             //HITBOXES SETUP
             switch (_obstacles[id_obstacle].type)
             {
-            case BLOCK:
+            case ObstacleType::BLOCK:
                 _obstacles[id_obstacle].hitbox = _obstacles[id_obstacle].rect;
                 break;
-            case SPIKE:
+            case ObstacleType::SPIKE:
                 _obstacles[id_obstacle].hitbox.x = _obstacles[id_obstacle].rect.x + 24;
                 _obstacles[id_obstacle].hitbox.y = _obstacles[id_obstacle].rect.y + 16;
                 _obstacles[id_obstacle].hitbox.w = 16;
                 _obstacles[id_obstacle].hitbox.h = 48;
                 break;
-            case SPIKE_SMALL:
+            case ObstacleType::SPIKE_SMALL:
                 _obstacles[id_obstacle].hitbox.x = _obstacles[id_obstacle].rect.x + 24;
                 _obstacles[id_obstacle].hitbox.y = _obstacles[id_obstacle].rect.y + 40;
                 _obstacles[id_obstacle].hitbox.w = 16;
                 _obstacles[id_obstacle].hitbox.h = 24;
                 break;
-            case YELLOW_ORB:
+            case ObstacleType::YELLOW_ORB:
                 _obstacles[id_obstacle].hitbox.x = _obstacles[id_obstacle].rect.x + 8;
                 _obstacles[id_obstacle].hitbox.y = _obstacles[id_obstacle].rect.y + 8;
                 _obstacles[id_obstacle].hitbox.w = 48;
                 _obstacles[id_obstacle].hitbox.h = 48;
                 break;
-            case PINK_ORB:
+            case ObstacleType::PINK_ORB:
                 _obstacles[id_obstacle].hitbox.x = _obstacles[id_obstacle].rect.x + 8;
                 _obstacles[id_obstacle].hitbox.y = _obstacles[id_obstacle].rect.y + 8;
                 _obstacles[id_obstacle].hitbox.w = 48;
                 _obstacles[id_obstacle].hitbox.h = 48;
                 break;
-            case BLUE_ORB:
+            case ObstacleType::BLUE_ORB:
                 _obstacles[id_obstacle].hitbox.x = _obstacles[id_obstacle].rect.x + 8;
                 _obstacles[id_obstacle].hitbox.y = _obstacles[id_obstacle].rect.y + 8;
                 _obstacles[id_obstacle].hitbox.w = 48;
                 _obstacles[id_obstacle].hitbox.h = 48;
                 break;
-            case SLAB_UPPER:
+            case ObstacleType::SLAB_UPPER:
                 _obstacles[id_obstacle].hitbox.x = _obstacles[id_obstacle].rect.x;
                 _obstacles[id_obstacle].hitbox.y = _obstacles[id_obstacle].rect.y ;
                 _obstacles[id_obstacle].hitbox.w = 64;
@@ -103,7 +109,7 @@ void Level::loadObstaclesFromFile(const char* filename) {
             int delta_y;
             switch (_obstacles[id_obstacle].direction)
             {
-            case RIGHT:
+            case Direction::RIGHT:
                 tmp_w = _obstacles[id_obstacle].hitbox.w;
                 tmp_h = _obstacles[id_obstacle].hitbox.h;
                 delta_x = _obstacles[id_obstacle].hitbox.x - _obstacles[id_obstacle].rect.x;
@@ -114,7 +120,7 @@ void Level::loadObstaclesFromFile(const char* filename) {
                 _obstacles[id_obstacle].hitbox.x = (_obstacles[id_obstacle].rect.x + BLOCK_SIZE - delta_y) - _obstacles[id_obstacle].hitbox.w;
                 _obstacles[id_obstacle].hitbox.y = _obstacles[id_obstacle].rect.y + delta_x;
                 break;
-            case DOWN:
+            case Direction::DOWN:
                 tmp_w = _obstacles[id_obstacle].hitbox.w;
                 tmp_h = _obstacles[id_obstacle].hitbox.h;
                 delta_x = _obstacles[id_obstacle].hitbox.x - _obstacles[id_obstacle].rect.x;
@@ -123,7 +129,7 @@ void Level::loadObstaclesFromFile(const char* filename) {
                 _obstacles[id_obstacle].hitbox.x = _obstacles[id_obstacle].rect.x + (BLOCK_SIZE - delta_x) - _obstacles[id_obstacle].hitbox.w;
                 _obstacles[id_obstacle].hitbox.y = _obstacles[id_obstacle].rect.y + (BLOCK_SIZE - delta_y) - _obstacles[id_obstacle].hitbox.h;
                 break;
-            case LEFT:
+            case Direction::LEFT:
                 tmp_w = _obstacles[id_obstacle].hitbox.w;
                 tmp_h = _obstacles[id_obstacle].hitbox.h;
                 delta_x = _obstacles[id_obstacle].hitbox.x - _obstacles[id_obstacle].rect.x;
@@ -190,25 +196,25 @@ void Level::render(bool hitboxes)
     for (int id_obstacle = 0; id_obstacle < _nb_obstacles; id_obstacle++) {
         switch (_obstacles[id_obstacle].type)
         {
-        case BLOCK: 
+        case ObstacleType::BLOCK: 
             pt_texture = _texture_block;
             break;
-        case SPIKE: 
+        case ObstacleType::SPIKE: 
             pt_texture = _texture_spike;
             break;
-        case SPIKE_SMALL:
+        case ObstacleType::SPIKE_SMALL:
             pt_texture = _texture_spike_small;
             break;
-        case YELLOW_ORB: 
+        case ObstacleType::YELLOW_ORB:
             pt_texture = _texture_yellow_orb;
             break;
-        case PINK_ORB:
+        case ObstacleType::PINK_ORB:
             pt_texture = _texture_pink_orb;
             break;
-        case BLUE_ORB:
+        case ObstacleType::BLUE_ORB:
             pt_texture = _texture_blue_orb;
             break;
-        case SLAB_UPPER:
+        case ObstacleType::SLAB_UPPER:
             pt_texture = _texture_slab_upper;
             break;
         default:
@@ -218,13 +224,13 @@ void Level::render(bool hitboxes)
         double angle = 0.0;
 
         switch (_obstacles[id_obstacle].direction) {
-        case 1:
+        case Direction::RIGHT:
             angle = 90.0;
             break;
-        case 2:
+        case Direction::DOWN:
             angle = 180.0;
             break;
-        case 3:
+        case Direction::LEFT:
             angle = -90.0;
             break;
         default:
@@ -260,7 +266,7 @@ void Level::restart()
 
 int Level::checkAllCollisions()
 {
-    _player->setOrbNearly(0);
+    _player->setOrbNearly(ObstacleType::AIR);
     _player->updateHitboxes();
 
 
@@ -282,23 +288,23 @@ int Level::checkAllCollisions()
 
         if ((obstacle_x < 384) && (obstacle_x > 192))
         {
-            int type_obstacle = current_obstacle.type;
+            ObstacleType obstacle_type = current_obstacle.type;
             SDL_Rect hitbox_obstacle = current_obstacle.hitbox;
-            switch (type_obstacle)
+            switch (obstacle_type)
             {
-            case SPIKE:
+            case ObstacleType::SPIKE:
                 if (checkCollision(_player->getHitboxMain(), hitbox_obstacle))
                 {
                     return -2;
                 }
                 break;
-            case SPIKE_SMALL:
+            case ObstacleType::SPIKE_SMALL:
                 if (checkCollision(_player->getHitboxMain(), hitbox_obstacle))
                 {
                     return -2;
                 }
                 break;
-            case BLOCK:
+            case ObstacleType::BLOCK:
                 if (checkCollision(_player->getHitboxFloor(), current_obstacle.hitbox))
                 {
                     if (_player->isAntigravity())
@@ -315,7 +321,7 @@ int Level::checkAllCollisions()
                     return -2;
                 }
                 break;
-            case SLAB_UPPER:
+            case ObstacleType::SLAB_UPPER:
                 if (checkCollision(_player->getHitboxFloor(), current_obstacle.hitbox))
                 {
                     if (_player->isAntigravity())
@@ -332,12 +338,12 @@ int Level::checkAllCollisions()
                     return -2;
                 }
                 break;
-            case YELLOW_ORB:
+            case ObstacleType::YELLOW_ORB:
                 if (checkCollision(_player->getHitboxMain(), current_obstacle.hitbox))
                 {
                     if (current_obstacle.used == false)
                     {
-                        _player->setOrbNearly(type_obstacle);
+                        _player->setOrbNearly(obstacle_type);
                     }
                     else
                     {
@@ -345,12 +351,12 @@ int Level::checkAllCollisions()
                     }
                 }
                 break;
-            case PINK_ORB:
+            case ObstacleType::PINK_ORB:
                 if (checkCollision(_player->getHitboxMain(), current_obstacle.hitbox))
                 {
                     if (current_obstacle.used == false)
                     {
-                        _player->setOrbNearly(type_obstacle);
+                        _player->setOrbNearly(obstacle_type);
                     }
                     else
                     {
@@ -358,12 +364,12 @@ int Level::checkAllCollisions()
                     }
                 }
                 break;
-            case BLUE_ORB:
+            case ObstacleType::BLUE_ORB:
                 if (checkCollision(_player->getHitboxMain(), current_obstacle.hitbox))
                 {
                     if (current_obstacle.used == false)
                     {
-                        _player->setOrbNearly(type_obstacle);
+                        _player->setOrbNearly(obstacle_type);
                     }
                     else
                     {

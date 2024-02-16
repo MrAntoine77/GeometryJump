@@ -22,19 +22,19 @@ private:
 
     Obstacle* _obstacles;
     Player* _player;
-    const char* _filename;
+    std::string _filename;
     int _floor = 604;
     int _nb_obstacles;
     int _speed = 13;
    
 public:
-    static void setRenderer(SDL_Renderer* newRenderer);
+    static void setRenderer(SDL_Renderer* renderer);
     static void initTextures();
 
-    Level(const char* filename, Player * player);
+    Level(std::string filename, Player* player);
     ~Level();
 
-    void loadObstaclesFromFile(const char* filename);
+    void loadObstaclesFromFile(std::string filename);
     void update(); 
     void updatePlayer();
     void render(bool hitboxes);

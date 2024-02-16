@@ -52,7 +52,7 @@ Core::Core() :
 
 		_neurones[id_neurone]->x = generateRandomNumber(0, _dist_neurone);
 		_neurones[id_neurone]->y = generateRandomNumber(-_dist_neurone / 2, _dist_neurone / 2);
-		_neurones[id_neurone]->type = generateNeuroneType();
+		_neurones[id_neurone]->type = generateRandomObstacleType();
 		_neurones[id_neurone]->reverse = (generateRandomNumber(0, 1) == 0);
 		_neurones[id_neurone]->activated = false;
 	}
@@ -104,25 +104,25 @@ void Core::update(Obstacle* obstacles, int nb_obstacles, int brain_x, int brain_
 		{
 			switch (obstacles[id_obstacle].type)
 			{
-			case BLOCK:
+			case ObstacleType::BLOCK:
 				if (checkCollision(current_neurone->rect, obstacles[id_obstacle].rect) || checkCollision(current_neurone->rect, GROUND_RECT_BOTTOM) || checkCollision(current_neurone->rect, GROUND_RECT_TOP))
 				{
 					block_collision = true;
 				}
 				break;
-			case SLAB_UPPER:
+			case ObstacleType::SLAB_UPPER:
 				if (checkCollision(current_neurone->rect, obstacles[id_obstacle].rect) || checkCollision(current_neurone->rect, GROUND_RECT_BOTTOM) || checkCollision(current_neurone->rect, GROUND_RECT_TOP))
 				{
 					block_collision = true;
 				}
 				break;
-			case SPIKE:
+			case ObstacleType::SPIKE:
 				if (checkCollision(current_neurone->rect, obstacles[id_obstacle].rect))
 				{
 					spike_collision = true;
 				}
 				break;
-			case SPIKE_SMALL:
+			case ObstacleType::SPIKE_SMALL:
 				if (checkCollision(current_neurone->rect, obstacles[id_obstacle].rect))
 				{
 					spike_collision = true;
@@ -139,18 +139,18 @@ void Core::update(Obstacle* obstacles, int nb_obstacles, int brain_x, int brain_
 
 		switch (current_neurone->type)
 		{
-		case BLOCK:
+		case ObstacleType::BLOCK:
 			collision = block_collision;
 			break;
-		case SLAB_UPPER:
+		case ObstacleType::SLAB_UPPER:
 			collision = block_collision;
 			break;
-		case SPIKE:
+		case ObstacleType::SPIKE:
 			collision = spike_collision;
 			break;
-		case SPIKE_SMALL:
+		case ObstacleType::SPIKE_SMALL:
 			collision = spike_collision;
-		case AIR:
+		case ObstacleType::AIR:
 			collision = !(spike_collision || block_collision);
 			break;
 		default:
@@ -180,27 +180,27 @@ void Core::render(bool hitboxes, bool highlight)
 		SDL_Texture* pt_texture = nullptr;
 		switch (current_neurone->type)
 		{
-		case SPIKE:
+		case ObstacleType::SPIKE:
 			pt_texture = (current_neurone->activated) ?
 				(current_neurone->reverse ? _texture_neurone_spike_reverse_on : _texture_neurone_spike_on) :
 				(current_neurone->reverse ? _texture_neurone_spike_reverse_off : _texture_neurone_spike_off);
 			break;
-		case SPIKE_SMALL:
+		case ObstacleType::SPIKE_SMALL:
 			pt_texture = (current_neurone->activated) ?
 				(current_neurone->reverse ? _texture_neurone_spike_reverse_on : _texture_neurone_spike_on) :
 				(current_neurone->reverse ? _texture_neurone_spike_reverse_off : _texture_neurone_spike_off);
 			break;
-		case BLOCK:
+		case ObstacleType::BLOCK:
 			pt_texture = (current_neurone->activated) ?
 				(current_neurone->reverse ? _texture_neurone_block_reverse_on : _texture_neurone_block_on) :
 				(current_neurone->reverse ? _texture_neurone_block_reverse_off : _texture_neurone_block_off);
 			break;
-		case SLAB_UPPER:
+		case ObstacleType::SLAB_UPPER:
 			pt_texture = (current_neurone->activated) ?
 				(current_neurone->reverse ? _texture_neurone_block_reverse_on : _texture_neurone_block_on) :
 				(current_neurone->reverse ? _texture_neurone_block_reverse_off : _texture_neurone_block_off);
 			break;
-		case AIR:
+		case ObstacleType::AIR:
 			pt_texture = (current_neurone->activated) ?
 				(current_neurone->reverse ? _texture_neurone_air_reverse_on : _texture_neurone_air_on) :
 				(current_neurone->reverse ? _texture_neurone_air_reverse_off : _texture_neurone_air_off);
@@ -223,7 +223,7 @@ void Core::render(bool hitboxes, bool highlight)
 	}
 }
 
-void Core::setNeurone(int id_neurone, int x, int y, int type, bool reverse)
+void Core::setNeurone(int id_neurone, int x, int y, ObstacleType type, bool reverse)
 {
 	_neurones[id_neurone]->x = x;
 	_neurones[id_neurone]->y = y;
@@ -288,7 +288,7 @@ void Core::addRandomNeurone()
 		new_neurones[_nb_neurones] = new Neurone;
 		new_neurones[_nb_neurones]->x = generateRandomNumber(0, _dist_neurone);
 		new_neurones[_nb_neurones]->y = generateRandomNumber(-_dist_neurone / 2, _dist_neurone / 2);
-		new_neurones[_nb_neurones]->type = generateNeuroneType();
+		new_neurones[_nb_neurones]->type = generateRandomObstacleType();
 		new_neurones[_nb_neurones]->reverse = (generateRandomNumber(0, 1) == 0);
 		new_neurones[_nb_neurones]->activated = false;
 
@@ -312,7 +312,7 @@ void Core::modifyRandomNeurone()
 	int id_rdm_neurone = generateRandomNumber(0, _nb_neurones - 1);
 	_neurones[id_rdm_neurone]->x = generateRandomNumber(0, _dist_neurone);
 	_neurones[id_rdm_neurone]->y = generateRandomNumber(-_dist_neurone / 2, _dist_neurone / 2);
-	_neurones[id_rdm_neurone]->type = generateNeuroneType();
+	_neurones[id_rdm_neurone]->type = generateRandomObstacleType();
 	_neurones[id_rdm_neurone]->reverse = (generateRandomNumber(0, 1) == 0);
 }
 
@@ -330,22 +330,23 @@ bool Core::isActivated()
 	return _activated;
 }
 
-int Core::generateNeuroneType()
+ObstacleType Core::generateRandomObstacleType()
 {
-	int type = generateRandomNumber(0, 2);
-	switch (type)
+	int random = generateRandomNumber(0, 2);
+	ObstacleType obstacle_type;
+	switch (random)
 	{
 	case 0:
-		type = BLOCK;
+		obstacle_type = ObstacleType::BLOCK;
 		break;
 	case 1:
-		type = SPIKE;
+		obstacle_type = ObstacleType::SPIKE;
 		break;
 	case 2:
-		type = AIR;
+		obstacle_type = ObstacleType::AIR;
 		break;
 	default:
 		break;
 	}
-	return type;
+	return obstacle_type;
 }
