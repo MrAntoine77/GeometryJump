@@ -14,8 +14,8 @@ int main(int argc, char* argv[]) {
         return 1; 
     }
 
-    Game* game = new Game(true, false);
-    game->init("Geometry Jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, false);
+    Game* game = new Game(true, true, false);
+    game->init("Geometry Jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, false);
 
     while (game->isRunning()) {
         game->handleEvents();

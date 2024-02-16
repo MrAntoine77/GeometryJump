@@ -11,13 +11,20 @@
 const int BLOCK_SIZE = 64;
 const float GRAVITY = 8523.988f;
 const int FRAMERATE = 60;
+const int WINDOW_W = 1280;
+const int WINDOW_H = 720;
 
-const SDL_Rect GROUND_RECT_TOP = { 0, -256, 1280, 28 };
-const SDL_Rect GROUND_RECT_BOTTOM = { 0, 668, 1280, 336 };
-const SDL_Rect DIABLE_ZONE = { 192, 0, 192, 720 };
+const SDL_Rect GROUND_RECT_TOP = { 0, -256, WINDOW_W, 28 };
+const SDL_Rect GROUND_RECT_BOTTOM = { 0, 668, WINDOW_W, 336 };
+const SDL_Rect DIABLE_ZONE = { 192, 0, 192, WINDOW_H };
 
 
-enum Type {
+static const int NB_TYPE_OBSTACLE = 8;
+static const int NB_BLOCKS_X_MAX = 512;
+static const int NB_BLOCKS_Y_MAX = 16;
+
+
+enum Type_Obstacle {
     AIR = -1,
     BLOCK,
     SPIKE,

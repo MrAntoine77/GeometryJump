@@ -333,23 +333,29 @@ int Level::checkAllCollisions()
                 }
                 break;
             case YELLOW_ORB:
-                if (current_obstacle.used == false)
+                if (checkCollision(_player->getHitboxMain(), current_obstacle.hitbox))
                 {
-                    _player->setOrbNearly(type_obstacle);
-                }
-                else
-                {
-                    current_obstacle.used == true;
+                    if (current_obstacle.used == false)
+                    {
+                        _player->setOrbNearly(type_obstacle);
+                    }
+                    else
+                    {
+                        current_obstacle.used = true;
+                    }
                 }
                 break;
             case PINK_ORB:
-                if (current_obstacle.used == false)
+                if (checkCollision(_player->getHitboxMain(), current_obstacle.hitbox))
                 {
-                    _player->setOrbNearly(type_obstacle);
-                }
-                else
-                {
-                    current_obstacle.used == true;
+                    if (current_obstacle.used == false)
+                    {
+                        _player->setOrbNearly(type_obstacle);
+                    }
+                    else
+                    {
+                        current_obstacle.used = true;
+                    }
                 }
                 break;
             case BLUE_ORB:
@@ -361,7 +367,7 @@ int Level::checkAllCollisions()
                     }
                     else
                     {
-                        current_obstacle.used == true;
+                        current_obstacle.used = true;
                     }
                 }
                 break;

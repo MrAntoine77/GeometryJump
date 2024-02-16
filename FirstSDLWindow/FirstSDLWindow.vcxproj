@@ -136,6 +136,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Genetic.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
@@ -145,6 +146,7 @@
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="Genetic.hpp" />
     <ClInclude Include="Level.hpp" />
+    <ClInclude Include="LevelEditor.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="utils.hpp" />
   </ItemGroup>

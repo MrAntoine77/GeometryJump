@@ -129,13 +129,16 @@ void Player::render(bool hitboxes)
 
 void Player::die()
 {
-    _brain->updateNbTotalNeurone();
-    _score -= _brain->getNbTotalNeurones();
-    if (_score < 0)
+    if (_mode == TRAINING)
     {
-        _score = 0;
-    }
+        _brain->updateNbTotalNeurone();
+        _score -= _brain->getNbTotalNeurones();
 
+        if (_score < 0)
+        {
+            _score = 0;
+        }
+    }   
 
     if (_mode == PLAYING)
     {
