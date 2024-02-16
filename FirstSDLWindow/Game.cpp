@@ -49,8 +49,8 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 
 		for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 		{
-			_levels[id_level] = new Level("Levels/Pseudo_Madness.txt");
-			_players[id_level] = new Player(_levels[id_level], false, PLAYING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
+			_players[id_level] = new Player(false, TESTING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
+			_levels[id_level] = new Level("Levels/Pseudo_Madness.txt", _players[id_level]);
 		}
 
 		std::cout << _NB_LEVELS << " players initialized" << std::endl;
@@ -65,7 +65,6 @@ void Game::init(const char* title, int x, int y, int w, int h, bool fullscreen)
 
 void Game::handleEvents()
 {
-	
 	SDL_Event event;
 	SDL_PollEvent(&event);
 
@@ -258,6 +257,5 @@ void Game::setRenderer()
 void Game::updatePlayerAndLevel(int id_level)
 {
 	_levels[id_level]->update();
-	_players[id_level]->update();
 }
 

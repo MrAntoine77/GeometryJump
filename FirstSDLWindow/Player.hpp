@@ -2,7 +2,6 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
-#include "Level.hpp"
 #include <iostream>
 #include "utils.hpp"
 #include "Brain.hpp"
@@ -12,7 +11,7 @@
 class Player
 {
 private:
-    static const int _NB_CORES = 8;
+    static const int _NB_CORES = 10;
     static const int _INIT_X = 256;
     static const int _INIT_Y = 384;
 
@@ -27,7 +26,6 @@ private:
     SDL_Rect _hitbox_death = { 0, 0, 0, 0 };
     SDL_Rect _hitbox_main = { 0, 0, 0, 0 };
     SDL_Texture* _texture; 
-    Level* _level;
     Brain* _brain;
     Genetic* _IA;
     int _id_player;
@@ -41,24 +39,39 @@ private:
     int _mode;
     int _best_current_score;
     int _generation;
+    bool _ground;
     
 public:
     static void setRenderer(SDL_Renderer* renderer);
 
-    Player(Level* level, bool invincible, int mode = PLAYING, int id_player = 0, 
+    Player(bool invincible, int mode = PLAYING, int id_player = 0, 
         const char * brain_filename = nullptr, const char * texture_filename = nullptr);
     ~Player();
 
-    void update(); 
+    void update(Obstacle* obstacles, int nb_obstacles);
+
+
     void handleInput();
     void render(bool hitboxes);
     void die();
     void jump();
     void showNextBrain();
-    int checkHitboxObstacles();
     void updateHitboxes();
     
+
+    SDL_Rect getHitboxFloor() const { return _hitbox_floor; }
+    SDL_Rect getHitboxDeath() const { return _hitbox_death; }
+    SDL_Rect getHitboxMain() const { return _hitbox_main; }
+    bool isAntigravity() const { return _antigravity; }
+    float getYVelocity() const { return _y_velocity; }
+    int getY() { return _rect.y; }
+    bool isInvincible() { return _invincible; }
+
+    
+
+    void setGround(bool ground) { _ground = ground; }
     void initMode(int val);
-    void setX(float x) { _rect.x = static_cast<int>(x); }
-    void setY(float y) { _rect.y = static_cast<int>(y); }
+    void setYVelocity(float y_velocity) { _y_velocity = y_velocity; }
+    void setY(int y) { _rect.y = y; }
+    void setOrbNearly(int orb_nearly) { _orb_nearly = orb_nearly; }
 };

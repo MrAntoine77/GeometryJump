@@ -26,7 +26,8 @@ void Level::initTextures()
     _texture_slab_upper = loadTexture("Textures/slab_upper.png", _renderer);
 }
 
-Level::Level(const char* filename) : _filename(filename)
+Level::Level(const char* filename, Player* player) : 
+    _filename(filename), _player(player)
 {
     loadObstaclesFromFile(filename);
 }
@@ -150,7 +151,39 @@ void Level::update()
         _obstacles[id_obstacle].rect.x -= _speed;
         _obstacles[id_obstacle].hitbox.x -= _speed;
     }
+
+    updatePlayer();
 }
+
+void Level::updatePlayer()
+{
+    _player->update(_obstacles, _nb_obstacles);
+
+    int collision_result = checkAllCollisions();
+
+    if (collision_result == -1)
+    {
+        //Sol non touché
+        _player->setGround(false);
+        _player->setYVelocity(fmaxf(fminf(_player->getYVelocity() + (GRAVITY / FRAMERATE), 1500.0f), -1500.0f));
+    }
+    else if (collision_result >= 0) {
+        //Sol touché
+        int new_y = (_player->isAntigravity()) ? collision_result - 1 : collision_result + 1;
+        if (_player->getY() != new_y) {
+            _player->setY(new_y);
+        }
+
+        _player->setGround(true);
+        _player->setYVelocity(0.0f);
+    }
+    if (collision_result == -2 && (_player->isInvincible() == false)) {
+        //Obstacle touché
+        _player->die();
+        restart();
+    }
+}
+
 
 void Level::render(bool hitboxes)
 {
@@ -225,4 +258,134 @@ void Level::render(bool hitboxes)
 void Level::restart()
 {
     loadObstaclesFromFile(_filename);
+}
+
+int Level::checkAllCollisions()
+{
+    _player->setOrbNearly(0);
+    _player->updateHitboxes();
+
+
+    if (_player->isAntigravity())
+    {
+        if (checkCollision(_player->getHitboxFloor(), GROUND_RECT_BOTTOM)) {
+            return -2;
+        }
+    }
+
+
+    int replace_y = -1;
+    int test = 0;
+
+    for (int id_obstacle = 0; id_obstacle < _nb_obstacles; id_obstacle++)
+    {
+        Obstacle current_obstacle = _obstacles[id_obstacle];
+        int obstacle_x = current_obstacle.hitbox.x;
+
+        if ((obstacle_x < 384) && (obstacle_x > 192))
+        {
+            int type_obstacle = current_obstacle.type;
+            SDL_Rect hitbox_obstacle = current_obstacle.hitbox;
+            switch (type_obstacle)
+            {
+            case SPIKE:
+                if (checkCollision(_player->getHitboxMain(), hitbox_obstacle))
+                {
+                    return -2;
+                }
+                break;
+            case SPIKE_SMALL:
+                if (checkCollision(_player->getHitboxMain(), hitbox_obstacle))
+                {
+                    return -2;
+                }
+                break;
+            case BLOCK:
+                if (checkCollision(_player->getHitboxFloor(), current_obstacle.hitbox))
+                {
+                    if (_player->isAntigravity())
+                    {
+                        replace_y = (current_obstacle.hitbox.y + current_obstacle.hitbox.h);
+                    }
+                    else
+                    {
+                        replace_y = ((current_obstacle.hitbox.y) - BLOCK_SIZE);
+                    }
+                }
+                if (checkCollision(_player->getHitboxDeath(), hitbox_obstacle))
+                {
+                    return -2;
+                }
+                break;
+            case SLAB_UPPER:
+                if (checkCollision(_player->getHitboxFloor(), current_obstacle.hitbox))
+                {
+                    if (_player->isAntigravity())
+                    {
+                        replace_y = (current_obstacle.hitbox.y + current_obstacle.hitbox.h);
+                    }
+                    else
+                    {
+                        replace_y = ((current_obstacle.hitbox.y) - BLOCK_SIZE);
+                    }
+                }
+                if (checkCollision(_player->getHitboxDeath(), hitbox_obstacle))
+                {
+                    return -2;
+                }
+                break;
+            case YELLOW_ORB:
+                if (current_obstacle.used == false)
+                {
+                    _player->setOrbNearly(type_obstacle);
+                }
+                else
+                {
+                    current_obstacle.used == true;
+                }
+                break;
+            case PINK_ORB:
+                if (current_obstacle.used == false)
+                {
+                    _player->setOrbNearly(type_obstacle);
+                }
+                else
+                {
+                    current_obstacle.used == true;
+                }
+                break;
+            case BLUE_ORB:
+                if (checkCollision(_player->getHitboxMain(), current_obstacle.hitbox))
+                {
+                    if (current_obstacle.used == false)
+                    {
+                        _player->setOrbNearly(type_obstacle);
+                    }
+                    else
+                    {
+                        current_obstacle.used == true;
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    if (_player->isAntigravity())
+    {
+        if (checkCollision(_player->getHitboxFloor(), GROUND_RECT_TOP)) {
+            replace_y = 28;
+        }
+    }
+    else
+    {
+        if (checkCollision(_player->getHitboxFloor(), GROUND_RECT_BOTTOM)) {
+            replace_y = 604;
+        }
+    }
+
+
+    return replace_y;
 }

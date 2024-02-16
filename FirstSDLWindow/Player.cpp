@@ -14,11 +14,10 @@ void Player::setRenderer(SDL_Renderer* renderer) {
 }
 
 
-Player::Player(Level* level, bool invincible, int mode, int idPlayer, 
-    const char * brain_filename, const char * texture_filename) :
-    _y_velocity(0.0f), _rotation_angle(0), _level(level), _orb_nearly(false), _invincible(invincible),
-    _selected_core(0), _antigravity(false), _mode(mode), _best_current_score(0), _generation(0), 
-    _id_player(idPlayer), _brain_filename(brain_filename), _score(0)
+Player::Player(bool invincible, int mode, int idPlayer, const char * brain_filename, const char * texture_filename) :
+    _y_velocity(0.0f), _rotation_angle(0), _orb_nearly(false), _invincible(invincible),_selected_core(0), _antigravity(false),
+    _mode(mode), _best_current_score(0), _generation(0), _id_player(idPlayer), _brain_filename(brain_filename), _score(0), 
+    _ground(false)
 {
     _IA = new Genetic(_NB_CORES);
 
@@ -50,9 +49,9 @@ Player::~Player()
 }
 
 
-void Player::update()
+void Player::update(Obstacle* obstacles, int nb_obstacles)
 {
-    _score++;
+    _score += 1000;
 
     const int rotation_rate = 10;
 
@@ -67,34 +66,14 @@ void Player::update()
             _rotation_angle = (_rotation_angle + rotation_rate) % 360;
             _rect.y += static_cast<int>(_y_velocity / FRAMERATE);
         }
-        updateHitboxes();
     }
-    
-
-    int collision_result = checkHitboxObstacles();
-    if (collision_result == -1)
-    {
-        _y_velocity += GRAVITY / FRAMERATE;
-        _y_velocity = fmaxf(fminf(_y_velocity, 1500.0f), -1500.0f);
-    }
-    else if (collision_result >= 0) {
-        int new_y = (_antigravity) ? collision_result - 1 : collision_result + 1;
-        if (_rect.y != new_y) {
-            _rect.y = new_y;
-        }
-        updateHitboxes();
-        _y_velocity = 0.0f;
-    }
-    if (collision_result == -2 && (_invincible == false)) {
-        die();
-    }
+    updateHitboxes();
 
 
-    if( (_mode == TRAINING) || (_mode == TESTING) ){
+    if ((_mode == TRAINING) || (_mode == TESTING)) {
         _brain->setPos(_rect.x, _rect.y);
-        _brain->update(_level->getObstacles(), _level->getNbObstacles());
+        _brain->update(obstacles, nb_obstacles);
     }
-
 
     if (_y_velocity == 0.0f) {
         int angle_mod_90 = _rotation_angle % 90;
@@ -150,13 +129,19 @@ void Player::render(bool hitboxes)
 
 void Player::die()
 {
+    _brain->updateNbTotalNeurone();
+    _score -= _brain->getNbTotalNeurones();
+    if (_score < 0)
+    {
+        _score = 0;
+    }
+
+
     if (_mode == PLAYING)
     {
         SDL_Delay(500);
     }
     
-    _level->restart();
-
     _rect.x = _INIT_X;
     _rect.y = _INIT_Y;
     _rect.w = BLOCK_SIZE;
@@ -180,7 +165,7 @@ void Player::die()
             _best_current_score = _score;
             _id_best_score = _id_player;
             _brain->saveToFile(_brain_filename);
-            std::cout << "[" << _generation << "] Player " << _id_player << " reached best score : " << _best_score << std::endl;
+            std::cout << "Player " << _id_player << " reached best score : " << _best_score << std::endl;
         }
 
         if (_best_current_score < _best_score)
@@ -190,6 +175,7 @@ void Player::die()
 
 
         if (_IA->nextExp(_score) == 0) {
+            std::cout << "[" << _generation << "] generation " << std::endl;
             _generation++;
             _IA->update();
         }
@@ -198,119 +184,6 @@ void Player::die()
     }
 
     _score = 0;
-}
-
-int Player::checkHitboxObstacles() {
-    _orb_nearly = 0;
-    updateHitboxes();
-
-    if (_antigravity)
-    {
-        if (checkCollision(_hitbox_death, GROUND_RECT_BOTTOM)) {
-            return -2;
-        }
-    }
-
-
-    int replace_y = -1;
-    int test = 0;
-
-    for (int id_obstacle = 0; id_obstacle < _level->getNbObstacles(); id_obstacle++)
-    {
-        Obstacle current_obstacle = _level->getObstacles()[id_obstacle];
-        int obstacle_x = current_obstacle.hitbox.x;
-
-        if ((obstacle_x < 384) && (obstacle_x > 192))
-        {
-            int type_obstacle = current_obstacle.type;
-            SDL_Rect hitbox_obstacle = current_obstacle.hitbox;
-            switch (type_obstacle)
-            {
-            case SPIKE:
-                if (checkCollision(_hitbox_main, hitbox_obstacle))
-                {
-                    return -2;
-                }
-                break;
-            case SPIKE_SMALL:
-                if (checkCollision(_hitbox_main, hitbox_obstacle))
-                {
-                    return -2;
-                }
-                break;
-            case BLOCK:
-                if (checkCollision(_hitbox_floor, _level->getObstacles()[id_obstacle].hitbox))
-                {
-                    if (_antigravity)
-                    {
-                        replace_y = (_level->getObstacles()[id_obstacle].hitbox.y + _level->getObstacles()[id_obstacle].hitbox.h);
-                    }
-                    else
-                    {
-                        replace_y = ((_level->getObstacles()[id_obstacle].hitbox.y) - BLOCK_SIZE);
-                    }
-                }
-                if (checkCollision(_hitbox_death, hitbox_obstacle))
-                {
-                    return -2;
-                }
-                break;
-            case SLAB_UPPER:
-                if (checkCollision(_hitbox_floor, _level->getObstacles()[id_obstacle].hitbox))
-                {
-                    if (_antigravity)
-                    {
-                        replace_y = (_level->getObstacles()[id_obstacle].hitbox.y + _level->getObstacles()[id_obstacle].hitbox.h);
-                    }
-                    else
-                    {
-                        replace_y = ((_level->getObstacles()[id_obstacle].hitbox.y) - BLOCK_SIZE);
-                    }
-                }
-                if (checkCollision(_hitbox_death, hitbox_obstacle))
-                {
-                     return -2;
-                }
-                break;
-            case YELLOW_ORB:
-                if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
-                {
-                    _orb_nearly = id_obstacle;
-                }
-                break;
-            case PINK_ORB:
-                if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
-                {
-                    _orb_nearly = id_obstacle;
-                }
-                break;
-            case BLUE_ORB:
-                if (checkCollision(_hitbox_main, _level->getObstacles()[id_obstacle].hitbox))
-                {
-                    _orb_nearly = id_obstacle;
-                }
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-    if (_antigravity)
-    {
-        if (checkCollision(_hitbox_floor, GROUND_RECT_TOP)) {
-            replace_y = 28;
-        }
-    }
-    else
-    {
-        if (checkCollision(_hitbox_floor, GROUND_RECT_BOTTOM)) {
-            replace_y = 604;
-        }
-    }
-
-
-    return replace_y;
 }
 
 void Player::updateHitboxes()
@@ -331,12 +204,9 @@ void Player::updateHitboxes()
 
 void Player::jump()
 {
-    if ((_level->getObstacles()[_orb_nearly].used == false) && (_orb_nearly != 0))
+    if (_orb_nearly != 0)
     {
-        _level->getObstacles()[_orb_nearly].used = true;
-        int orb_type = _level->getObstacles()[_orb_nearly].type;
-
-        switch (orb_type)
+        switch (_orb_nearly)
         {
         case YELLOW_ORB:
             _y_velocity = -sqrt(2.0f * GRAVITY * BLOCK_SIZE * 2.1f);
@@ -353,7 +223,7 @@ void Player::jump()
             break;
         }
     }
-    else if((_y_velocity == 0.0f) && (checkHitboxObstacles() >= 0))
+    else if((_y_velocity == 0.0f) && _ground)
     {
         _y_velocity = -sqrt(2.0f * GRAVITY * BLOCK_SIZE * 2.0f);
     }

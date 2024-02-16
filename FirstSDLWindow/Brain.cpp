@@ -11,7 +11,7 @@ void Brain::setRenderer(SDL_Renderer* renderer) {
 }
 
 Brain::Brain(int nb_cores) :
-	_x(0), _y(0), _nb_cores(nb_cores)
+	_x(0), _y(0), _nb_cores(nb_cores), _nb_total_neurones(0)
 {
 	_cores = new Core * [_nb_cores];
 	for (int id_core = 0; id_core < _nb_cores; id_core++)
@@ -21,7 +21,7 @@ Brain::Brain(int nb_cores) :
 }
 
 Brain::Brain(Brain * src) : 
-	_x(0), _y(0)
+	_x(0), _y(0), _nb_total_neurones(0)
 {
 	_nb_cores = src->getNbCores();
 	_cores = new Core * [_nb_cores];
@@ -33,7 +33,7 @@ Brain::Brain(Brain * src) :
 
 
 Brain::Brain(const char* filename) : 
-	_x(0), _y(0)
+	_x(0), _y(0), _nb_total_neurones(0)
 {
 	_cores = nullptr;
 	std::ifstream file(filename);
@@ -150,6 +150,21 @@ void Brain::setPos(int x, int y)
 	_y = y;
 }
 
+void Brain::deleteRandomNeurone(int id_core)
+{
+	_cores[id_core]->deleteRandomNeurone();
+}
+
+void Brain::modifyRandomNeurone(int id_core)
+{
+	_cores[id_core]->modifyRandomNeurone();
+}
+
+void Brain::addRandomNeurone(int id_core)
+{
+	_cores[id_core]->deleteRandomNeurone();
+}
+
 void Brain::setNeurone(int id_core, int id_neurone, int x, int y, int type, bool reverse)
 {
 	_cores[id_core]->setNeurone(id_neurone, x, y, type, reverse);
@@ -168,4 +183,13 @@ bool Brain::areCoreActivated() const
 		}
 	}
 	return activated;
+}
+
+void Brain::updateNbTotalNeurone()
+{
+	_nb_total_neurones = 0;
+	for (int id_core = 0; id_core < _nb_cores; id_core++)
+	{
+		_nb_total_neurones += _cores[id_core]->getNbNeurones();
+	}
 }

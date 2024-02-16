@@ -11,7 +11,7 @@ private:
 	static const int _NB_NEURONES_MIN = 1;
 	static const int _NB_NEURONES_MAX = 8;
 	static const int _DIST_NEURONE_MIN = 3;
-	static const int _DIST_NEURONE_MAX = 12;
+	static const int _DIST_NEURONE_MAX = 16;
 
 	static SDL_Renderer* _renderer;
 
@@ -46,10 +46,15 @@ public:
 
 
 	void setNeurone(int id_neurone, int x, int y, int type, bool reverse);
+	void deleteRandomNeurone();
+	void addRandomNeurone();
+	void modifyRandomNeurone();
 
 	bool isActivated();
 	int getNbNeurones() const { return _nb_neurones; }
 	int getDistNeurone() const { return _dist_neurone; }
 	Neurone* getNeuroneAt(int id_neurone) { return _neurones[id_neurone]; }
+private:
+	int generateNeuroneType();
 };
 

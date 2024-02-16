@@ -41,33 +41,18 @@ void Core::initTextures()
 Core::Core() :
 	_activated(false)
 {
-	_nb_neurones = generateRandomNumber(_NB_NEURONES_MIN, _NB_NEURONES_MIN);
+	_nb_neurones = generateRandomNumber(_NB_NEURONES_MIN, _NB_NEURONES_MAX);
 	_dist_neurone = generateRandomNumber(_DIST_NEURONE_MIN, _DIST_NEURONE_MAX);
 	_neurones = new Neurone * [_nb_neurones];
+
 	for (int id_neurone = 0; id_neurone < _nb_neurones; id_neurone++)
 	{
-		int type = generateRandomNumber(0, 2);
-		switch (type)
-		{
-		case 0:
-			type = BLOCK;
-			break;
-		case 1:
-			type = SPIKE;
-			break;
-		case 2:
-			type = AIR;
-			break;
-		default:
-			break;
-		}
-
 
 		_neurones[id_neurone] = new Neurone;
 
 		_neurones[id_neurone]->x = generateRandomNumber(0, _dist_neurone);
 		_neurones[id_neurone]->y = generateRandomNumber(-_dist_neurone / 2, _dist_neurone / 2);
-		_neurones[id_neurone]->type = type;
+		_neurones[id_neurone]->type = generateNeuroneType();
 		_neurones[id_neurone]->reverse = (generateRandomNumber(0, 1) == 0);
 		_neurones[id_neurone]->activated = false;
 	}
@@ -227,7 +212,7 @@ void Core::render(bool hitboxes, bool highlight)
 
 		if (!highlight)
 		{
-			SDL_SetTextureAlphaMod(pt_texture, 0);
+			SDL_SetTextureAlphaMod(pt_texture, 64);
 			SDL_RenderCopyEx(_renderer, pt_texture, NULL, &(current_neurone->rect), 0, NULL, SDL_FLIP_NONE);
 			SDL_SetTextureAlphaMod(pt_texture, 255);
 		}
@@ -247,6 +232,90 @@ void Core::setNeurone(int id_neurone, int x, int y, int type, bool reverse)
 	_neurones[id_neurone]->activated = false;
 }
 
+void Core::deleteRandomNeurone()
+{
+	if (_nb_neurones > _NB_NEURONES_MIN)
+	{
+		int id_rdm_neurone = generateRandomNumber(0, _nb_neurones - 1);
+
+		Neurone** new_neurones = new Neurone * [_nb_neurones - 1];
+		int id_new_neurone = 0;
+		for (int id_neurone = 0; id_neurone < _nb_neurones; id_neurone++)
+		{
+			if (id_neurone != id_rdm_neurone)
+			{
+				new_neurones[id_new_neurone] = new Neurone;
+				new_neurones[id_new_neurone]->x = _neurones[id_neurone]->x;
+				new_neurones[id_new_neurone]->y = _neurones[id_neurone]->y;
+				new_neurones[id_new_neurone]->type = _neurones[id_neurone]->type;
+				new_neurones[id_new_neurone]->reverse = _neurones[id_neurone]->reverse;
+				new_neurones[id_new_neurone]->activated = false;
+				id_new_neurone++;
+			}
+		}
+		for (int id_neurone = 0; id_neurone < _nb_neurones; id_neurone++)
+		{
+			delete _neurones[id_neurone];
+		}
+		delete[] _neurones;
+
+		_nb_neurones -= 1;
+		_neurones = new_neurones;
+	} 
+	else
+	{
+		addRandomNeurone();
+	}
+}
+
+void Core::addRandomNeurone()
+{
+	if (_nb_neurones < _NB_NEURONES_MAX)
+	{
+		Neurone** new_neurones = new Neurone * [_nb_neurones + 1];
+		int id_new_neurone = 0;
+		for (int id_neurone = 0; id_neurone < _nb_neurones; id_neurone++)
+		{
+			new_neurones[id_new_neurone] = new Neurone;
+			new_neurones[id_new_neurone]->x = _neurones[id_neurone]->x;
+			new_neurones[id_new_neurone]->y = _neurones[id_neurone]->y;
+			new_neurones[id_new_neurone]->type = _neurones[id_neurone]->type;
+			new_neurones[id_new_neurone]->reverse = _neurones[id_neurone]->reverse;
+			new_neurones[id_new_neurone]->activated = false;
+			id_new_neurone++;
+		}
+
+		new_neurones[_nb_neurones] = new Neurone;
+		new_neurones[_nb_neurones]->x = generateRandomNumber(0, _dist_neurone);
+		new_neurones[_nb_neurones]->y = generateRandomNumber(-_dist_neurone / 2, _dist_neurone / 2);
+		new_neurones[_nb_neurones]->type = generateNeuroneType();
+		new_neurones[_nb_neurones]->reverse = (generateRandomNumber(0, 1) == 0);
+		new_neurones[_nb_neurones]->activated = false;
+
+		for (int id_neurone = 0; id_neurone < _nb_neurones; id_neurone++)
+		{
+			delete _neurones[id_neurone];
+		}
+		delete[] _neurones;
+
+		_nb_neurones += 1;
+		_neurones = new_neurones;
+	}
+	else
+	{
+		deleteRandomNeurone();
+	}
+}
+
+void Core::modifyRandomNeurone()
+{
+	int id_rdm_neurone = generateRandomNumber(0, _nb_neurones - 1);
+	_neurones[id_rdm_neurone]->x = generateRandomNumber(0, _dist_neurone);
+	_neurones[id_rdm_neurone]->y = generateRandomNumber(-_dist_neurone / 2, _dist_neurone / 2);
+	_neurones[id_rdm_neurone]->type = generateNeuroneType();
+	_neurones[id_rdm_neurone]->reverse = (generateRandomNumber(0, 1) == 0);
+}
+
 bool Core::isActivated()
 {
 	_activated = true;
@@ -259,4 +328,24 @@ bool Core::isActivated()
 		}
 	}
 	return _activated;
+}
+
+int Core::generateNeuroneType()
+{
+	int type = generateRandomNumber(0, 2);
+	switch (type)
+	{
+	case 0:
+		type = BLOCK;
+		break;
+	case 1:
+		type = SPIKE;
+		break;
+	case 2:
+		type = AIR;
+		break;
+	default:
+		break;
+	}
+	return type;
 }

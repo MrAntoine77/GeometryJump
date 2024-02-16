@@ -47,7 +47,6 @@ void Genetic::update()
 
 		alter(sorted_brain_id[id_brain]);
 	}
-	
 }
 
 void Genetic::alter(int id_brain)
@@ -56,26 +55,19 @@ void Genetic::alter(int id_brain)
 	int id_core = generateRandomNumber(0, nb_cores - 1);
 	int nb_neurones = _brains[id_brain]->getCores()[id_core]->getNbNeurones();
 	int dist_neurone = _brains[id_brain]->getCores()[id_core]->getDistNeurone();
-	int random = generateRandomNumber(0, 1); 
+	int random = generateRandomNumber(0, 2); 
 	int id_neurone;
 
 	switch (random)
 	{
 	case 0:
-		//Changer completement le coeur
-		_brains[id_brain]->resetCore(id_core);
+		_brains[id_brain]->modifyRandomNeurone(id_core);
 		break;
 	case 1:
-		//Changer un seul neurone // A CHANGER DANS CORE
-		int x, y, type;
-		bool reverse;
-		id_neurone = generateRandomNumber(0, nb_neurones - 1);
-		x = generateRandomNumber(0, dist_neurone);
-		y = generateRandomNumber(-dist_neurone / 2, dist_neurone / 2);
-		reverse = (generateRandomNumber(0, 1) == 0);
-		type = generateRandomNumber(0, 1);
-		_brains[id_brain]->setNeurone(id_core, id_neurone, x, y, type, reverse);
+		_brains[id_brain]->deleteRandomNeurone(id_core);	
 		break;
+	case 2:
+		_brains[id_brain]->addRandomNeurone(id_core);
 	default:
 		break;
 	}
