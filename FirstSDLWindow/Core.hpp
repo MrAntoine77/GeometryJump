@@ -1,5 +1,6 @@
 #pragma once
 #include "utils.hpp"
+#include "TexturesManager.hpp"
 
 class Core
 {
@@ -15,33 +16,18 @@ private:
 
 	static SDL_Renderer* _renderer;
 
-	static SDL_Texture* _texture_neurone_spike_on;
-	static SDL_Texture* _texture_neurone_spike_off;
-	static SDL_Texture* _texture_neurone_block_on;
-	static SDL_Texture* _texture_neurone_block_off;
-	static SDL_Texture* _texture_neurone_air_on;
-	static SDL_Texture* _texture_neurone_air_off;
-	static SDL_Texture* _texture_neurone_spike_reverse_on;
-	static SDL_Texture* _texture_neurone_spike_reverse_off;
-	static SDL_Texture* _texture_neurone_block_reverse_on;
-	static SDL_Texture* _texture_neurone_block_reverse_off;
-	static SDL_Texture* _texture_neurone_air_reverse_on;
-	static SDL_Texture* _texture_neurone_air_reverse_off;
-
-	bool _activated;
-	Neurone** _neurones;
-	int _nb_neurones;
+	bool _activated = false;
+	std::vector<Neurone> _neurones;
 	int _dist_neurone;
 public:
 	static void setRenderer(SDL_Renderer* renderer);
-	static void initTextures();
 
 	Core();
-	Core(Core* src);
+	Core(const Core& src);
 	Core(int nb_neurones, int dist_neurone);
 	~Core();
 
-	void update(Obstacle* obstacles, int nb_obstacles, int brain_x, int brain_y);
+	void update(std::vector<Obstacle> obstacles, int brain_x, int brain_y);
 	void render(bool hitboxes, bool highlight);
 
 
@@ -51,9 +37,9 @@ public:
 	void modifyRandomNeurone();
 
 	bool isActivated();
-	int getNbNeurones() const { return _nb_neurones; }
+	int getNbNeurones() const { return static_cast<int>(_neurones.size()); }
 	int getDistNeurone() const { return _dist_neurone; }
-	Neurone* getNeuroneAt(int id_neurone) { return _neurones[id_neurone]; }
+	Neurone getNeuroneAt(int id_neurone) const { return _neurones[id_neurone]; }
 private:
 	ObstacleType generateRandomObstacleType();
 };

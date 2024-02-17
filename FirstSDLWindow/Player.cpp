@@ -1,10 +1,6 @@
 #include "Player.hpp"
 
 
-int Player::_best_score = 0;
-int Player::_id_best_score = 0;
-
-
 SDL_Renderer* Player::_renderer = nullptr;
 
 void Player::setRenderer(SDL_Renderer* renderer) {
@@ -15,11 +11,9 @@ void Player::setRenderer(SDL_Renderer* renderer) {
 
 
 Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string brain_filename, std::string texture_filename) :
-    _y_velocity(0.0f), _rotation_angle(0), _orb_nearly(ObstacleType::AIR), _invincible(invincible),_selected_core(0), _antigravity(false),
-    _gamemode(gamemode), _best_current_score(0), _generation(0), _id_player(idPlayer), _brain_filename(brain_filename), _score(0), 
-    _on_ground(false)
+    _invincible(invincible), _gamemode(gamemode), _id_player(idPlayer), _brain_filename(brain_filename)
 {
-    _IA = new Genetic(_NB_CORES);
+    _IA = Genetic(_NB_CORES);
 
     initMode(_gamemode);
 
@@ -30,28 +24,17 @@ Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string bra
 
     updateHitboxes();
 
-    _texture = loadTexture(texture_filename.c_str(), _renderer);
+    _texture = TexturesManager::getPlayerTexture();
 
     if (!_texture) {
         std::cerr << "Erreur lors du chargement de la texture du joueur: " << SDL_GetError() << std::endl;
     }
 }
 
-Player::~Player()
+
+void Player::update(std::vector<Obstacle> obstacles)
 {
-    SDL_DestroyTexture(_texture);
-
-    if (_gamemode == Gamemode::TRAINING)
-    {
-        delete _brain;
-        delete _IA;
-    }
-}
-
-
-void Player::update(Obstacle* obstacles, int nb_obstacles)
-{
-    _score += 1000;
+    _brain->addScore(1000);
 
     const int rotation_rate = 10;
 
@@ -72,7 +55,7 @@ void Player::update(Obstacle* obstacles, int nb_obstacles)
 
     if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) {
         _brain->setPos(_rect.x, _rect.y);
-        _brain->update(obstacles, nb_obstacles);
+        _brain->update(obstacles);
     }
 
     if (_y_velocity == 0.0f) {
@@ -99,12 +82,14 @@ void Player::handleInput()
 
 void Player::render(bool hitboxes)
 {
-    if (_antigravity) {
+    if (_antigravity) 
+    {
         SDL_RenderCopyEx(_renderer, _texture, NULL, &_rect, _rotation_angle, NULL, SDL_FLIP_VERTICAL);
     }
     else
     {
         SDL_RenderCopyEx(_renderer, _texture, NULL, &_rect, _rotation_angle, NULL, SDL_FLIP_NONE);
+        SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
     }
 
 
@@ -129,15 +114,10 @@ void Player::render(bool hitboxes)
 
 void Player::die()
 {
+
     if (_gamemode == Gamemode::TRAINING)
     {
-        _brain->updateNbTotalNeurone();
-        _score -= _brain->getNbTotalNeurones();
-
-        if (_score < 0)
-        {
-            _score = 0;
-        }
+        _brain->setScore(_brain->getScore() - _brain->getNbTotalNeurones());
     }   
 
     if (_gamemode == Gamemode::PLAYING)
@@ -157,36 +137,16 @@ void Player::die()
 
     if (_gamemode == Gamemode::TRAINING)
     {
-        if (_score > _best_current_score)
-        {
-            _best_current_score = _score;
-        }
-
-        if (_score > _best_score)
-        {
-            _best_score = _score;
-            _best_current_score = _score;
-            _id_best_score = _id_player;
-            _brain->saveToFile(_brain_filename);
-            std::cout << "Player " << _id_player << " reached best score : " << _best_score << std::endl;
-        }
-
-        if (_best_current_score < _best_score)
-        {
-            _best_current_score = _best_score;
-        }
-
-
-        if (_IA->nextExp(_score) == 0) {
+        if (_IA.nextExp() == 0) {
             std::cout << "[" << _generation << "] generation " << std::endl;
             _generation++;
-            _IA->update();
+            _IA.update();
         }
 
-        _brain = _IA->getCurrentBrain();
+        _brain = _IA.getCurrentBrain();
     }
 
-    _score = 0;
+    _brain->setScore(0);
 }
 
 void Player::updateHitboxes()
@@ -248,11 +208,9 @@ void Player::initMode(Gamemode gamemode)
     switch (_gamemode)
     {
     case Gamemode::TRAINING:
-        delete _brain;
-        _brain = _IA->getCurrentBrain();
+        _brain = _IA.getCurrentBrain();
         break;
     case Gamemode::TESTING:
-        delete _brain;
         _brain = new Brain(_brain_filename);
         break;
     default:

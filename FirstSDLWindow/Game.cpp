@@ -1,26 +1,10 @@
 #include "Game.hpp"
 
 
-Game::Game(bool show_hitboxes, bool rendering, bool editing) :
-	_show_hitboxes(show_hitboxes), _rendering(rendering), _jump_pressed(false),
-	_selected_level(0), _best_score(0), _editing(editing), _levels(nullptr), _players(nullptr),
-	_level_editor(nullptr)
+Game::Game(bool show_hitboxes, bool rendering, Gamemode gamemode, int speed) :
+	_show_hitboxes(show_hitboxes), _rendering(rendering), _gamemode(gamemode), _speed(speed)
 {
 
-}
-
-Game::~Game()
-{
-	if (!_editing)
-	{
-		for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
-		{
-			delete _levels[id_level];
-			delete _players[id_level];
-		}
-		delete[] _levels;
-		delete[] _players;
-	}
 }
 
 void Game::init(std::string title, int x, int y, int w, int h, bool fullscreen)
@@ -47,23 +31,27 @@ void Game::init(std::string title, int x, int y, int w, int h, bool fullscreen)
 			std::cout << "Renderer created" << std::endl;
 		}
 
+		TexturesManager::init(_renderer);
+		std::cout << "Textures loaded" << std::endl;
 
-		if (!_editing)
+
+		if (_gamemode != Gamemode::EDITING)
 		{
-			_levels = new Level * [_NB_LEVELS];
-			_players = new Player * [_NB_LEVELS];
-
 			for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 			{
-				_players[id_level] = new Player(false, Gamemode::TRAINING, id_level, "Brains/brain_final.txt", "Textures/icon1.png");
-				_levels[id_level] = new Level("Levels/Pseudo_Madness.txt", _players[id_level]);
+				Player player(false, _gamemode, id_level, "Brains/brain_final.txt", "Textures/icon2.png");
+				_players.push_back(player);
+
+				Level level("Levels/created_level.txt", &_players[id_level]);
+				_levels.push_back(level);
+
 			}
 
 			std::cout << _NB_LEVELS << " players initialized" << std::endl;
 		}
 		else
 		{
-			_level_editor = new LevelEditor("Levels/created_level.txt");
+			_level_editor = LevelEditor("Levels/created_level.txt");
 		}
 
 
@@ -80,7 +68,7 @@ void Game::handleEvents()
 	SDL_Event event;
 	SDL_PollEvent(&event);
 
-	if (!_editing) 
+	if (_gamemode != Gamemode::EDITING)
 	{
 		switch (event.type)
 		{
@@ -130,18 +118,18 @@ void Game::handleEvents()
 				std::cout << "Speed : 17" << std::endl;
 				break;
 			case SDLK_F1:
-				_players[_selected_level]->showNextBrain();
+				_players[_selected_level].showNextBrain();
 				break;
 			case SDLK_F5:
-				_players[_selected_level]->initMode(Gamemode::PLAYING);
+				_players[_selected_level].initMode(Gamemode::PLAYING);
 				std::cout << "Playing mode activated" << std::endl;
 				break;
 			case SDLK_F6:
-				_players[_selected_level]->initMode(Gamemode::TESTING);
+				_players[_selected_level].initMode(Gamemode::TESTING);
 				std::cout << "Testing mode activated" << std::endl;
 				break;
 			case SDLK_F7:
-				_players[_selected_level]->initMode(Gamemode::TRAINING);
+				_players[_selected_level].initMode(Gamemode::TRAINING);
 				std::cout << "Training mode activated" << std::endl;
 				break;
 			case SDLK_h:
@@ -202,16 +190,15 @@ void Game::handleEvents()
 		}
 		if (_jump_pressed)
 		{
-			_players[_selected_level]->jump();
+			_players[_selected_level].jump();
 		}
 		for (int id_level = 0; id_level < _NB_LEVELS; id_level++)
 		{
-			_players[id_level]->handleInput();
+			_players[id_level].handleInput();
 		}
 	}
 	else
 	{
-
 		bool obstacle_pressed = false;
 
 		switch (event.type)
@@ -223,7 +210,7 @@ void Game::handleEvents()
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button == SDL_BUTTON_LEFT && !obstacle_pressed) {
 				obstacle_pressed = true;
-				_level_editor->placeObstacle();
+				_level_editor.placeObstacle();
 			}
 			break;
 		case SDL_MOUSEBUTTONUP:
@@ -236,31 +223,25 @@ void Game::handleEvents()
 			switch (event.key.keysym.sym)
 			{
 			case SDLK_UP:
-				_level_editor->nextIdObstacle();
+				_level_editor.nextObstacleType();
 				break;
 			case SDLK_DOWN:
-				_level_editor->previousIdObstacle();
+				_level_editor.previousObstacleType();
 				break;
 			case SDLK_RIGHT:
-				_level_editor->rightRotationObstacle();
+				_level_editor.rightRotationObstacle();
 				break;
 			case SDLK_LEFT:
-				_level_editor->leftRotationObstacle();
+				_level_editor.leftRotationObstacle();
 				break;
-			case SDLK_a:
-				_level_editor->saveGrid();
-				break;
-			case SDLK_p:
-				_level_editor->rightRotationObstacle();
-				break;
-			case SDLK_o:
-				_level_editor->leftRotationObstacle();
+			case SDLK_s:
+				_level_editor.saveGrid();
 				break;
 			case SDLK_d:
-				_level_editor->addStep(1);
+				_level_editor.addStep(1);
 				break;
 			case SDLK_q:
-				_level_editor->addStep(-1);
+				_level_editor.addStep(-1);
 				break;
 			default:
 				break;
@@ -270,12 +251,12 @@ void Game::handleEvents()
 			break;
 		}
 
-		_level_editor->handleInput();
+		_level_editor.handleInput();
 	}
 }
 
 void Game::update() {
-	if (!_editing)
+	if (_gamemode != Gamemode::EDITING)
 	{
 		if (!_pause) {
 			if (_NB_LEVELS > 1)
@@ -299,7 +280,7 @@ void Game::update() {
 	} 
 	else
 	{
-		_level_editor->update();
+		_level_editor.update();
 	}
 }
 
@@ -309,21 +290,20 @@ void Game::render()
 	{
 		SDL_RenderClear(_renderer);
 
-		if (!_editing)
+		if (_gamemode != Gamemode::EDITING)
 		{
 			if (_show_hitboxes)
 			{
 				SDL_SetRenderDrawColor(_renderer, 232, 232, 232, 255);
 				SDL_RenderFillRect(_renderer, &DIABLE_ZONE);
 			}
-			_levels[_selected_level]->render(_show_hitboxes);
-			_players[_selected_level]->render(_show_hitboxes);
+			_levels[_selected_level].render(_show_hitboxes);
+			_players[_selected_level].render(_show_hitboxes);
 		}
 		else
 		{
-			_level_editor->render();
+			_level_editor.render();
 		}
-
 
 		SDL_SetRenderDrawColor(_renderer, 200, 200, 200, 255);
 		SDL_RenderPresent(_renderer);
@@ -343,7 +323,7 @@ void Game::clean()
 
 void Game::setRenderer()
 {
-	if (!_editing)
+	if (_gamemode != Gamemode::EDITING)
 	{
 		Level::setRenderer(_renderer);
 		Player::setRenderer(_renderer);
@@ -357,6 +337,6 @@ void Game::setRenderer()
 
 void Game::updatePlayerAndLevel(int id_level)
 {
-	_levels[id_level]->update();
+	_levels[id_level].update();
 }
 

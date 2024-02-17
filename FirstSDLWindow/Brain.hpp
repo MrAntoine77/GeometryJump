@@ -16,36 +16,40 @@ class Brain
 {
 private:
 	static SDL_Renderer* _renderer;
+	static int _best_score;
 
-	int _x;
-	int _y;
-	int _nb_cores;
-	int _nb_total_neurones;
-	Core** _cores;
+	int _score = 0;
+	int _x = 0;
+	int _y = 0;
+	int _nb_total_neurones = 0;
+	std::vector<Core> _cores;
 
 public:
 	static void setRenderer(SDL_Renderer* renderer);
 
-	Brain(int nb_cores);
-	Brain(Brain * src);
-	Brain(std::string);
-	~Brain();
+	Brain(int nb_cores = 0);
+	Brain(const Brain& src);
+	Brain(std::string filename);
 
-	void update(Obstacle* obstacles, int nb_obstacles);
+	void update(std::vector<Obstacle> obstacles);
 	void render(bool hitboxes, int id_highlighted_core);
 
-	void deleteRandomNeurone(int id_core, int nb_modifs);
-	void addRandomNeurone(int id_core, int nb_modifs);
-	void modifyRandomNeurone(int id_core, int nb_modifs);
+	void deleteRandomNeurone(int nb_modifs);
+	void addRandomNeurone(int nb_modifs);
+	void modifyRandomNeurone(int nb_modifs);
 
 	void saveToFile(std::string filename);
 	void setPos(int x, int y);
 	void setNeurone(int id_core, int id_neurone, int x, int y, ObstacleType type, bool reverse);
-	void updateNbTotalNeurone();
+	void setScore(int score);
+	void addScore(int add) { _score += add; }
 
-	int getNbTotalNeurones() { return _nb_total_neurones; }
-	Core** getCores() const { return _cores; }
-	int getNbCores() const { return _nb_cores; }
-	bool areCoreActivated() const;
+	int getScore() const { return _score; }
+	int getNbTotalNeurones() const;
+	std::vector<Core> getCores() const { return _cores; }
+	int getNbCores() const { return static_cast<int>(_cores.size()); }
+	bool areCoreActivated();
+
+	bool operator>(const Brain& other) const;
 };
 

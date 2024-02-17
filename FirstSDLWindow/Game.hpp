@@ -12,27 +12,29 @@ class Game
 {
 private:
 	static const int _NB_LEVELS = 1;
-	const bool _editing;
 
 	SDL_Window* _window = nullptr;
 	SDL_Renderer* _renderer = nullptr;
-	Player** _players;
-	Level** _levels;
-	LevelEditor* _level_editor;
-	int _best_score;
+
+	std::vector<Player> _players;
+	std::vector<Level> _levels;
+
+	LevelEditor _level_editor;
+	int _best_score = 0;
 	bool _running = false;
 	bool _pause = false;
-	bool _show_hitboxes = true;
+	bool _jump_pressed = false;
+	int _selected_level = 0;
+	int _speed;	//17
+
 	bool _rendering;
-	bool _jump_pressed;
-	int _selected_level;
-	int _speed = 17;	//17
+	bool _show_hitboxes;
+	Gamemode _gamemode;
+
 
 public:
 	
-	Game(bool show_hitboxes = false, bool rendering = true, bool editing = false);
-	~Game();
-
+	Game(bool show_hitboxes = false, bool rendering = true, Gamemode gamemode = Gamemode::PLAYING, int speed = 17);
 
 	void handleEvents();
 	void update();

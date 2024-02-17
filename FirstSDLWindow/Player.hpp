@@ -16,8 +16,6 @@ private:
     static const int _INIT_Y = 384;
 
     static SDL_Renderer* _renderer;
-    static int _best_score;
-    static int _id_best_score;
 
     std::string _brain_filename;
 
@@ -25,31 +23,30 @@ private:
     SDL_Rect _hitbox_floor = { 0, 0, 0, 0 };
     SDL_Rect _hitbox_death = { 0, 0, 0, 0 };
     SDL_Rect _hitbox_main = { 0, 0, 0, 0 };
-    SDL_Texture* _texture; 
-    Brain* _brain;
-    Genetic* _IA;
-    int _id_player;
-    int _rotation_angle;
-    int _selected_core;
-    float _y_velocity;
-    ObstacleType _orb_nearly;
-    bool _antigravity;
-    int _score = 0;
+    
+    SDL_Texture* _texture;
+
+    Brain * _brain;
+    Genetic _IA;
+    int _id_player = 0;
+    int _rotation_angle = 0;
+    int _selected_core = 0;
+    float _y_velocity = 0.0f;
+    ObstacleType _orb_nearly = ObstacleType::AIR;
+    bool _antigravity = false;
+    int _generation = 0;
+    bool _on_ground = false;
+
     bool _invincible;
     Gamemode _gamemode;
-    int _best_current_score;
-    int _generation;
-    bool _on_ground;
 
     
 public:
     static void setRenderer(SDL_Renderer* renderer);
 
-    Player(bool invincible, Gamemode gamemode = Gamemode::PLAYING, int id_player = 0, 
-        std::string brain_filename = "", std::string texture_filename = "");
-    ~Player();
+    Player(bool invincible, Gamemode gamemode = Gamemode::PLAYING, int id_player = 0, std::string brain_filename = "", std::string texture_filename = "");
 
-    void update(Obstacle* obstacles, int nb_obstacles);
+    void update(std::vector<Obstacle>);
 
 
     void handleInput();

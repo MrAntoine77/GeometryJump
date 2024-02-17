@@ -19,13 +19,14 @@ const SDL_Rect GROUND_RECT_BOTTOM = { 0, 668, WINDOW_W, 336 };
 const SDL_Rect DIABLE_ZONE = { 192, 0, 192, WINDOW_H };
 
 
-static const int NB_TYPE_OBSTACLE = 8;
+
 static const int NB_BLOCKS_X_MAX = 512;
 static const int NB_BLOCKS_Y_MAX = 16;
 
 
+static const int NB_TYPE_OBSTACLE = 8;
 enum class ObstacleType {
-    AIR = -1,
+    AIR,
     BLOCK,
     SPIKE,
     SPIKE_SMALL,
@@ -45,7 +46,8 @@ enum class Direction {
 enum class Gamemode {
     TRAINING,
     TESTING,
-    PLAYING
+    PLAYING,
+    EDITING
 };
 
 struct Obstacle {
@@ -74,9 +76,9 @@ static int generateRandomNumber(int a, int b) {
     return distribution(gen);
 }
 
-static SDL_Texture* loadTexture(const char* filePath, SDL_Renderer* renderer)
+static SDL_Texture* loadTexture(std::string filename, SDL_Renderer* renderer)
 {
-    SDL_Surface* surface = IMG_Load(filePath);
+    SDL_Surface* surface = IMG_Load(filename.c_str());
     if (!surface) {
         std::cerr << "Erreur lors du chargement de l'image : " << IMG_GetError() << std::endl;
         return nullptr;
@@ -130,28 +132,10 @@ static int trouverIndexMin(const int tableau[], int taille) {
 
     return id_min;
 }
-inline Direction rightRotation(Direction rotation_obstacle)
-{
-    return (Direction)(((int)rotation_obstacle + 1) % 4);
-}
 
-inline Direction leftRotation(Direction rotation_obstacle)
-{
-    switch (rotation_obstacle)
-    {
-    case Direction::UP:
-        return Direction::LEFT;
-        break;
-    case Direction::RIGHT:
-        return Direction::UP;
-        break;
-    case Direction::DOWN:
-        return Direction::RIGHT;
-        break;
-    case Direction::LEFT:
-        return Direction::DOWN;
-        break;
-    default:
-        break;
-    }
+template <typename Enum>
+Enum moduloEnum(Enum value, int nb_values, int coef) {
+    int intValue = static_cast<int>(value);
+    int result = (intValue + nb_values + coef) % nb_values;
+    return static_cast<Enum>(result);
 }

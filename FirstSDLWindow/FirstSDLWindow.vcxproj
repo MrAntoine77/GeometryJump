@@ -139,6 +139,7 @@
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="TexturesManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Brain.hpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="Level.hpp" />
     <ClInclude Include="LevelEditor.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="TexturesManager.hpp" />
     <ClInclude Include="utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

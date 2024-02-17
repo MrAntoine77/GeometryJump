@@ -1,50 +1,52 @@
 #pragma once
 #include <SDL.h>
-#include "utils.hpp"
 #include <fstream>
 #include <iostream>
+
+#include "TexturesManager.hpp"
+#include "utils.hpp"
+
 class LevelEditor
 {
 private:
-    static const int _NB_MAX_BLOCKS = 500;
+    static const int _NB_MAX_BLOCKS = 512;
 
+    static const int _NB_MAX_X = 512;
+    static const int _NB_DISPLAYED_X = 20;
+    static const int _NB_DISPLAYED_Y = 11;
 
     static SDL_Renderer* _renderer;
-    static SDL_Texture* _texture_block;
-    static SDL_Texture* _texture_spike;
-    static SDL_Texture* _texture_spike_small;
-    static SDL_Texture* _texture_yellow_orb;
-    static SDL_Texture* _texture_pink_orb;
-    static SDL_Texture* _texture_blue_orb;
-    static SDL_Texture* _texture_slab_upper;
 
     int _grid[NB_BLOCKS_X_MAX][NB_BLOCKS_Y_MAX][2];
-    int _mouse_x;
-    int _mouse_y;
-    int _pos_grid_x;
-    int _pos_grid_y;
-    int _nb_blocks;
-    int _step;
-    ObstacleType _id_obstacle;
-    Direction _rotation_obstacle;
+    int _mouse_x = 0;
+    int _mouse_y = 0;
+    int _pos_grid_x = 0;
+    int _pos_grid_y = 0;
+    int _nb_blocks = 0;
+    int _step = 0;
+
+    ObstacleType _obstacle_type = ObstacleType::BLOCK;
+    Direction _direction_obstacle = Direction::UP;
 
     SDL_Rect _rect;
     std::string _filename;
+
+
 public:
     static void setRenderer(SDL_Renderer* renderer);
-    static void initTextures();
 
     LevelEditor(std::string filename);
+    LevelEditor();
     ~LevelEditor();
 
     void handleInput();
     void update();
     void render();
-    void renderObstacle(SDL_Rect rect, ObstacleType id_obstacle, Direction rotation);
+    void renderObstacle(SDL_Rect rect, ObstacleType obstacle_type, Direction direction_obstacle);
 
 
-    void nextIdObstacle();
-    void previousIdObstacle();
+    void nextObstacleType();
+    void previousObstacleType();
     void rightRotationObstacle();
     void leftRotationObstacle();
     void placeObstacle();
