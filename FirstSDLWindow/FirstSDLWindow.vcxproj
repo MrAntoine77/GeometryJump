@@ -138,6 +138,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
   </ItemGroup>
@@ -148,6 +149,7 @@
     <ClInclude Include="Genetic.hpp" />
     <ClInclude Include="Level.hpp" />
     <ClInclude Include="LevelEditor.hpp" />
+    <ClInclude Include="Obstacle.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="TexturesManager.hpp" />
     <ClInclude Include="utils.hpp" />

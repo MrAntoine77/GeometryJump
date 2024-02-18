@@ -9,7 +9,6 @@ void Genetic::setRenderer(SDL_Renderer* renderer)
 
 Genetic::Genetic(int nb_cores)
 {
-
 	for (int id_brain = 0; id_brain < _NB_BRAINS; id_brain++)
 	{
 		Brain brain(nb_cores);
@@ -21,43 +20,38 @@ Genetic::Genetic(int nb_cores)
 
 void Genetic::update()
 {
-	int sorted_brain_id[_NB_BRAINS];
-
-	std::sort(_brains.begin(), _brains.end(), std::greater<Brain>());
-
-	Brain& best_brain = _brains[0];
-
+	auto it_best_brain = std::max_element(_brains.begin(), _brains.end());
 
 	for (auto& brain : _brains)
 	{
-		if (&brain != &best_brain)
+		if (&brain != &(*it_best_brain))
 		{
-			brain = Brain(best_brain);
+			brain = *it_best_brain;
 			alter(brain);
 		}
-
-		brain.setScore(0);
 	}
-
 }
 
 void Genetic::alter(Brain& brain)
 {
-	int nb_modifs = generateRandomNumber(1, _NB_MAX_MODIFS);
-	int random = generateRandomNumber(0, 2);
+	int nb_modifs = generateRandomInt(1, _NB_MAX_MODIFS);
+	int random = generateRandomInt(0, 2);
 
-	switch (random)
+	for (int id_modif = 0; id_modif < nb_modifs; id_modif++)
 	{
-	case 0:
-		brain.modifyRandomNeurone(nb_modifs);
-		break;
-	case 1:
-		brain.deleteRandomNeurone(nb_modifs);
-		break;
-	case 2:
-		brain.addRandomNeurone(nb_modifs);
-	default:
-		break;
+		switch (random)
+		{
+		case 0:
+			brain.modifyRandomNeurone();
+			break;
+		case 1:
+			brain.deleteRandomNeurone();
+			break;
+		case 2:
+			brain.addRandomNeurone();
+		default:
+			break;
+		}
 	}
 
 }

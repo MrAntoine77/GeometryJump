@@ -16,8 +16,8 @@ private:
 	SDL_Window* _window = nullptr;
 	SDL_Renderer* _renderer = nullptr;
 
-	std::vector<Player> _players;
-	std::vector<Level> _levels;
+	Player _player;
+	Level _level;
 
 	LevelEditor _level_editor;
 	int _best_score = 0;
@@ -27,14 +27,14 @@ private:
 	int _selected_level = 0;
 	int _speed;	//17
 
-	bool _rendering;
-	bool _show_hitboxes;
+	Rendering _rendering;
+	ShowHitboxes _show_hitboxes;
 	Gamemode _gamemode;
 
 
 public:
 	
-	Game(bool show_hitboxes = false, bool rendering = true, Gamemode gamemode = Gamemode::PLAYING, int speed = 17);
+	Game(ShowHitboxes show_hitboxes = ShowHitboxes::OFF, Rendering rendering = Rendering::ON, Gamemode gamemode = Gamemode::PLAYING, int speed = 17);
 
 	void handleEvents();
 	void update();
@@ -45,5 +45,4 @@ public:
 
 private:
 	void setRenderer();
-	void updatePlayerAndLevel(int id_level);
 };

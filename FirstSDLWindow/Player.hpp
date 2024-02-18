@@ -14,7 +14,7 @@ private:
     static const int _NB_CORES = 6;
     static const int _INIT_X = 256;
     static const int _INIT_Y = 384;
-
+    
     static SDL_Renderer* _renderer;
 
     std::string _brain_filename;
@@ -24,19 +24,18 @@ private:
     SDL_Rect _hitbox_death = { 0, 0, 0, 0 };
     SDL_Rect _hitbox_main = { 0, 0, 0, 0 };
     
-    SDL_Texture* _texture;
+    SDL_Texture* _texture = nullptr;
 
-    Brain * _brain;
+    Brain * _brain = nullptr;
     Genetic _IA;
     int _id_player = 0;
     int _rotation_angle = 0;
     int _selected_core = 0;
     float _y_velocity = 0.0f;
     ObstacleType _orb_nearly = ObstacleType::AIR;
-    bool _antigravity = false;
     int _generation = 0;
     bool _on_ground = false;
-
+    bool _jump_pressed = false;
     bool _invincible;
     Gamemode _gamemode;
 
@@ -44,13 +43,14 @@ private:
 public:
     static void setRenderer(SDL_Renderer* renderer);
 
-    Player(bool invincible, Gamemode gamemode = Gamemode::PLAYING, int id_player = 0, std::string brain_filename = "", std::string texture_filename = "");
+    Player();
+    Player(bool invincible, Gamemode gamemode, int id_player, std::string brain_filename, std::string texture_filename);
 
     void update(std::vector<Obstacle>);
 
 
-    void handleInput();
-    void render(bool hitboxes);
+    void handleEvents(SDL_Event& event);
+    void render(ShowHitboxes hitboxes);
     void die();
     void jump();
     void showNextBrain();
@@ -60,7 +60,6 @@ public:
     SDL_Rect getHitboxFloor() const { return _hitbox_floor; }
     SDL_Rect getHitboxDeath() const { return _hitbox_death; }
     SDL_Rect getHitboxMain() const { return _hitbox_main; }
-    bool isAntigravity() const { return _antigravity; }
     float getYVelocity() const { return _y_velocity; }
     int getY() { return _rect.y; }
     bool isInvincible() { return _invincible; }

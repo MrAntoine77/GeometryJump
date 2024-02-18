@@ -9,13 +9,18 @@ void Player::setRenderer(SDL_Renderer* renderer) {
     Genetic::setRenderer(_renderer);
 }
 
+Player::Player() :
+    _invincible(false), _gamemode(Gamemode::PLAYING), _id_player(0), _brain_filename("")
+{
+
+}
 
 Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string brain_filename, std::string texture_filename) :
     _invincible(invincible), _gamemode(gamemode), _id_player(idPlayer), _brain_filename(brain_filename)
 {
     _IA = Genetic(_NB_CORES);
-
     initMode(_gamemode);
+
 
     _rect.x = _INIT_X;
     _rect.y = _INIT_Y;
@@ -34,66 +39,115 @@ Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string bra
 
 void Player::update(std::vector<Obstacle> obstacles)
 {
-    _brain->addScore(1000);
+    if (_gamemode == Gamemode::TRAINING)
+    {
+        _brain->addScore(1000);
+    }
+   
 
     const int rotation_rate = 10;
 
     if (_y_velocity != 0.0f)
     {
-        if (_antigravity) {
-
-            _rotation_angle = (_rotation_angle - rotation_rate) % 360;
-            _rect.y -= static_cast<int>(_y_velocity / FRAMERATE);
-        }
-        else {
-            _rotation_angle = (_rotation_angle + rotation_rate) % 360;
-            _rect.y += static_cast<int>(_y_velocity / FRAMERATE);
-        }
+        _rotation_angle = (_rotation_angle + rotation_rate) % 360;
+        _rect.y += static_cast<int>(_y_velocity / FRAMERATE);
     }
     updateHitboxes();
 
 
-    if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) {
+    if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
+    {
         _brain->setPos(_rect.x, _rect.y);
         _brain->update(obstacles);
     }
 
-    if (_y_velocity == 0.0f) {
+    if (_y_velocity == 0.0f) 
+    {
         int angle_mod_90 = _rotation_angle % 90;
-        if (angle_mod_90 != 0) {
+        if (angle_mod_90 != 0) 
+        {
             bool should_increase_angle = (angle_mod_90 >= 45);
             int anc = _rotation_angle;
-            if (_antigravity) {
-                _rotation_angle += (should_increase_angle) ? rotation_rate : -rotation_rate;
-            }
-            else {
-                _rotation_angle += (should_increase_angle) ? rotation_rate : -rotation_rate;
-            }
+            _rotation_angle += (should_increase_angle) ? rotation_rate : -rotation_rate;
+            
         }
     }
 }
 
-void Player::handleInput()
+void Player::handleEvents(SDL_Event& event)
 {
-    if (((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) && _brain->areCoreActivated()) {
+    if (_gamemode == Gamemode::PLAYING)
+    {
+        switch (event.type)
+        {
+        case SDL_MOUSEBUTTONDOWN:
+            if (event.button.button == SDL_BUTTON_LEFT) {
+                _jump_pressed = true;
+            }
+            break;
+        case SDL_MOUSEBUTTONUP:
+            if (event.button.button == SDL_BUTTON_LEFT) {
+                _jump_pressed = false;
+            }
+            break;
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_UP:
+            case SDLK_SPACE:
+                _jump_pressed = true;
+                break;
+            case SDLK_F1:
+                showNextBrain();
+                break;
+            default:
+                break;
+            }
+            break;
+        case SDL_KEYUP:
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_UP:
+            case SDLK_SPACE:
+                _jump_pressed = false;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    else if((_gamemode == Gamemode::TESTING) || (_gamemode == Gamemode::TRAINING))
+    {
+       switch (event.type)
+        {
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_F1:
+                showNextBrain();
+                break;
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+
+    if (_jump_pressed || (((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) && _brain->anyCoreActivated())) {
         jump();
     }
 }
 
-void Player::render(bool hitboxes)
+void Player::render(ShowHitboxes hitboxes)
 {
-    if (_antigravity) 
-    {
-        SDL_RenderCopyEx(_renderer, _texture, NULL, &_rect, _rotation_angle, NULL, SDL_FLIP_VERTICAL);
-    }
-    else
-    {
-        SDL_RenderCopyEx(_renderer, _texture, NULL, &_rect, _rotation_angle, NULL, SDL_FLIP_NONE);
-        SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-    }
 
+    SDL_RenderCopyEx(_renderer, _texture, NULL, &_rect, _rotation_angle, NULL, SDL_FLIP_NONE);
+    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 
-    if (hitboxes)
+    if (hitboxes == ShowHitboxes::ON)
     {
         SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
         SDL_RenderDrawRect(_renderer, &_hitbox_floor);
@@ -114,12 +168,6 @@ void Player::render(bool hitboxes)
 
 void Player::die()
 {
-
-    if (_gamemode == Gamemode::TRAINING)
-    {
-        _brain->setScore(_brain->getScore() - _brain->getNbTotalNeurones());
-    }   
-
     if (_gamemode == Gamemode::PLAYING)
     {
         SDL_Delay(500);
@@ -132,11 +180,12 @@ void Player::die()
 
     _y_velocity = 0.0f;
     updateHitboxes();
-    _antigravity = false;
 
 
     if (_gamemode == Gamemode::TRAINING)
     {
+        _brain->updateScore(_brain->getScore());// -_brain->getNbTotalNeurones());
+
         if (_IA.nextExp() == 0) {
             std::cout << "[" << _generation << "] generation " << std::endl;
             _generation++;
@@ -144,25 +193,16 @@ void Player::die()
         }
 
         _brain = _IA.getCurrentBrain();
+        _brain->updateScore(0);
     }
-
-    _brain->setScore(0);
 }
 
 void Player::updateHitboxes()
 {
     _hitbox_main = _rect;
-    if (_antigravity)
-    {
-        _hitbox_death = { _rect.x, _rect.y + 24, _rect.w, 40 };
-        _hitbox_floor = { _rect.x + 1, _rect.y, BLOCK_SIZE - 2, 16 };
-    }
-    else
-    {
-       
-        _hitbox_death = { _rect.x, _rect.y, _rect.w, 40 };
-        _hitbox_floor = { _rect.x + 1, _rect.y + 48, BLOCK_SIZE - 2, 16 };
-    }
+    _hitbox_death = { _rect.x, _rect.y, _rect.w, 48 };
+    _hitbox_floor = { _rect.x + 2, _rect.y + 48, BLOCK_SIZE - 4, 32 };
+
 }
 
 void Player::jump()
@@ -179,7 +219,6 @@ void Player::jump()
             break;
         case ObstacleType::BLUE_ORB:
             _y_velocity = -_y_velocity;
-            _antigravity = !_antigravity;
             updateHitboxes();
             break;
         default:
@@ -205,6 +244,7 @@ void Player::showNextBrain()
 void Player::initMode(Gamemode gamemode) 
 {
     _gamemode = gamemode;
+
     switch (_gamemode)
     {
     case Gamemode::TRAINING:

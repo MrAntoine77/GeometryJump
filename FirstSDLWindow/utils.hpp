@@ -22,9 +22,9 @@ const SDL_Rect DIABLE_ZONE = { 192, 0, 192, WINDOW_H };
 
 static const int NB_BLOCKS_X_MAX = 512;
 static const int NB_BLOCKS_Y_MAX = 16;
-
-
 static const int NB_TYPE_OBSTACLE = 8;
+
+
 enum class ObstacleType {
     AIR,
     BLOCK,
@@ -37,10 +37,10 @@ enum class ObstacleType {
 };
 
 enum class Direction {
-    UP,
-    RIGHT,
-    DOWN,
-    LEFT
+    UP = 0,
+    RIGHT = 90,
+    DOWN = 180,
+    LEFT = 270
 };
 
 enum class Gamemode {
@@ -50,33 +50,59 @@ enum class Gamemode {
     EDITING
 };
 
-struct Obstacle {
-    ObstacleType type;
-    SDL_Rect rect;
-    Direction direction;
-    bool used = false;
-    SDL_Rect hitbox;
+enum class ShowHitboxes {
+    OFF,
+    ON,
+};
+
+enum class Rendering {
+    ON,
+    OFF,
+};
+
+struct ObstacleInfo {
+    ObstacleType type = ObstacleType::AIR;
+    Direction direction = Direction::UP;
+};
+
+struct Position {
+    int x = 0;
+    int y = 0;
+
+    bool operator<(const Position& other) const {
+        return (x < other.x) || (x == other.x && y < other.y);
+    }
 };
 
 
 struct Neurone {
-    int x;
-    int y;
-    bool reverse;
-    ObstacleType type;
-    bool activated;
-    SDL_Rect rect;
+    bool reverse = false;
+    bool activated = false;
+    float x = 0.0f;
+    float y = 0.0f;
+    ObstacleType type = ObstacleType::AIR;
+    SDL_Rect rect = { 0,0,0,0 };
 };
 
 
-static int generateRandomNumber(int a, int b) {
+
+
+
+inline int generateRandomInt(int a, int b) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> distribution(a, b);
     return distribution(gen);
 }
 
-static SDL_Texture* loadTexture(std::string filename, SDL_Renderer* renderer)
+inline float generateRandomFloat(int a, int b) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> distribution(static_cast<float>(a), static_cast<float>(b));
+    return distribution(gen);
+}
+
+inline SDL_Texture* loadTexture(std::string filename, SDL_Renderer* renderer)
 {
     SDL_Surface* surface = IMG_Load(filename.c_str());
     if (!surface) {
@@ -95,7 +121,7 @@ static SDL_Texture* loadTexture(std::string filename, SDL_Renderer* renderer)
     return texture;
 }
 
-static bool checkCollision(const SDL_Rect& rect_a, const SDL_Rect& rect_b) {
+inline bool checkCollision(const SDL_Rect& rect_a, const SDL_Rect& rect_b) {
     if (rect_a.x + rect_a.w <= rect_b.x || rect_b.x + rect_b.w <= rect_a.x ||
         rect_a.y + rect_a.h <= rect_b.y || rect_b.y + rect_b.h <= rect_a.y) {
         return false;
@@ -103,7 +129,7 @@ static bool checkCollision(const SDL_Rect& rect_a, const SDL_Rect& rect_b) {
     return true;
 }
 
-static int trouverIndexMax(const int tableau[], int taille) {
+inline int trouverIndexMax(const int tableau[], int taille) {
     if (taille <= 0) {
         return -1;
     }
@@ -118,7 +144,7 @@ static int trouverIndexMax(const int tableau[], int taille) {
     return id_max;
 }
 
-static int trouverIndexMin(const int tableau[], int taille) {
+inline int trouverIndexMin(const int tableau[], int taille) {
     if (taille <= 0) {
         return -1;
     }
@@ -131,6 +157,11 @@ static int trouverIndexMin(const int tableau[], int taille) {
     }
 
     return id_min;
+}
+
+inline void displayRect(SDL_Rect& rect)
+{
+    std::cout << "x :  " << rect.x << ", y : " << rect.y << ", w : " << rect.w << ", h : " << rect.h << std::endl;
 }
 
 template <typename Enum>

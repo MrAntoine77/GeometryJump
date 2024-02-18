@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include <fstream>
 #include <iostream>
+#include <map>
+
 
 #include "TexturesManager.hpp"
 #include "utils.hpp"
@@ -9,15 +11,16 @@
 class LevelEditor
 {
 private:
-    static const int _NB_MAX_BLOCKS = 512;
-
     static const int _NB_MAX_X = 512;
     static const int _NB_DISPLAYED_X = 20;
     static const int _NB_DISPLAYED_Y = 11;
 
     static SDL_Renderer* _renderer;
 
-    int _grid[NB_BLOCKS_X_MAX][NB_BLOCKS_Y_MAX][2];
+    //int _grid[NB_BLOCKS_X_MAX][NB_BLOCKS_Y_MAX][2];
+
+    std::map<Position, ObstacleInfo> _obstacles;
+
     int _mouse_x = 0;
     int _mouse_y = 0;
     int _pos_grid_x = 0;
@@ -37,9 +40,8 @@ public:
 
     LevelEditor(std::string filename);
     LevelEditor();
-    ~LevelEditor();
 
-    void handleInput();
+    void handleEvents(SDL_Event& event);
     void update();
     void render();
     void renderObstacle(SDL_Rect rect, ObstacleType obstacle_type, Direction direction_obstacle);

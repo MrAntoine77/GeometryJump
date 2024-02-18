@@ -6,12 +6,14 @@
 #include "SDL_image.h"
 #include "Player.hpp"
 #include "utils.hpp"
+#include "Obstacle.hpp"
 #include "TexturesManager.hpp"
 
 class Level
 {
 private:
     static SDL_Renderer* _renderer;
+
 
     std::vector<Obstacle> _obstacles;
     Player* _player;
@@ -23,12 +25,13 @@ public:
     static void setRenderer(SDL_Renderer* renderer);
 
     Level(std::string filename, Player* player);
-    ~Level();
+    Level();
 
     void loadObstaclesFromFile(std::string filename);
     void update(); 
     void updatePlayer();
-    void render(bool hitboxes);
+    void render(ShowHitboxes hitboxes);
+    void handleEvents(SDL_Event& event);
     void restart();
     int checkAllCollisions();
 };

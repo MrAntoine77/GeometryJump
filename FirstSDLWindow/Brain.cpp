@@ -18,6 +18,7 @@ Brain::Brain(int nb_cores)
 		Core core;
 		_cores.push_back(core);
 	}
+	_score = 0;
 }
 
 Brain::Brain(const Brain& src)
@@ -44,7 +45,8 @@ Brain::Brain(std::string filename)
 		for (auto& core : _cores)
 		{
 			file >> nb_neurones >> dist_neurone;
-			int x, y, type;
+			float x, y;
+			int type;
 			bool reverse;
 			Core core(nb_neurones, dist_neurone);
 
@@ -53,7 +55,7 @@ Brain::Brain(std::string filename)
 			for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
 			{
 				file >> x >> y >> type >> reverse;
-				core.setNeurone(id_neurone, x, y, (ObstacleType)type, reverse);
+				core.setNeurone(id_neurone, x, y,  static_cast<ObstacleType>(type), reverse);
 			}
 		}
 		file.close();
@@ -62,6 +64,7 @@ Brain::Brain(std::string filename)
 	{
 		std::cerr << "Erreur ouverture fichier Brain::Brain(const char * filename) : " << filename << std::endl;
 	}
+	_score = 0;
 }
 
 void Brain::saveToFile(std::string filename)
@@ -82,12 +85,12 @@ void Brain::saveToFile(std::string filename)
 			{
 				Neurone neurone = core.getNeuroneAt(id_neurone);
 
-				int x = neurone.x;
-				int y = neurone.y;
+				float x = neurone.x;
+				float y = neurone.y;
 				ObstacleType type = neurone .type;
 				bool reverse = neurone.reverse;
 
-				file << x << " " << y << " " << (int)type << " " << reverse << std::endl;
+				file << x << " " << y << " " << static_cast<int>(type) << " " << reverse << std::endl;
 			}
 		}
 		file.close();
@@ -102,20 +105,13 @@ void Brain::update(std::vector<Obstacle> obstacles)
 	}
 }
 
-void Brain::render(bool hitboxes, int id_highlighted_core)
+void Brain::render(ShowHitboxes hitboxes, int id_highlighted_core)
 {
-	if (hitboxes)
+	if (hitboxes == ShowHitboxes::ON)
 	{
-		for (int id_core = 0; id_core < _cores.size(); id_core++)
+		for (int id_core = 0; id_core < static_cast<int>(_cores.size()); id_core++)
 		{
-			if (id_core == id_highlighted_core)
-			{
-				_cores[id_core].render(hitboxes, true);
-			}
-			else
-			{
-				_cores[id_core].render(hitboxes, false);
-			}
+			_cores[id_core].render((id_core == id_highlighted_core));
 		}
 	}
 }
@@ -126,51 +122,37 @@ void Brain::setPos(int x, int y)
 	_y = y;
 }
 
-void Brain::deleteRandomNeurone(int nb_modifs)
+void Brain::deleteRandomNeurone()
 {
-	int id_core = generateRandomNumber(0, static_cast<int>(_cores.size()) - 1);
-	for (int id_modif = 0; id_modif < static_cast<int>(_cores.size()); id_modif++)
-	{
-		_cores[id_core].deleteRandomNeurone();
-	}
+	int id_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
+	_cores[id_core].deleteRandomNeurone();
+
 }
 
-void Brain::modifyRandomNeurone(int nb_modifs)
+void Brain::modifyRandomNeurone()
 {
-	int id_core = generateRandomNumber(0, static_cast<int>(_cores.size()) - 1);
-	for (int id_modif = 0; id_modif < static_cast<int>(_cores.size()); id_modif++)
-	{
-		_cores[id_core].modifyRandomNeurone();
-	}
+	int id_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
+	_cores[id_core].modifyRandomNeurone();
+
 }
 
-void Brain::addRandomNeurone(int nb_modifs)
+void Brain::addRandomNeurone()
 {
-	int id_core = generateRandomNumber(0, static_cast<int>(_cores.size()) - 1);
-	for (int id_modif = 0; id_modif < static_cast<int>(_cores.size()); id_modif++)
-	{
-		_cores[id_core].deleteRandomNeurone();
-	}
+	int id_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
+	_cores[id_core].deleteRandomNeurone();
+
 }
 
-void Brain::setNeurone(int id_core, int id_neurone, int x, int y, ObstacleType type, bool reverse)
+void Brain::setNeurone(int id_core, int id_neurone, float x, float y, ObstacleType type, bool reverse)
 {
 	_cores[id_core].setNeurone(id_neurone, x, y, type, reverse);
 }
 
-bool Brain::areCoreActivated()
+bool Brain::anyCoreActivated() const
 {
-	bool activated = false;
-
-	for (auto& core : _cores)
-	{
-		if (core.isActivated())
-		{
-			activated = true;
-			break;
-		}
-	}
-	return activated;
+	return std::any_of(_cores.begin(), _cores.end(), [](const auto& core) {
+		return core.isActivated();
+		});
 }
 
 int Brain::getNbTotalNeurones() const
@@ -183,8 +165,9 @@ int Brain::getNbTotalNeurones() const
 	return nb_total_neurones;
 }
 
-void Brain::setScore(int score)
+void Brain::updateScore(int score)
 {
+	
 	_score = score;
 	if (_score < 0)
 	{
@@ -193,10 +176,7 @@ void Brain::setScore(int score)
 	if (_score > _best_score)
 	{
 		_best_score = _score;
-		std::cout << "New best score : " << (float)_best_score/1000.0 << std::endl;
+		std::cout << "Best score reached : " << (float)_best_score / 1000.0 << std::endl;
+		saveToFile("Brains/test.txt");
 	}
-}
-
-bool Brain::operator>(const Brain& other) const {
-	return _score > other._score;
 }
