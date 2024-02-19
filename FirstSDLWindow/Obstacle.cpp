@@ -115,8 +115,34 @@ void Obstacle::setNbY(int nb_y)
     _hitbox.h = BLOCK_SIZE * _nb_y;
 }
 
-bool Obstacle::operator<(const Obstacle& other) const {
-    return (static_cast<int>(_type) < static_cast<int>(other._type)) ||
-        ((static_cast<int>(_type) == static_cast<int>(other._type)) &&
-            ((_x < other._x) || ((_x == other._x) && (_y < other._y))));
+
+
+bool Obstacle::compareByX(const Obstacle& obstacle1, const Obstacle& obstacle2)
+{
+    return (static_cast<int>(obstacle1._type) < static_cast<int>(obstacle2._type)) ||
+        ((static_cast<int>(obstacle1._type) == static_cast<int>(obstacle2._type)) &&
+            ((static_cast<int>(obstacle1._direction) < static_cast<int>(obstacle2._direction)) ||
+                ((static_cast<int>(obstacle1._direction) == static_cast<int>(obstacle2._direction)) &&
+                    ((obstacle1._x < obstacle2._x) || ((obstacle1._x == obstacle2._x) && (obstacle1._y < obstacle2._y))))));
 }
+
+bool Obstacle::compareByY(const Obstacle& obstacle1, const Obstacle& obstacle2)
+{
+    return (static_cast<int>(obstacle1._type) < static_cast<int>(obstacle2._type)) ||
+        ((static_cast<int>(obstacle1._type) == static_cast<int>(obstacle2._type)) &&
+            ((static_cast<int>(obstacle1._direction) < static_cast<int>(obstacle2._direction)) ||
+                ((static_cast<int>(obstacle1._direction) == static_cast<int>(obstacle2._direction)) &&
+                    ((obstacle1._y < obstacle2._y) || ((obstacle1._y == obstacle2._y) && (obstacle1._x < obstacle2._x))))));
+}
+
+bool Obstacle::isGroupable(Axe axe) const
+{
+    bool is_groupable = false;
+
+    is_groupable |= (_type == ObstacleType::BLOCK);
+    is_groupable |= ((axe == Axe::X) && (_direction == Direction::UP || _direction == Direction::DOWN) && (_type == ObstacleType::SLAB_UPPER));
+    is_groupable |= ((axe == Axe::Y) && (_direction == Direction::RIGHT || _direction == Direction::DOWN) && (_type == ObstacleType::SLAB_UPPER));
+
+    return is_groupable;
+}
+

@@ -37,6 +37,7 @@ public:
     void setNbX(int nb_x);
     void setNbY(int nb_y);
 
+    bool isGroupable(Axe axe) const;
     bool isUsed() const { return _used; }
     int getInitX() { return _init_x; }
     int getX() const { return _x; }
@@ -44,6 +45,9 @@ public:
     SDL_Rect getHitbox() const { return _hitbox; }
     ObstacleType getType() const { return _type; }
     Direction getDirection() const { return _direction; }
-    bool operator<(const Obstacle& other) const;
+
+    static bool compareByX(const Obstacle& obstacle1, const Obstacle& obstacle2);
+    static bool compareByY(const Obstacle& obstacle1, const Obstacle& obstacle2);
+
 };
 

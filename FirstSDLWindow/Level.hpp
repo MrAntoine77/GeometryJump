@@ -37,7 +37,12 @@ public:
 private:
     void loadObstaclesFromFile(std::string filename);
     void restart();
-    void updateHitboxes();
+    void updateHitboxes(
+        int (Obstacle::* get1)() const,
+        int (Obstacle::* get2)() const,
+        void (Obstacle::* setNbZ)(int),
+        bool(* comparator)(const Obstacle&, const Obstacle&),
+        Axe axe);
 };
 
 

@@ -20,59 +20,34 @@ Level::Level() : _filename(""), _player(nullptr)
 }
 
 
-void Level::updateHitboxes()
+void Level::updateHitboxes(
+    int (Obstacle::* get1)() const,
+    int (Obstacle::* get2)() const,
+    void (Obstacle::* setNbZ)(int),
+    bool(* comparator)(const Obstacle&, const Obstacle&),
+    Axe axe)
 {
-    // Fonctionne mais a revoir
+    std::sort(_obstacles.begin(), _obstacles.end(), *comparator);
 
-    std::sort(_obstacles.begin(), _obstacles.end());
-
-    std::cout << "Level optimizing... ";
-    int taille = static_cast<int>(_obstacles.size());
-
-    for (int i = 0; i < taille; i++)
+    for (int i = 0; i < static_cast<int>(_obstacles.size()); i++)
     {
-        if (_obstacles[i].getType() == ObstacleType::BLOCK)
+        if (_obstacles[i].isGroupable(axe))
         {
+            int z = 0;
 
-            int nb_x = 1, nb_y = 1;
-            int y = 0, x = 0;
+            while (((i + z + 1) < static_cast<int>(_obstacles.size())) 
+                && ((_obstacles[i + z].*get1)() == (_obstacles[i + z + 1].*get1)() - 64)
+                && ((_obstacles[i + z].*get2)() == (_obstacles[i + z + 1].*get2)())
+                && (_obstacles[i + z].getDirection() == _obstacles[i + z + 1].getDirection())
+                && (_obstacles[i + z].getType() == _obstacles[i + z + 1].getType()))
+            {
+                z++;
+            }
+            (_obstacles[i].*setNbZ)(z + 1);
+            _obstacles.erase(_obstacles.begin() + i + 1, _obstacles.begin() + i + z + 1);
 
-            while (((i + y + 1) < taille) && (_obstacles[i + y].getY() == _obstacles[i + y + 1].getY() - 64) && (_obstacles[i + y].getX() == _obstacles[i + y + 1].getX()) && (_obstacles[i + y].getType() == _obstacles[i + y + 1].getType()))
-            {
-                y++;
-            }
-            if (y > 0)
-            {
-                _obstacles[i].setNbY(y + 1);
-                taille -= y;
-                _obstacles.erase(_obstacles.begin() + i + 1, _obstacles.begin() + i + y + 1);
-            }
         }
     }
-    
-    taille = static_cast<int>(_obstacles.size());
-
-    for (int i = 0; i < taille; i++)
-    {
-        if (_obstacles[i].getType() == ObstacleType::BLOCK)
-        {
-            int nb_x = 1, nb_y = 1;
-            int y = 0, x = 0;
-
-            while (((i + x + 1) < taille) && (_obstacles[i + x].getX() == _obstacles[i + x + 1].getX() - 64) && (_obstacles[i + x].getY() == _obstacles[i + x + 1].getY()) && (_obstacles[i + y].getType() == _obstacles[i + y + 1].getType()))
-            {
-                x++;
-            }
-            if (x > 0)
-            {
-                _obstacles[i].setNbX(x + 1);
-                taille -= x;
-                _obstacles.erase(_obstacles.begin() + i + 1, _obstacles.begin() + i + x + 1);
-            }
-        }
-    }
-    std::cout << "finished !" << std::endl;
-
 }
 
 void Level::loadObstaclesFromFile(std::string filename) {
@@ -93,7 +68,10 @@ void Level::loadObstaclesFromFile(std::string filename) {
         }
         file.close();
         std::cout << "Level " << filename << " loaded" << std::endl;
-        updateHitboxes();
+        std::cout << "Optimizing... ";
+        updateHitboxes(&Obstacle::getY, &Obstacle::getX, &Obstacle::setNbY, Obstacle::compareByX, Axe::Y);
+        updateHitboxes(&Obstacle::getX, &Obstacle::getY, &Obstacle::setNbX, Obstacle::compareByY, Axe::X);
+        std::cout << "finished !" << std::endl;
     }
     else {
         std::cerr << "Erreur lors de l'ouverture du fichier." << std::endl;

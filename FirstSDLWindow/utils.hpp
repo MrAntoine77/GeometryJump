@@ -24,6 +24,10 @@ const int NB_BLOCKS_X_MAX = 512;
 const int NB_BLOCKS_Y_MAX = 16;
 const int NB_TYPE_OBSTACLE = 8;
 
+enum class Axe {
+    X,
+    Y
+};
 
 enum class ObstacleType {
     AIR,

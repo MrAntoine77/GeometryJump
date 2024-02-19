@@ -204,15 +204,18 @@ void LevelEditor::saveGrid() const
 
 		for (auto& obstacle : _obstacles)
 		{
-			int x, y, type, direction;
+			if (obstacle.second.type != ObstacleType::AIR)
+			{
+				int x, y, type, direction;
 
-			x = obstacle.first.x;
-			y = obstacle.first.y;
-			type = static_cast<int>(obstacle.second.type);
-			direction = static_cast<int>(obstacle.second.direction);
+				x = obstacle.first.x;
+				y = obstacle.first.y;
+				type = static_cast<int>(obstacle.second.type);
+				direction = static_cast<int>(obstacle.second.direction);
 
-			file << type << " " << x << " " << y << " " << direction << std::endl;
-			std::cout << type << " " << x << " " << y << " " << direction << std::endl;
+				file << type << " " << x << " " << y << " " << direction << std::endl;
+				std::cout << type << " " << x << " " << y << " " << direction << std::endl;
+			}
 		}
 
 		std::cout << "Level saved in : " << _filename << std::endl;
