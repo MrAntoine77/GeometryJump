@@ -37,7 +37,7 @@ void Game::init(std::string title, int x, int y, int w, int h, bool fullscreen)
 
 		if (_gamemode != Gamemode::EDITING)
 		{
-			_player = Player(false, _gamemode, 0, "Brains/brain_final.txt", "Textures/icon2.png");
+			_player = Player(false, _gamemode, 0, "Brains/test.txt", "Textures/icon2.png");
 			_level = Level("Levels/created_level.txt", &_player);
 
 			std::cout << _NB_LEVELS << " players initialized" << std::endl;
@@ -196,7 +196,10 @@ void Game::render()
 		SDL_SetRenderDrawColor(_renderer, 200, 200, 200, 255);
 		SDL_RenderPresent(_renderer);
 
-		SDL_Delay(_speed);
+		if (!_pause)
+		{
+			SDL_Delay(_speed);
+		}
 	}
 
 }
@@ -211,14 +214,14 @@ void Game::clean()
 
 void Game::setRenderer()
 {
-	if (_gamemode != Gamemode::EDITING)
+	if (_gamemode == Gamemode::EDITING)
 	{
-		Level::setRenderer(_renderer);
-		Player::setRenderer(_renderer);
+		LevelEditor::setRenderer(_renderer);
 	}
 	else
 	{
-		LevelEditor::setRenderer(_renderer);
+		Level::setRenderer(_renderer);
+		Player::setRenderer(_renderer);
 	}
 
 }

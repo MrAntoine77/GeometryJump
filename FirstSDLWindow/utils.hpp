@@ -11,6 +11,8 @@
 const int BLOCK_SIZE = 64;
 const float GRAVITY = 8523.988f;
 const int FRAMERATE = 60;
+const int LEVEL_SPEED = 13;
+
 const int WINDOW_W = 1280;
 const int WINDOW_H = 720;
 
@@ -18,11 +20,9 @@ const SDL_Rect GROUND_RECT_TOP = { 0, -256, WINDOW_W, 28 };
 const SDL_Rect GROUND_RECT_BOTTOM = { 0, 668, WINDOW_W, 336 };
 const SDL_Rect DIABLE_ZONE = { 192, 0, 192, WINDOW_H };
 
-
-
-static const int NB_BLOCKS_X_MAX = 512;
-static const int NB_BLOCKS_Y_MAX = 16;
-static const int NB_TYPE_OBSTACLE = 8;
+const int NB_BLOCKS_X_MAX = 512;
+const int NB_BLOCKS_Y_MAX = 16;
+const int NB_TYPE_OBSTACLE = 8;
 
 
 enum class ObstacleType {
@@ -73,20 +73,6 @@ struct Position {
         return (x < other.x) || (x == other.x && y < other.y);
     }
 };
-
-
-struct Neurone {
-    bool reverse = false;
-    bool activated = false;
-    float x = 0.0f;
-    float y = 0.0f;
-    ObstacleType type = ObstacleType::AIR;
-    SDL_Rect rect = { 0,0,0,0 };
-};
-
-
-
-
 
 inline int generateRandomInt(int a, int b) {
     std::random_device rd;

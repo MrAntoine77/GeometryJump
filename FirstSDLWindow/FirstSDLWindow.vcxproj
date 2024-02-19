@@ -138,6 +138,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Neurone.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
@@ -149,10 +150,14 @@
     <ClInclude Include="Genetic.hpp" />
     <ClInclude Include="Level.hpp" />
     <ClInclude Include="LevelEditor.hpp" />
+    <ClInclude Include="Neurone.hpp" />
     <ClInclude Include="Obstacle.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="TexturesManager.hpp" />
     <ClInclude Include="utils.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

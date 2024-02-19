@@ -1,8 +1,15 @@
 #include "Obstacle.hpp"
 
+
+SDL_Renderer* Obstacle::_renderer = nullptr;
+
+void Obstacle::setRenderer(SDL_Renderer* renderer)
+{
+    _renderer = renderer;
+}
+
 ObstacleType Obstacle::generateRandomNeuroneType()
 {
-	
 	ObstacleType neurone_types[] = { ObstacleType::AIR, ObstacleType::BLOCK, ObstacleType::SPIKE };
 	int random = generateRandomInt(0, 2);
 
@@ -14,31 +21,31 @@ Obstacle::Obstacle(int x, int y, ObstacleType type, Direction direction) : _x(x)
     switch (_type)
     {
     case ObstacleType::BLOCK:
-        _hitbox = { _x, _y, BLOCK_SIZE, BLOCK_SIZE };
+        _hitbox = { _x, _y, BLOCK_SIZE * _nb_x, BLOCK_SIZE * _nb_y };
         break;
     case ObstacleType::SPIKE:
-        _hitbox.x = _x + 24;
-        _hitbox.y = _y + 16;
+        _relative_hitbox_x = 24;
+        _relative_hitbox_y = 16;
         _hitbox.w = 16;
         _hitbox.h = 48;
         break;
     case ObstacleType::SPIKE_SMALL:
-        _hitbox.x = _x + 24;
-        _hitbox.y = _y + 40;
+        _relative_hitbox_x = 24;
+        _relative_hitbox_y = 40;
         _hitbox.w = 16;
         _hitbox.h = 24;
         break;
     case ObstacleType::YELLOW_ORB:
     case ObstacleType::PINK_ORB:
     case ObstacleType::BLUE_ORB:
-        _hitbox.x = _x + 8;
-        _hitbox.y = _y + 8;
+        _relative_hitbox_x = 8;
+        _relative_hitbox_y = 8;
         _hitbox.w = 48;
         _hitbox.h = 48;
         break;
     case ObstacleType::SLAB_UPPER:
-        _hitbox.x = _x;
-        _hitbox.y = _y;
+        _relative_hitbox_x = 0;
+        _relative_hitbox_y = 0;
         _hitbox.w = 64;
         _hitbox.h = 32;
         break;
@@ -46,31 +53,70 @@ Obstacle::Obstacle(int x, int y, ObstacleType type, Direction direction) : _x(x)
         break;
     }
 
-    int delta_x = _hitbox.x - _x;
-    int delta_y = _hitbox.y - _y;
+
     switch (_direction)
     {
     case Direction::RIGHT:
-        std::swap(_hitbox.w, _hitbox.h);
-        _hitbox.x = (_x + BLOCK_SIZE - delta_y) - _hitbox.w;
-        _hitbox.y = _y + delta_x;
+        std::swap(_hitbox.w, _hitbox.h);;
+        std::swap(_relative_hitbox_x, _relative_hitbox_y);
+        _relative_hitbox_x = 64 - _relative_hitbox_x - _hitbox.w;
+
         break;
     case Direction::DOWN:
-        _hitbox.x = _x + (BLOCK_SIZE - delta_x) - _hitbox.w;
-        _hitbox.y = _y + (BLOCK_SIZE - delta_y) - _hitbox.h;
+        _relative_hitbox_y = 64 - _relative_hitbox_y - _hitbox.h;
+        _relative_hitbox_x = 64 - _relative_hitbox_x - _hitbox.w;
         break;
     case Direction::LEFT:
-        std::swap(_hitbox.w, _hitbox.h);
-        _hitbox.x = _x + delta_y;
-        _hitbox.y = _y + (BLOCK_SIZE - delta_x) - _hitbox.h;
+        std::swap(_hitbox.w, _hitbox.h);;
+        std::swap(_relative_hitbox_x, _relative_hitbox_y);
+        _relative_hitbox_y = 64 - _relative_hitbox_y - _hitbox.h;
         break;
     default:
         break;
     }
+
+    _init_x = _x;
 }
 
-void Obstacle::addX(int add)
+void Obstacle::render(ShowHitboxes hitboxes)
 {
-    _x += add;
-    _hitbox.x += add;
+    for (int x = 0; x < _nb_x; x++)
+    {
+        for (int y = 0; y < _nb_y; y++)
+        {
+            const SDL_Rect rect = { _x + BLOCK_SIZE * x, _y + BLOCK_SIZE * y, BLOCK_SIZE, BLOCK_SIZE };
+            SDL_RenderCopyEx(_renderer, TexturesManager::getBlockTexture(_type), NULL, &rect, static_cast<double>(_direction), NULL, SDL_FLIP_NONE);
+
+            if (hitboxes == ShowHitboxes::ON)
+            {
+                SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 32);
+                SDL_RenderDrawRect(_renderer, &_hitbox);
+            }
+        }
+    }
+}
+
+void Obstacle::setX(int x)
+{
+    _x = x;
+    _hitbox.x = _x + _relative_hitbox_x;
+    _hitbox.y = _y + _relative_hitbox_y;
+}
+
+void Obstacle::setNbX(int nb_x)
+{
+    _nb_x = nb_x;
+    _hitbox.w = BLOCK_SIZE * _nb_x;
+}
+
+void Obstacle::setNbY(int nb_y)
+{
+    _nb_y = nb_y;
+    _hitbox.h = BLOCK_SIZE * _nb_y;
+}
+
+bool Obstacle::operator<(const Obstacle& other) const {
+    return (static_cast<int>(_type) < static_cast<int>(other._type)) ||
+        ((static_cast<int>(_type) == static_cast<int>(other._type)) &&
+            ((_x < other._x) || ((_x == other._x) && (_y < other._y))));
 }

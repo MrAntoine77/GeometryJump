@@ -1,31 +1,49 @@
 #pragma once
 #include "utils.hpp"
+#include "TexturesManager.hpp"
 
 class Obstacle
 {
 private:
-    bool _used = false;
-    int _x = 0;
-    int _y = 0;
+    static SDL_Renderer* _renderer;
 
     ObstacleType _type = ObstacleType::AIR;
     Direction _direction = Direction::UP;
     SDL_Rect _hitbox = { 0,0,0,0 };
+    SDL_Rect _relative_hitbox = { 0, 0, 0, 0 };
 
+    int _nb_x = 1;
+    int _nb_y = 1;
+
+    bool _used = false;
+    int _x = 0;
+    int _y = 0;
+
+    int _relative_hitbox_x = 0;
+    int _relative_hitbox_y = 0;
+
+    int _init_x = 0;
 public:
+    static void setRenderer(SDL_Renderer* renderer);
+
     static ObstacleType generateRandomNeuroneType();
 
     Obstacle(int x, int y, ObstacleType type, Direction direction);
 
+    void render(ShowHitboxes hitboxes);
     void setUsed(bool used) { _used = used; }
-    void addX(int add);
+    void setX(int x);
+
+    void setNbX(int nb_x);
+    void setNbY(int nb_y);
 
     bool isUsed() const { return _used; }
+    int getInitX() { return _init_x; }
     int getX() const { return _x; }
     int getY() const { return _y; }
-    SDL_Rect getHitbox() { return _hitbox; }
+    SDL_Rect getHitbox() const { return _hitbox; }
     ObstacleType getType() const { return _type; }
     Direction getDirection() const { return _direction; }
-
+    bool operator<(const Obstacle& other) const;
 };
 

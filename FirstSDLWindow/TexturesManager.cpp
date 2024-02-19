@@ -55,39 +55,27 @@ void TexturesManager::init(SDL_Renderer* renderer)
 	_texture_player = loadTexture("Textures/icon1.png", _renderer);
 }
 
-SDL_Texture* TexturesManager::getNeuroneTexture(Neurone neurone)
+SDL_Texture* TexturesManager::getNeuroneTexture(ObstacleType type, bool activated, bool reversed)
 {
 	SDL_Texture* pt_texture = nullptr;
 
-	bool activated = neurone.activated;
-	bool reverse = neurone.reverse;
 
-	switch (neurone.type)
+	switch (type)
 	{
 	case ObstacleType::SPIKE:
 		pt_texture = (activated) ?
-			(reverse ? _texture_neurone_spike_reverse_on : _texture_neurone_spike_on) :
-			(reverse ? _texture_neurone_spike_reverse_off : _texture_neurone_spike_off);
-		break;
-	case ObstacleType::SPIKE_SMALL:
-		pt_texture = (activated) ?
-			(reverse ? _texture_neurone_spike_reverse_on : _texture_neurone_spike_on) :
-			(reverse ? _texture_neurone_spike_reverse_off : _texture_neurone_spike_off);
+			(reversed ? _texture_neurone_spike_reverse_on : _texture_neurone_spike_on) :
+			(reversed ? _texture_neurone_spike_reverse_off : _texture_neurone_spike_off);
 		break;
 	case ObstacleType::BLOCK:
 		pt_texture = (activated) ?
-			(reverse ? _texture_neurone_block_reverse_on : _texture_neurone_block_on) :
-			(reverse ? _texture_neurone_block_reverse_off : _texture_neurone_block_off);
-		break;
-	case ObstacleType::SLAB_UPPER:
-		pt_texture = (activated) ?
-			(reverse ? _texture_neurone_block_reverse_on : _texture_neurone_block_on) :
-			(reverse ? _texture_neurone_block_reverse_off : _texture_neurone_block_off);
+			(reversed ? _texture_neurone_block_reverse_on : _texture_neurone_block_on) :
+			(reversed ? _texture_neurone_block_reverse_off : _texture_neurone_block_off);
 		break;
 	case ObstacleType::AIR:
 		pt_texture = (activated) ?
-			(reverse ? _texture_neurone_air_reverse_on : _texture_neurone_air_on) :
-			(reverse ? _texture_neurone_air_reverse_off : _texture_neurone_air_off);
+			(reversed ? _texture_neurone_air_reverse_on : _texture_neurone_air_on) :
+			(reversed ? _texture_neurone_air_reverse_off : _texture_neurone_air_off);
 		break;
 
 	default:

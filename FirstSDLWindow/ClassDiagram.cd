@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Brain">
+    <Position X="6.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACEAKIAAQDCgAAAgAAAACgEQAgCACCAASgAAAUAAA=</HashCode>
+      <FileName>Brain.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core">
+    <Position X="4.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAIAgAAAJAAAAgAggAAAEAAgBBAAAAQgggBUBAA=</HashCode>
+      <FileName>Core.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game">
+    <Position X="17.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAIAAAgBEABBAAgAAC0gAEAgAIAIABARAAAAUAQA=</HashCode>
+      <FileName>Game.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Genetic">
+    <Position X="6.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAEAAQAAAgAAABACEAAAAAABAAAAAAAkBAA=</HashCode>
+      <FileName>Genetic.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Level">
+    <Position X="10" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAABAAAAAAABQAAgAACAEAGAAAAAABAAAAAAA0QAA=</HashCode>
+      <FileName>Level.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LevelEditor">
+    <Position X="21.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAIAAAIBBAARQAQgAAgEAAGBAAIBEAEAgAAEAUAWA=</HashCode>
+      <FileName>LevelEditor.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Neurone">
+    <Position X="3" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAJgCSABwQAAgIAgAAAEQAABBQAAAAAgGAUAEA=</HashCode>
+      <FileName>Neurone.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Obstacle">
+    <Position X="16" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAgIAAQCAAQAShAAAAAAAQAAAAAAAAAIAGQAAAA=</HashCode>
+      <FileName>Obstacle.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player">
+    <Position X="8.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgGAMAAASAAQTDmAgACAEIQECAAAgMBAAgAQSAUOQA=</HashCode>
+      <FileName>Player.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TexturesManager">
+    <Position X="13.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAgEKAAAgQQggAAgCCAEgAAAAKAQAgAABAAIAI=</HashCode>
+      <FileName>TexturesManager.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -33,7 +33,7 @@ public:
     static void init(SDL_Renderer* renderer);
 
     static SDL_Texture* getPlayerTexture() { return _texture_player; }
-    static SDL_Texture* getNeuroneTexture(Neurone neurone);
+    static SDL_Texture* getNeuroneTexture(ObstacleType type, bool activated, bool reversed);
     static SDL_Texture* getBlockTexture(ObstacleType obstacle_type);
 };
 

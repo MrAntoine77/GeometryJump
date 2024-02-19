@@ -1,21 +1,24 @@
 #pragma once
+#include <vector>
+
 #include "utils.hpp"
 #include "TexturesManager.hpp"
 #include "Obstacle.hpp"
+#include "Neurone.hpp"
 
 class Core
 {
 private:
 	static const int _NEURONE_HITBOX_SIZE = 48;
-
 	static const int _NB_NEURONES_MIN = 1;
-	static const int _NB_NEURONES_MAX = 3;
+	static const int _NB_NEURONES_MAX = 8;
 	static const int _DIST_NEURONE_MIN = 0;
-	static const int _DIST_NEURONE_MAX = 8 * (BLOCK_SIZE/ _NEURONE_HITBOX_SIZE);
+	static const int _DIST_NEURONE_MAX = 10 * (BLOCK_SIZE/ _NEURONE_HITBOX_SIZE);
 
 	static SDL_Renderer* _renderer;
 
 	std::vector<Neurone> _neurones;
+
 	int _dist_neurone;
 public:
 	static void setRenderer(SDL_Renderer* renderer);
@@ -27,11 +30,11 @@ public:
 	void update(std::vector<Obstacle> obstacles, int brain_x, int brain_y);
 	void render(bool highlight);
 
-
-	void setNeurone(int id_neurone, float x, float y, ObstacleType type, bool reverse);
 	void deleteRandomNeurone();
 	void addRandomNeurone();
 	void modifyRandomNeurone();
+
+	void setNeurone(int id_neurone, float x, float y, ObstacleType type, bool reversed);
 
 	bool isActivated() const;
 	int getNbNeurones() const { return static_cast<int>(_neurones.size()); }

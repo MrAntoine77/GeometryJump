@@ -149,12 +149,6 @@ void Player::render(ShowHitboxes hitboxes)
 
     if (hitboxes == ShowHitboxes::ON)
     {
-        SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
-        SDL_RenderDrawRect(_renderer, &_hitbox_floor);
-
-        SDL_SetRenderDrawColor(_renderer, 128, 255, 0, 255);
-        SDL_RenderDrawRect(_renderer, &_hitbox_death);
-
         SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
         SDL_RenderDrawRect(_renderer, &_hitbox_main);
     }
@@ -168,11 +162,12 @@ void Player::render(ShowHitboxes hitboxes)
 
 void Player::die()
 {
-    if (_gamemode == Gamemode::PLAYING)
-    {
-        SDL_Delay(500);
-    }
+    //if (_gamemode == Gamemode::PLAYING)
+    //{
+    //    SDL_Delay(500);
+    //}
     
+
     _rect.x = _INIT_X;
     _rect.y = _INIT_Y;
     _rect.w = BLOCK_SIZE;
@@ -200,9 +195,6 @@ void Player::die()
 void Player::updateHitboxes()
 {
     _hitbox_main = _rect;
-    _hitbox_death = { _rect.x, _rect.y, _rect.w, 48 };
-    _hitbox_floor = { _rect.x + 2, _rect.y + 48, BLOCK_SIZE - 4, 32 };
-
 }
 
 void Player::jump()

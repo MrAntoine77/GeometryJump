@@ -36,13 +36,13 @@ Brain::Brain(const Brain& src)
 Brain::Brain(std::string filename)
 {
 	std::ifstream file(filename);
-
 	if (file.is_open()) {
+		std::cout << filename << std::endl;
 
 		int dist_neurone, nb_neurones, nb_cores;
 		file >> nb_cores;
 
-		for (auto& core : _cores)
+		for (int i = 0; i < nb_cores; i++)
 		{
 			file >> nb_neurones >> dist_neurone;
 			float x, y;
@@ -55,6 +55,7 @@ Brain::Brain(std::string filename)
 			for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
 			{
 				file >> x >> y >> type >> reverse;
+				
 				core.setNeurone(id_neurone, x, y,  static_cast<ObstacleType>(type), reverse);
 			}
 		}
@@ -67,7 +68,7 @@ Brain::Brain(std::string filename)
 	_score = 0;
 }
 
-void Brain::saveToFile(std::string filename)
+void Brain::saveToFile(std::string filename) const
 {
 	std::ofstream file(filename);
 	if (file.is_open()) {
@@ -85,10 +86,10 @@ void Brain::saveToFile(std::string filename)
 			{
 				Neurone neurone = core.getNeuroneAt(id_neurone);
 
-				float x = neurone.x;
-				float y = neurone.y;
-				ObstacleType type = neurone .type;
-				bool reverse = neurone.reverse;
+				float x = neurone.getX();
+				float y = neurone.getY();
+				ObstacleType type = neurone.getType();
+				bool reverse = neurone.isReversed();
 
 				file << x << " " << y << " " << static_cast<int>(type) << " " << reverse << std::endl;
 			}

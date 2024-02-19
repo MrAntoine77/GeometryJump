@@ -1,16 +1,15 @@
 #pragma once
-
-#include <SDL.h>
-#include "SDL_image.h"
-#include <fstream>
-#include "utils.hpp"
 #include <cstdlib>
 #include <ctime>
 #include <set>
 #include <random>
+#include <SDL.h>
+#include "SDL_image.h"
+#include <fstream>
+#include <vector>
+
+#include "utils.hpp"
 #include "Core.hpp"
-
-
 
 class Brain
 {
@@ -18,12 +17,11 @@ private:
 	static SDL_Renderer* _renderer;
 	static int _best_score;
 
+	std::vector<Core> _cores;
+
 	int _score = 0;
 	int _x = 0;
 	int _y = 0;
-	int _nb_total_neurones = 0;
-	std::vector<Core> _cores;
-
 public:
 	static void setRenderer(SDL_Renderer* renderer);
 	static int getBestScore() { return _best_score; }
@@ -39,7 +37,7 @@ public:
 	void addRandomNeurone();
 	void modifyRandomNeurone();
 
-	void saveToFile(std::string filename);
+	void saveToFile(std::string filename) const;
 	void setPos(int x, int y);
 	void setNeurone(int id_core, int id_neurone, float x, float y, ObstacleType type, bool reverse);
 	void updateScore(int score);
