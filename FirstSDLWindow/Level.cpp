@@ -39,7 +39,9 @@ void Level::updateHitboxes(
                 && ((_obstacles[i + z].*get1)() == (_obstacles[i + z + 1].*get1)() - 64)
                 && ((_obstacles[i + z].*get2)() == (_obstacles[i + z + 1].*get2)())
                 && (_obstacles[i + z].getDirection() == _obstacles[i + z + 1].getDirection())
-                && (_obstacles[i + z].getType() == _obstacles[i + z + 1].getType()))
+                && (_obstacles[i + z].getType() == _obstacles[i + z + 1].getType())
+                && (_obstacles[i + z].getNbX() == _obstacles[i + z + 1].getNbX())
+                && (_obstacles[i + z].getNbY() == _obstacles[i + z + 1].getNbY()))
             {
                 z++;
             }

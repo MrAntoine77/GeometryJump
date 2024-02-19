@@ -53,7 +53,6 @@ void Genetic::alter(Brain& brain)
 			break;
 		}
 	}
-
 }
 
 int Genetic::nextExp()

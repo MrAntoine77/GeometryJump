@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
         return 1; 
     }
 
-    Game* game = new Game(ShowHitboxes::ON, Rendering::ON, Gamemode::PLAYING, 17); //
+    Game* game = new Game(ShowHitboxes::ON, Rendering::ON, Gamemode::TESTING, 17); //
     game->init("Geometry Jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, false);
 
     while (game->isRunning()) 

@@ -42,6 +42,8 @@ public:
     int getInitX() { return _init_x; }
     int getX() const { return _x; }
     int getY() const { return _y; }
+    int getNbX() const { return _nb_x; }
+    int getNbY() const { return _nb_y; }
     SDL_Rect getHitbox() const { return _hitbox; }
     ObstacleType getType() const { return _type; }
     Direction getDirection() const { return _direction; }

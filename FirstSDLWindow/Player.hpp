@@ -9,7 +9,7 @@
 class Player
 {
 private:
-    static const int _NB_CORES = 8;
+    static const int _NB_CORES = 10;
     static const int _INIT_X = 256;
     static const int _INIT_Y = 384;
     

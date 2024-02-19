@@ -35,10 +35,10 @@ Brain::Brain(const Brain& src)
 
 Brain::Brain(std::string filename)
 {
+	std::cout << "Brain " << filename <<  "loaded" << std::endl;
 	std::ifstream file(filename);
-	if (file.is_open()) {
-		std::cout << filename << std::endl;
-
+	if (file.is_open())
+	{       
 		int dist_neurone, nb_neurones, nb_cores;
 		file >> nb_cores;
 
@@ -70,6 +70,7 @@ Brain::Brain(std::string filename)
 
 void Brain::saveToFile(std::string filename) const
 {
+	std::cout << "Braine saved to : " << filename << " with score : " << _score <<std::endl;
 	std::ofstream file(filename);
 	if (file.is_open()) {
 		int nb_neurones, dist_neurones;
