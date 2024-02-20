@@ -106,13 +106,13 @@ void Obstacle::setX(int x)
 void Obstacle::setNbX(int nb_x)
 {
     _nb_x = nb_x;
-    _hitbox.w = BLOCK_SIZE * _nb_x;
+    _hitbox.w += BLOCK_SIZE * (_nb_x - 1);
 }
 
 void Obstacle::setNbY(int nb_y)
 {
     _nb_y = nb_y;
-    _hitbox.h = BLOCK_SIZE * _nb_y;
+    _hitbox.h += BLOCK_SIZE * (_nb_y - 1);
 }
 
 
@@ -137,12 +137,17 @@ bool Obstacle::compareByY(const Obstacle& obstacle1, const Obstacle& obstacle2)
 
 bool Obstacle::isGroupable(Axe axe) const
 {
-    bool is_groupable = false;
+    switch (_type) {
+    case ObstacleType::BLOCK:
+        return true;
+    case ObstacleType::SLAB_UPPER:
+    case ObstacleType::SPIKE:
+    case ObstacleType::SPIKE_SMALL:
+        return (axe == Axe::X && (_direction == Direction::UP || _direction == Direction::DOWN)) ||
+            (axe == Axe::Y && (_direction == Direction::RIGHT || _direction == Direction::LEFT));
 
-    is_groupable |= (_type == ObstacleType::BLOCK);
-    is_groupable |= ((axe == Axe::X) && (_direction == Direction::UP || _direction == Direction::DOWN) && (_type == ObstacleType::SLAB_UPPER));
-    is_groupable |= ((axe == Axe::Y) && (_direction == Direction::RIGHT || _direction == Direction::DOWN) && (_type == ObstacleType::SLAB_UPPER));
-
-    return is_groupable;
+    default:
+        return false;
+    }
+    return true;
 }
-

@@ -34,17 +34,18 @@ void Game::init(std::string title, int x, int y, int w, int h, bool fullscreen)
 		TexturesManager::init(_renderer);
 		std::cout << "Textures loaded" << std::endl;
 
+		std::string level_filename = "Levels/created_level2.txt";
 
 		if (_gamemode != Gamemode::EDITING)
 		{
 			_player = Player(false, _gamemode, 0, "Brains/test.txt", "Textures/icon2.png");
-			_level = Level("Levels/created_level.txt", &_player);
+			_level = Level(level_filename, &_player);
 
 			std::cout << _NB_LEVELS << " players initialized" << std::endl;
 		}
 		else
 		{
-			_level_editor = LevelEditor("Levels/created_level.txt");
+			_level_editor = LevelEditor(level_filename);
 		}
 
 		_running = true;

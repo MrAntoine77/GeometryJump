@@ -12,7 +12,7 @@ class Genetic
 {
 private:
 	static const int _NB_BRAINS = 512;
-	static const int _NB_MAX_MODIFS = 8;
+	static const int _NB_MAX_MODIFS = 16;
 
 	static SDL_Renderer* _renderer;
 

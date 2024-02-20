@@ -166,13 +166,7 @@ void Player::render(ShowHitboxes hitboxes)
 }
 
 void Player::die()
-{
-    //if (_gamemode == Gamemode::PLAYING)
-    //{
-    //    SDL_Delay(500);
-    //}
-    
-
+{   
     _rect.x = _INIT_X;
     _rect.y = _INIT_Y;
     _rect.w = BLOCK_SIZE;
@@ -184,7 +178,7 @@ void Player::die()
 
     if (_gamemode == Gamemode::TRAINING)
     {
-        _brain->updateScore(_brain->getScore());// -_brain->getNbTotalNeurones());
+        _brain->updateScore(_brain->getScore() -_brain->getNbTotalNeurones());
 
         if (_IA.nextExp() == 0) {
             _generation++;
