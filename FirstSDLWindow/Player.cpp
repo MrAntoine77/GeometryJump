@@ -18,7 +18,12 @@ Player::Player() :
 Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string brain_filename, std::string texture_filename) :
     _invincible(invincible), _gamemode(gamemode), _id_player(idPlayer), _brain_filename(brain_filename)
 {
-    _IA = Genetic(_NB_CORES);
+
+    if (_gamemode == Gamemode::TRAINING)
+    {
+        _IA = Genetic(_NB_CORES);
+    }
+    
     initMode(_gamemode);
 
 
@@ -182,8 +187,8 @@ void Player::die()
         _brain->updateScore(_brain->getScore());// -_brain->getNbTotalNeurones());
 
         if (_IA.nextExp() == 0) {
-            std::cout << "[" << _generation << "] generation " << std::endl;
             _generation++;
+            std::cout << "[" << _generation << "] generation " << std::endl;
             _IA.update();
         }
 

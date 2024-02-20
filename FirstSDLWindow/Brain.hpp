@@ -36,6 +36,7 @@ public:
 	void deleteRandomNeurone();
 	void addRandomNeurone();
 	void modifyRandomNeurone();
+	void merge(const Brain& brain);
 
 	void saveToFile(std::string filename) const;
 	void setPos(int x, int y);

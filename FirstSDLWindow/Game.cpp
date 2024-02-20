@@ -47,7 +47,6 @@ void Game::init(std::string title, int x, int y, int w, int h, bool fullscreen)
 			_level_editor = LevelEditor("Levels/created_level.txt");
 		}
 
-
 		_running = true;
 	} 
 	else 

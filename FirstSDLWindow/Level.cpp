@@ -154,15 +154,13 @@ int Level::checkAllCollisions()
     _player->updateHitboxes();
 
     int replace_y = -1;
-    int test = 0;
     SDL_Rect hitbox_player = _player->getHitboxMain();
 
     for (auto& obstacle : _obstacles)
     {
-        int obstacle_x = obstacle.getHitbox().x;
-
-        ObstacleType obstacle_type = obstacle.getType();
         SDL_Rect hitbox_obstacle = obstacle.getHitbox();
+        ObstacleType obstacle_type = obstacle.getType();
+        
             
 
         switch (obstacle_type)
@@ -211,9 +209,9 @@ int Level::checkAllCollisions()
     }
 
 
-    if (hitbox_player.y > 604)
+    if (hitbox_player.y > _floor_y)
     {
-        replace_y = 604;
+        replace_y = _floor_y;
     }
 
 

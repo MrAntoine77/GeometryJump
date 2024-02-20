@@ -12,17 +12,19 @@ class Genetic
 {
 private:
 	static const int _NB_BRAINS = 512;
-	static const int _NB_MAX_MODIFS = 1;
+	static const int _NB_MAX_MODIFS = 8;
 
 	static SDL_Renderer* _renderer;
 
 	std::vector<Brain> _brains;
+	Brain _best_brain;
 	
 	int _current_brain_id = 0;
 public:
 	static void setRenderer(SDL_Renderer * renderer);
 
-	Genetic(int nb_cores = 0);
+	Genetic(int nb_cores);
+	Genetic();
 
 	void update();
 	void alter(Brain& brain);

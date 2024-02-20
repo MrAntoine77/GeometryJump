@@ -8,7 +8,7 @@
 class Neurone
 {
 private:
-    static const int _NEURONE_HITBOX_SIZE = 48;
+    static const int _NEURONE_HITBOX_SIZE = 32;
     static const int _NB_NEURONES_MIN = 1;
     static const int _NB_NEURONES_MAX = 8;
     static const int _DIST_NEURONE_MIN = 0;

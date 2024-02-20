@@ -51,5 +51,6 @@ public:
     static bool compareByX(const Obstacle& obstacle1, const Obstacle& obstacle2);
     static bool compareByY(const Obstacle& obstacle1, const Obstacle& obstacle2);
 
+
 };
 

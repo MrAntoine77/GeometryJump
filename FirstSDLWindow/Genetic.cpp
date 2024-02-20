@@ -16,19 +16,30 @@ Genetic::Genetic(int nb_cores)
 	}
 
 	_current_brain_id = 0;
+	_best_brain = _brains[0];
+}
+
+
+Genetic::Genetic()
+{
+	_current_brain_id = 0;
 }
 
 void Genetic::update()
 {
-	auto it_best_brain = std::max_element(_brains.begin(), _brains.end());
-
-	for (auto& brain : _brains)
+	if (Brain::getBestScore() > _best_brain.getScore())
 	{
-		if (&brain != &(*it_best_brain))
+		std::sort(_brains.begin(), _brains.end(), std::greater<>());
+		if (_brains[0].getScore() > _best_brain.getScore())
 		{
-			brain = *it_best_brain;
-			alter(brain);
+			_best_brain = Brain(_brains[0]);
 		}
+	}
+
+	for (int id_brain = 0; id_brain < _NB_BRAINS; id_brain++)
+	{
+		_brains[id_brain] = Brain(_best_brain);
+		alter(_brains[id_brain]);
 	}
 }
 

@@ -23,6 +23,8 @@ Brain::Brain(int nb_cores)
 
 Brain::Brain(const Brain& src)
 {
+	
+
 	int nb_cores = static_cast<int>(src._cores.size());
 	for (int id_core = 0; id_core < nb_cores; id_core++)
 	{
@@ -35,7 +37,7 @@ Brain::Brain(const Brain& src)
 
 Brain::Brain(std::string filename)
 {
-	std::cout << "Brain " << filename <<  "loaded" << std::endl;
+	
 	std::ifstream file(filename);
 	if (file.is_open())
 	{       
@@ -50,14 +52,15 @@ Brain::Brain(std::string filename)
 			bool reverse;
 			Core core(nb_neurones, dist_neurone);
 
-			_cores.push_back(core);
-
 			for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
 			{
 				file >> x >> y >> type >> reverse;
 				
 				core.setNeurone(id_neurone, x, y,  static_cast<ObstacleType>(type), reverse);
 			}
+
+			_cores.push_back(core);
+			std::cout << "Brain " << filename << " loaded" << std::endl;
 		}
 		file.close();
 	}
@@ -70,7 +73,7 @@ Brain::Brain(std::string filename)
 
 void Brain::saveToFile(std::string filename) const
 {
-	std::cout << "Braine saved to : " << filename << " with score : " << _score <<std::endl;
+	std::cout << "Brain saved to : " << filename << std::endl;
 	std::ofstream file(filename);
 	if (file.is_open()) {
 		int nb_neurones, dist_neurones;
@@ -136,6 +139,14 @@ void Brain::modifyRandomNeurone()
 	int id_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
 	_cores[id_core].modifyRandomNeurone();
 
+}
+
+void Brain::merge(const Brain& brain)
+{
+	for (int i = 0; i < static_cast<int>(brain._cores.size()); i+=2)
+	{
+		_cores[i] = brain._cores[i];
+	}
 }
 
 void Brain::addRandomNeurone()
