@@ -11,11 +11,11 @@ void Brain::setRenderer(SDL_Renderer* renderer) {
 	Core::setRenderer(_renderer);
 }
 
-Brain::Brain(int nb_cores)
+Brain::Brain(int nb_cores, int nb_neurones)
 {
 	for (int id_core = 0; id_core < nb_cores; id_core++)
 	{
-		Core core;
+		Core core = Core(nb_neurones);
 		_cores.push_back(core);
 	}
 	_score = 0;
@@ -127,33 +127,57 @@ void Brain::setPos(int x, int y)
 	_y = y;
 }
 
-void Brain::deleteRandomNeurone()
+void Brain::deleteRandomNeurone(int nb_neurones)
 {
-	int id_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
-	_cores[id_core].deleteRandomNeurone();
-
-}
-
-void Brain::modifyRandomNeurone()
-{
-	int id_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
-	_cores[id_core].modifyRandomNeurone();
-
-}
-
-void Brain::merge(const Brain& brain)
-{
-	for (int i = 0; i < static_cast<int>(brain._cores.size()); i+=2)
+	if (static_cast<int>(_cores.size()) > 0)
 	{
-		_cores[i] = brain._cores[i];
+		int id_random_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
+
+		if (_cores[id_random_core].getNbNeurones() > nb_neurones)
+		{
+			for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
+			{
+				_cores[id_random_core].deleteRandomNeurone();
+			}
+		}
+		else
+		{
+			_cores.erase(_cores.begin() + id_random_core);
+		}
 	}
 }
 
-void Brain::addRandomNeurone()
-{
-	int id_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
-	_cores[id_core].deleteRandomNeurone();
 
+
+void Brain::addRandomNeurone(int nb_neurones)
+{
+	if (static_cast<int>(_cores.size()) > 0)
+	{
+		int id_random_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
+
+		for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
+		{
+			if (_cores[id_random_core].getNbNeurones() < CORE_NB_NEURONE_MAX)
+			{
+				_cores[id_random_core].addRandomNeurone();
+			}
+		}
+	}
+}
+
+void Brain::addRandomCore(int nb_neurones)
+{
+	Core core(nb_neurones);
+	_cores.push_back(core);
+}
+
+void Brain::modifyRandomNeurone(int nb_neurones)
+{
+	for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
+	{
+		int id_core = generateRandomInt(0, static_cast<int>(_cores.size()) - 1);
+		_cores[id_core].modifyRandomNeurone();
+	}
 }
 
 void Brain::setNeurone(int id_core, int id_neurone, float x, float y, ObstacleType type, bool reverse)
@@ -189,7 +213,8 @@ void Brain::updateScore(int score)
 	if (_score > _best_score)
 	{
 		_best_score = _score;
-		std::cout << "Best score reached : " << (float)_best_score / 1000.0 << std::endl;
+		std::cout << "Best score reached : " << (float)_best_score / 1000.0
+			<< " with " << static_cast<int>(_cores.size()) << " cores" << std::endl;
 		saveToFile("Brains/test.txt");
 	}
 }

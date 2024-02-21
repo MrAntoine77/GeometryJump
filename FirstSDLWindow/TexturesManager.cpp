@@ -31,26 +31,26 @@ void TexturesManager::init(SDL_Renderer* renderer)
 {
 	_renderer = renderer;
 
-	_texture_block = loadTexture("Textures/block.png", _renderer);
-	_texture_spike = loadTexture("Textures/spike.png", _renderer);
-	_texture_spike_small = loadTexture("Textures/spike_small.png", _renderer);
-	_texture_yellow_orb = loadTexture("Textures/yellow_orb.png", _renderer);
-	_texture_pink_orb = loadTexture("Textures/pink_orb.png", _renderer);
-	_texture_blue_orb = loadTexture("Textures/blue_orb.png", _renderer);
-	_texture_slab_upper = loadTexture("Textures/slab_upper.png", _renderer);
+	_texture_block			= loadTexture("Textures/Obstacles/block.png", _renderer);
+	_texture_spike			= loadTexture("Textures/Obstacles/spike.png", _renderer);
+	_texture_spike_small	= loadTexture("Textures/Obstacles/spike_small.png", _renderer);
+	_texture_yellow_orb		= loadTexture("Textures/Obstacles/yellow_orb.png", _renderer);
+	_texture_pink_orb		= loadTexture("Textures/Obstacles/pink_orb.png", _renderer);
+	_texture_blue_orb		= loadTexture("Textures/Obstacles/blue_orb.png", _renderer);
+	_texture_slab_upper		= loadTexture("Textures/Obstacles/slab_upper.png", _renderer);
 
-	_texture_neurone_spike_on = loadTexture("Textures/Neurones/neurone_spike_on.png", _renderer);
-	_texture_neurone_spike_off = loadTexture("Textures/Neurones/neurone_spike_off.png", _renderer);
-	_texture_neurone_block_on = loadTexture("Textures/Neurones/neurone_block_on.png", _renderer);
-	_texture_neurone_block_off = loadTexture("Textures/Neurones/neurone_block_off.png", _renderer);
-	_texture_neurone_air_on = loadTexture("Textures/Neurones/neurone_air_on.png", _renderer);
-	_texture_neurone_air_off = loadTexture("Textures/Neurones/neurone_air_off.png", _renderer);
-	_texture_neurone_spike_reverse_on = loadTexture("Textures/Neurones/neurone_spike_reverse_on.png", _renderer);
-	_texture_neurone_spike_reverse_off = loadTexture("Textures/Neurones/neurone_spike_reverse_off.png", _renderer);
-	_texture_neurone_block_reverse_on = loadTexture("Textures/Neurones/neurone_block_reverse_on.png", _renderer);
-	_texture_neurone_block_reverse_off = loadTexture("Textures/Neurones/neurone_block_reverse_off.png", _renderer);
-	_texture_neurone_air_reverse_on = loadTexture("Textures/Neurones/neurone_air_reverse_on.png", _renderer);
-	_texture_neurone_air_reverse_off = loadTexture("Textures/Neurones/neurone_air_reverse_off.png", _renderer);
+	_texture_neurone_spike_on			= loadTexture("Textures/Neurones/neurone_spike_on.png", _renderer);
+	_texture_neurone_spike_off			= loadTexture("Textures/Neurones/neurone_spike_off.png", _renderer);
+	_texture_neurone_block_on			= loadTexture("Textures/Neurones/neurone_block_on.png", _renderer);
+	_texture_neurone_block_off			= loadTexture("Textures/Neurones/neurone_block_off.png", _renderer);
+	_texture_neurone_air_on				= loadTexture("Textures/Neurones/neurone_air_on.png", _renderer);
+	_texture_neurone_air_off			= loadTexture("Textures/Neurones/neurone_air_off.png", _renderer);
+	_texture_neurone_spike_reverse_on	= loadTexture("Textures/Neurones/neurone_spike_reverse_on.png", _renderer);
+	_texture_neurone_spike_reverse_off	= loadTexture("Textures/Neurones/neurone_spike_reverse_off.png", _renderer);
+	_texture_neurone_block_reverse_on	= loadTexture("Textures/Neurones/neurone_block_reverse_on.png", _renderer);
+	_texture_neurone_block_reverse_off	= loadTexture("Textures/Neurones/neurone_block_reverse_off.png", _renderer);
+	_texture_neurone_air_reverse_on		= loadTexture("Textures/Neurones/neurone_air_reverse_on.png", _renderer);
+	_texture_neurone_air_reverse_off	= loadTexture("Textures/Neurones/neurone_air_reverse_off.png", _renderer);
 
 	_texture_player = loadTexture("Textures/icon1.png", _renderer);
 }

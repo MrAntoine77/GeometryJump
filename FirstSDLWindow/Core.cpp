@@ -8,10 +8,8 @@ void Core::setRenderer(SDL_Renderer* renderer) {
 	Neurone::setRenderer(_renderer);
 }
 
-Core::Core()
+Core::Core(int nb_neurones)
 {
-	int nb_neurones = generateRandomInt(_NB_NEURONES_MIN, _NB_NEURONES_MAX);
-
 	for (int id_neurone = 0; id_neurone < nb_neurones; id_neurone++)
 	{
 		Neurone neurone;
@@ -47,25 +45,28 @@ void Core::update(std::vector<Obstacle> obstacles, int brain_x, int brain_y)
 
 void Core::render(bool highlight)
 {
-	int center_x = 0;
-	int center_y = 0;
-
-	for (auto& neurone : _neurones)
+	if (_neurones.size() > 0)
 	{
-		center_x += neurone.getRect().x + static_cast<int>(_NEURONE_HITBOX_SIZE / 2);
-		center_y += neurone.getRect().y + static_cast<int>(_NEURONE_HITBOX_SIZE / 2);
+		int center_x = 0;
+		int center_y = 0;
 
-		neurone.render(highlight);
-	}
-	center_x = static_cast<int>(center_x / _neurones.size());
-	center_y = static_cast<int>(center_y / _neurones.size());
-
-	if (highlight)
-	{
 		for (auto& neurone : _neurones)
 		{
-			SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-			SDL_RenderDrawLine(_renderer, neurone.getRect().x + static_cast<int>(_NEURONE_HITBOX_SIZE / 2), neurone.getRect().y + static_cast<int>(_NEURONE_HITBOX_SIZE / 2), center_x, center_y);
+			center_x += neurone.getRect().x + static_cast<int>(NEURONE_HITBOX_SIZE / 2);
+			center_y += neurone.getRect().y + static_cast<int>(NEURONE_HITBOX_SIZE / 2);
+
+			neurone.render(highlight);
+		}
+		center_x = static_cast<int>(center_x / _neurones.size());
+		center_y = static_cast<int>(center_y / _neurones.size());
+
+		if (highlight)
+		{
+			for (auto& neurone : _neurones)
+			{
+				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+				SDL_RenderDrawLine(_renderer, neurone.getRect().x + static_cast<int>(NEURONE_HITBOX_SIZE / 2), neurone.getRect().y + static_cast<int>(NEURONE_HITBOX_SIZE / 2), center_x, center_y);
+			}
 		}
 	}
 }
@@ -78,28 +79,15 @@ void Core::setNeurone(int id_neurone, float x, float y, ObstacleType type, bool 
 
 void Core::deleteRandomNeurone()
 {
-	if (_neurones.size() > _NB_NEURONES_MIN)
-	{
-		int id_rdm_neurone = generateRandomInt(0, static_cast<int>(_neurones.size()) - 1);
-		_neurones.erase(_neurones.begin() + id_rdm_neurone);
-	} 
-	else
-	{
-		addRandomNeurone();
-	}
+	int id_rdm_neurone = generateRandomInt(0, static_cast<int>(_neurones.size()) - 1);
+	_neurones.erase(_neurones.begin() + id_rdm_neurone);
+
 }
 
 void Core::addRandomNeurone()
 {
-	if (_neurones.size() < _NB_NEURONES_MAX)
-	{
-		Neurone neurone;
-		_neurones.push_back(neurone);		
-	}
-	else
-	{
-		deleteRandomNeurone();
-	}
+	Neurone neurone;
+	_neurones.push_back(neurone);		
 }
 
 void Core::modifyRandomNeurone()

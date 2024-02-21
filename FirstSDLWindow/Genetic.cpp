@@ -7,16 +7,15 @@ void Genetic::setRenderer(SDL_Renderer* renderer)
 	_renderer = renderer;
 }
 
-Genetic::Genetic(int nb_cores)
+Genetic::Genetic(int nb_cores, int nb_neurones)
 {
-	for (int id_brain = 0; id_brain < _NB_BRAINS; id_brain++)
+	for (int id_brain = 0; id_brain < GENETIC_NB_BRAINS; id_brain++)
 	{
-		Brain brain(nb_cores);
+		Brain brain(nb_cores, nb_neurones);
 		_brains.push_back(brain);
 	}
 
 	_current_brain_id = 0;
-	_best_brain = _brains[0];
 }
 
 
@@ -27,47 +26,46 @@ Genetic::Genetic()
 
 void Genetic::update()
 {
-	if (Brain::getBestScore() > _best_brain.getScore())
+	std::sort(_brains.begin(), _brains.end(), std::greater<>());
+
+	for (int id_brain = 0; id_brain < (GENETIC_NB_BRAINS / GENETIC_NB_DIV); id_brain++)
 	{
-		std::sort(_brains.begin(), _brains.end(), std::greater<>());
-		if (_brains[0].getScore() > _best_brain.getScore())
+		for (int i = 1; i < GENETIC_NB_DIV; i++)
 		{
-			_best_brain = Brain(_brains[0]);
+			_brains[id_brain + i * (GENETIC_NB_BRAINS / GENETIC_NB_DIV)] = Brain(_brains[id_brain]);
+			alter(_brains[id_brain + i * (GENETIC_NB_BRAINS / GENETIC_NB_DIV)]);
 		}
 	}
 
-	for (int id_brain = 0; id_brain < _NB_BRAINS; id_brain++)
-	{
-		_brains[id_brain] = Brain(_best_brain);
-		alter(_brains[id_brain]);
-	}
+	
 }
 
 void Genetic::alter(Brain& brain)
 {
-	int nb_modifs = generateRandomInt(1, _NB_MAX_MODIFS);
-	int random = generateRandomInt(0, 2);
+	int nb_modifs = generateRandomInt(1, GENETIC_NB_MAX_MODIFS);
+	int random = generateRandomInt(0, 3);
 
-	for (int id_modif = 0; id_modif < nb_modifs; id_modif++)
+	switch (random)
 	{
-		switch (random)
-		{
-		case 0:
-			brain.modifyRandomNeurone();
-			break;
-		case 1:
-			brain.deleteRandomNeurone();
-			break;
-		case 2:
-			brain.addRandomNeurone();
-		default:
-			break;
-		}
+	case 0:
+		brain.modifyRandomNeurone(nb_modifs);
+		break;
+	case 1:
+		brain.deleteRandomNeurone(nb_modifs);
+		break;
+	case 2:
+		brain.addRandomNeurone(nb_modifs);
+		break;
+	case 3:
+		brain.addRandomCore(nb_modifs);
+		break;
+	default:
+		break;
 	}
 }
 
 int Genetic::nextExp()
 {
-	_current_brain_id = (_current_brain_id + 1) % _NB_BRAINS;
+	_current_brain_id = (_current_brain_id + 1) % GENETIC_NB_BRAINS;
 	return _current_brain_id;
 }

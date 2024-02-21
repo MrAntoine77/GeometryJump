@@ -17,8 +17,8 @@ Neurone::Neurone(const Neurone& src)
 
 Neurone::Neurone()
 {
-	_x = generateRandomFloat(0, _DIST_NEURONE_MAX);
-	_y = generateRandomFloat(-_DIST_NEURONE_MAX / 2, _DIST_NEURONE_MAX / 2);
+	_x = generateRandomFloat(0, NEURONE_DIST_MAX);
+	_y = generateRandomFloat(-NEURONE_DIST_MAX / 2, NEURONE_DIST_MAX / 2);
 	_type = Obstacle::generateRandomNeuroneType();
 	_reversed = (generateRandomInt(0, 1) == 0);
 	_activated = false;
@@ -29,7 +29,7 @@ void Neurone::render(bool highlight)
 	SDL_Texture* pt_texture = TexturesManager::getNeuroneTexture(_type, _activated, _reversed);
 	if (!highlight)
 	{
-		SDL_SetTextureAlphaMod(pt_texture, _ALPHA_UNSELECTED_NEURONE);
+		SDL_SetTextureAlphaMod(pt_texture, NEURONE_ALPHA_UNSELECTED);
 		SDL_RenderCopyEx(_renderer, pt_texture, NULL, &_rect, 0, NULL, SDL_FLIP_NONE);
 		SDL_SetTextureAlphaMod(pt_texture, 255);
 	}
@@ -41,9 +41,9 @@ void Neurone::render(bool highlight)
 
 void Neurone::update(const std::vector<Obstacle>& obstacles, int brain_x, int brain_y)
 {
-	int neurone_x = static_cast<int>(static_cast<float>(_NEURONE_HITBOX_SIZE) * _x);
-	int neurone_y = static_cast<int>(static_cast<float>(_NEURONE_HITBOX_SIZE) * _y);
-	_rect = { neurone_x + brain_x, neurone_y + brain_y, _NEURONE_HITBOX_SIZE, _NEURONE_HITBOX_SIZE };
+	int neurone_x = static_cast<int>(static_cast<float>(NEURONE_HITBOX_SIZE) * _x);
+	int neurone_y = static_cast<int>(static_cast<float>(NEURONE_HITBOX_SIZE) * _y);
+	_rect = { neurone_x + brain_x, neurone_y + brain_y, NEURONE_HITBOX_SIZE, NEURONE_HITBOX_SIZE };
 
 	bool collision = false, spike_collision = false, block_collision = false;
 

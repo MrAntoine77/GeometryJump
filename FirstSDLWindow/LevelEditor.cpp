@@ -184,9 +184,9 @@ void LevelEditor::addStep(int add)
 	{
 		_step = 0;
 	}
-	else if (_step + add > (_NB_MAX_X - _NB_DISPLAYED_X))
+	else if (_step + add > (EDITOR_NB_MAX_X - EDITOR_NB_DISPLAYED_X))
 	{
-		_step = _NB_MAX_X - _NB_DISPLAYED_X;
+		_step = EDITOR_NB_MAX_X - EDITOR_NB_DISPLAYED_X;
  	}
 	else
 	{

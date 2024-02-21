@@ -8,11 +8,7 @@
 
 class Player
 {
-private:
-    static const int _NB_CORES = 8;
-    static const int _INIT_X = 256;
-    static const int _INIT_Y = 384;
-    
+private:   
     static SDL_Renderer* _renderer;
 
     SDL_Texture* _texture = nullptr;

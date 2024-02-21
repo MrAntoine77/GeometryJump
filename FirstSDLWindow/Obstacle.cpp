@@ -115,8 +115,6 @@ void Obstacle::setNbY(int nb_y)
     _hitbox.h += BLOCK_SIZE * (_nb_y - 1);
 }
 
-
-
 bool Obstacle::compareByX(const Obstacle& obstacle1, const Obstacle& obstacle2)
 {
     return (static_cast<int>(obstacle1._type) < static_cast<int>(obstacle2._type)) ||
@@ -139,15 +137,18 @@ bool Obstacle::isGroupable(Axe axe) const
 {
     switch (_type) {
     case ObstacleType::BLOCK:
-        return true;
     case ObstacleType::SLAB_UPPER:
     case ObstacleType::SPIKE:
     case ObstacleType::SPIKE_SMALL:
-        return (axe == Axe::X && (_direction == Direction::UP || _direction == Direction::DOWN)) ||
-            (axe == Axe::Y && (_direction == Direction::RIGHT || _direction == Direction::LEFT));
-
+        return true;
+        break;
+    case ObstacleType::YELLOW_ORB:
+    case ObstacleType::BLUE_ORB:
+    case ObstacleType::PINK_ORB:
+        return false;
+        break;
     default:
         return false;
+        break;
     }
-    return true;
 }

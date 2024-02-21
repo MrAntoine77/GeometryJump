@@ -21,14 +21,14 @@ Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string bra
 
     if (_gamemode == Gamemode::TRAINING)
     {
-        _IA = Genetic(_NB_CORES);
+        _IA = Genetic(1, 1);
     }
     
     initMode(_gamemode);
 
 
-    _rect.x = _INIT_X;
-    _rect.y = _INIT_Y;
+    _rect.x = PLAYER_INIT_X;
+    _rect.y = PLAYER_INIT_Y;
     _rect.w = BLOCK_SIZE;
     _rect.h = BLOCK_SIZE;
 
@@ -167,8 +167,8 @@ void Player::render(ShowHitboxes hitboxes)
 
 void Player::die()
 {   
-    _rect.x = _INIT_X;
-    _rect.y = _INIT_Y;
+    _rect.x = PLAYER_INIT_X;
+    _rect.y = PLAYER_INIT_Y;
     _rect.w = BLOCK_SIZE;
     _rect.h = BLOCK_SIZE;
 
@@ -178,9 +178,12 @@ void Player::die()
 
     if (_gamemode == Gamemode::TRAINING)
     {
-        _brain->updateScore(_brain->getScore() -_brain->getNbTotalNeurones());
+        _brain->updateScore(_brain->getScore() -_brain->getNbTotalNeurones() - _brain->getNbCores());
 
-        if (_IA.nextExp() == 0) {
+        if (_IA.nextExp() == 0) 
+        {
+
+
             _generation++;
             std::cout << "[" << _generation << "] generation " << std::endl;
             _IA.update();
@@ -227,7 +230,7 @@ void Player::showNextBrain()
 {
     if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
     {
-        _selected_core = (_selected_core + 1) % _NB_CORES;
+        _selected_core = (_selected_core + 1) % static_cast<int>(_brain->getNbCores());
         std::cout << "Core " << _selected_core << " selected" << std::endl;
     }   
 }

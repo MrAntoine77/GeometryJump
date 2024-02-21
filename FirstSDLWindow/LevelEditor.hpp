@@ -9,10 +9,6 @@
 class LevelEditor
 {
 private:
-    static const int _NB_MAX_X = 512;
-    static const int _NB_DISPLAYED_X = 20;
-    static const int _NB_DISPLAYED_Y = 11;
-
     static SDL_Renderer* _renderer;
 
     std::map<Position, ObstacleInfo> _obstacles;

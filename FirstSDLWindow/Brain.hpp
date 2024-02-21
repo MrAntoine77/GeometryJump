@@ -26,17 +26,17 @@ public:
 	static void setRenderer(SDL_Renderer* renderer);
 	static int getBestScore() { return _best_score; }
 
-	Brain(int nb_cores = 0);
+	Brain(int nb_cores = 0, int nb_neurones = 1);
 	Brain(const Brain& src);
 	Brain(std::string filename);
 
 	void update(std::vector<Obstacle> obstacles);
 	void render(ShowHitboxes hitboxes, int id_highlighted_core);
 
-	void deleteRandomNeurone();
-	void addRandomNeurone();
-	void modifyRandomNeurone();
-	void merge(const Brain& brain);
+	void deleteRandomNeurone(int nb_neurones);
+	void addRandomNeurone(int nb_neurones);
+	void addRandomCore(int nb_neurones);
+	void modifyRandomNeurone(int nb_neurones);
 
 	void saveToFile(std::string filename) const;
 	void setPos(int x, int y);

@@ -9,12 +9,6 @@
 class Core
 {
 private:
-	static const int _NEURONE_HITBOX_SIZE = 48;
-	static const int _NB_NEURONES_MIN = 1;
-	static const int _NB_NEURONES_MAX = 8;
-	static const int _DIST_NEURONE_MIN = 0;
-	static const int _DIST_NEURONE_MAX = 10 * (BLOCK_SIZE/ _NEURONE_HITBOX_SIZE);
-
 	static SDL_Renderer* _renderer;
 
 	std::vector<Neurone> _neurones;
@@ -23,7 +17,7 @@ private:
 public:
 	static void setRenderer(SDL_Renderer* renderer);
 
-	Core();
+	Core(int nb_neurones = 1);
 	Core(const Core& src);
 	Core(int nb_neurones, int dist_neurone);
 

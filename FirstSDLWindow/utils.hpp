@@ -24,6 +24,32 @@ const int NB_BLOCKS_X_MAX = 512;
 const int NB_BLOCKS_Y_MAX = 16;
 const int NB_TYPE_OBSTACLE = 8;
 
+//Genetic
+static const int GENETIC_NB_BRAINS = 1024;
+static const int GENETIC_NB_MAX_MODIFS = 4;
+static const int GENETIC_NB_DIV = 1024;
+
+//Core
+static const int CORE_NB_NEURONE_MAX = 8;
+
+//Neurone
+static const int NEURONE_HITBOX_SIZE = 48;
+static const int NEURONE_ALPHA_UNSELECTED = 32;
+static const int NEURONE_DIST_MIN = 1;
+static const int NEURONE_DIST_MAX = 10 * (BLOCK_SIZE / NEURONE_HITBOX_SIZE);
+
+//Player
+
+static const int PLAYER_INIT_X = 256;
+static const int PLAYER_INIT_Y = 384;
+
+
+//Level Editor
+static const int EDITOR_NB_MAX_X = 512;
+static const int EDITOR_NB_DISPLAYED_X = 20;
+static const int EDITOR_NB_DISPLAYED_Y = 11;
+
+
 enum class Axe {
     X,
     Y
