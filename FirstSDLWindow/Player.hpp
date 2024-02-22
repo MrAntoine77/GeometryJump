@@ -5,6 +5,7 @@
 #include "utils.hpp"
 #include "Brain.hpp"
 #include "Genetic.hpp"
+#include "ParticlesSpawner.hpp"
 
 class Player
 {
@@ -15,11 +16,15 @@ private:
     Brain * _brain = nullptr;
 
     std::string _brain_filename;
-    SDL_Rect _rect = { 0, 0, 0, 0 };
-    SDL_Rect _hitbox_main = { 0, 0, 0, 0 };
+    SDL_Rect _rect = { 0, 0, BLOCK_SIZE, BLOCK_SIZE };
+    SDL_Rect _hitbox_main = { 0, 0, BLOCK_SIZE, BLOCK_SIZE };
+    SDL_Rect _hitbox_floor = { 0, 0, BLOCK_SIZE, 3 * BLOCK_SIZE + 8 };
+    SDL_Rect _hitbox_death = { 0, 0, BLOCK_SIZE, BLOCK_SIZE - 8 };
     Genetic _IA;
     Gamemode _gamemode;
     ObstacleType _orb_nearly = ObstacleType::AIR;
+
+    ParticlesSpawner _particles;
 
     int _id_player = 0;
     int _rotation_angle = 0;
@@ -29,6 +34,7 @@ private:
     bool _on_ground = false;
     bool _jump_pressed = false;
     bool _invincible;
+    bool _pre_obstacle_detected = false;
 public:
     static void setRenderer(SDL_Renderer* renderer);
 
@@ -38,7 +44,7 @@ public:
     void update(std::vector<Obstacle>);
     void updateHitboxes();
     void handleEvents(SDL_Event& event);
-    void render(ShowHitboxes hitboxes);
+    void render(ShowHitboxes hitboxes, int y);
     void die();
     void jump();
 
@@ -48,7 +54,14 @@ public:
     void setY(int y) { _rect.y = y; }
     void setOrbNearly(ObstacleType orb_nearly) { _orb_nearly = orb_nearly; }
 
+    void setPreObstacleDetected(bool detected) { _pre_obstacle_detected = detected; }
+    bool isPreObstacleDetected() const { return _pre_obstacle_detected; }
+    bool isOnGround() const { return _on_ground; }
+
     SDL_Rect getHitboxMain() const { return _hitbox_main; }
+    SDL_Rect getHitboxFloor() const { return _hitbox_floor; }
+    SDL_Rect getHitboxDeath() const { return _hitbox_death; }
+
     float getYVelocity() const { return _y_velocity; }
     int getY() const { return _rect.y; }
     bool isInvincible() const { return _invincible; }

@@ -7,6 +7,7 @@ void Player::setRenderer(SDL_Renderer* renderer) {
     _renderer = renderer;
     Brain::setRenderer(_renderer);
     Genetic::setRenderer(_renderer);
+    ParticlesSpawner::setRenderer(_renderer);
 }
 
 Player::Player() :
@@ -18,6 +19,9 @@ Player::Player() :
 Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string brain_filename, std::string texture_filename) :
     _invincible(invincible), _gamemode(gamemode), _id_player(idPlayer), _brain_filename(brain_filename)
 {
+
+    _particles = ParticlesSpawner(_rect.x, _rect.y, static_cast<float>(- LEVEL_SPEED), 0.0f, 32.0f, 32.0f, 8, 16, 8, 1.0f);
+
 
     if (_gamemode == Gamemode::TRAINING)
     {
@@ -77,6 +81,17 @@ void Player::update(std::vector<Obstacle> obstacles)
             
         }
     }
+
+    _particles.setPos(_hitbox_main.x + 12, _hitbox_main.y + BLOCK_SIZE - 12);
+    if (_on_ground)
+    {
+        _particles.update(true);
+    }
+    else
+    {
+        _particles.update(false);
+    }
+    
 }
 
 void Player::handleEvents(SDL_Event& event)
@@ -86,12 +101,14 @@ void Player::handleEvents(SDL_Event& event)
         switch (event.type)
         {
         case SDL_MOUSEBUTTONDOWN:
-            if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.button.button == SDL_BUTTON_LEFT) 
+            {
                 _jump_pressed = true;
             }
             break;
         case SDL_MOUSEBUTTONUP:
-            if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.button.button == SDL_BUTTON_LEFT) 
+            {
                 _jump_pressed = false;
             }
             break;
@@ -141,21 +158,38 @@ void Player::handleEvents(SDL_Event& event)
     }
 
 
-    if (_jump_pressed || (((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) && _brain->anyCoreActivated())) {
+    if (_jump_pressed || (((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) && _brain->anyCoreActivated()))
+    {
         jump();
     }
 }
 
-void Player::render(ShowHitboxes hitboxes)
+void Player::render(ShowHitboxes hitboxes, int y)
 {
+    _particles.render(y);
 
-    SDL_RenderCopyEx(_renderer, _texture, NULL, &_rect, _rotation_angle, NULL, SDL_FLIP_NONE);
+    SDL_Rect rect = _rect;
+    rect.y += y;
+    SDL_RenderCopyEx(_renderer, _texture, NULL, &rect, _rotation_angle, NULL, SDL_FLIP_NONE);
     SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 
     if (hitboxes == ShowHitboxes::ON)
     {
+        SDL_Rect hitbox_main = _hitbox_main;
+        SDL_Rect hitbox_floor = _hitbox_floor;
+        SDL_Rect hitbox_death = _hitbox_death;
+
+        hitbox_main.y += y;
+        hitbox_floor.y += y;
+        hitbox_death.y += y;
+
+
         SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
-        SDL_RenderDrawRect(_renderer, &_hitbox_main);
+        SDL_RenderDrawRect(_renderer, &hitbox_main);
+        SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
+        SDL_RenderDrawRect(_renderer, &hitbox_floor);
+        SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+        SDL_RenderDrawRect(_renderer, &hitbox_death);
     }
 
     if ( (_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING) )
@@ -163,6 +197,8 @@ void Player::render(ShowHitboxes hitboxes)
 
         _brain->render(hitboxes, _selected_core);
     }
+
+   
 }
 
 void Player::die()
@@ -196,7 +232,14 @@ void Player::die()
 
 void Player::updateHitboxes()
 {
-    _hitbox_main = _rect;
+    _hitbox_main.x = _rect.x;
+    _hitbox_main.y = _rect.y;
+
+    _hitbox_death.x = _rect.x;
+    _hitbox_death.y = _rect.y;
+
+    _hitbox_floor.x = _rect.x;
+    _hitbox_floor.y = _rect.y + BLOCK_SIZE - 8;
 }
 
 void Player::jump()

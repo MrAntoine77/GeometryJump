@@ -21,7 +21,7 @@ Obstacle::Obstacle(int x, int y, ObstacleType type, Direction direction) : _x(x)
     switch (_type)
     {
     case ObstacleType::BLOCK:
-        _hitbox = { _x, _y, BLOCK_SIZE * _nb_x, BLOCK_SIZE * _nb_y };
+        _hitbox = { _x, _y, BLOCK_SIZE, BLOCK_SIZE};
         break;
     case ObstacleType::SPIKE:
         _relative_hitbox_x = 24;
@@ -59,41 +59,52 @@ Obstacle::Obstacle(int x, int y, ObstacleType type, Direction direction) : _x(x)
     case Direction::RIGHT:
         std::swap(_hitbox.w, _hitbox.h);;
         std::swap(_relative_hitbox_x, _relative_hitbox_y);
-        _relative_hitbox_x = 64 - _relative_hitbox_x - _hitbox.w;
+        _relative_hitbox_x = BLOCK_SIZE - _relative_hitbox_x - _hitbox.w;
 
         break;
     case Direction::DOWN:
-        _relative_hitbox_y = 64 - _relative_hitbox_y - _hitbox.h;
-        _relative_hitbox_x = 64 - _relative_hitbox_x - _hitbox.w;
+        _relative_hitbox_y = BLOCK_SIZE - _relative_hitbox_y - _hitbox.h;
+        _relative_hitbox_x = BLOCK_SIZE - _relative_hitbox_x - _hitbox.w;
         break;
     case Direction::LEFT:
         std::swap(_hitbox.w, _hitbox.h);;
         std::swap(_relative_hitbox_x, _relative_hitbox_y);
-        _relative_hitbox_y = 64 - _relative_hitbox_y - _hitbox.h;
+        _relative_hitbox_y = BLOCK_SIZE - _relative_hitbox_y - _hitbox.h;
         break;
     default:
         break;
     }
 
     _init_x = _x;
+    _init_y = _y;
 }
 
-void Obstacle::render(ShowHitboxes hitboxes)
+void Obstacle::render(ShowHitboxes hitboxes, int y)
 {
-    for (int x = 0; x < _nb_x; x++)
+    for (int id_x = 0; id_x < _nb_x; id_x++)
     {
-        for (int y = 0; y < _nb_y; y++)
+        for (int id_y = 0; id_y < _nb_y; id_y++)
         {
-            const SDL_Rect rect = { _x + BLOCK_SIZE * x, _y + BLOCK_SIZE * y, BLOCK_SIZE, BLOCK_SIZE };
+            const SDL_Rect rect = { _x + BLOCK_SIZE * id_x, _y + BLOCK_SIZE * id_y + y, BLOCK_SIZE, BLOCK_SIZE };
             SDL_RenderCopyEx(_renderer, TexturesManager::getBlockTexture(_type), NULL, &rect, static_cast<double>(_direction), NULL, SDL_FLIP_NONE);
 
             if (hitboxes == ShowHitboxes::ON)
             {
-                SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 32);
-                SDL_RenderDrawRect(_renderer, &_hitbox);
+                SDL_Rect hitbox = _hitbox;
+                hitbox.y += y;
+                SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+                SDL_RenderDrawRect(_renderer, &hitbox);
             }
         }
     }
+}
+
+void Obstacle::setPos(int x, int y)
+{
+    _x = x;
+    _y = y;
+    _hitbox.x = _x + _relative_hitbox_x;
+    _hitbox.y = _y + _relative_hitbox_y;
 }
 
 void Obstacle::setX(int x)

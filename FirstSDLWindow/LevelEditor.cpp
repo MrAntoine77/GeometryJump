@@ -42,7 +42,7 @@ void LevelEditor::handleEvents(SDL_Event& event)
 	_rect.y = (_mouse_y / BLOCK_SIZE) * BLOCK_SIZE;
 
 	_pos_grid_x = (_mouse_x / BLOCK_SIZE);
-	_pos_grid_y = (WINDOW_H / 64) - (_mouse_y / BLOCK_SIZE) - 1;
+	_pos_grid_y = (WINDOW_H / BLOCK_SIZE) - (_mouse_y / BLOCK_SIZE) - 1;
 
 	bool obstacle_pressed = false;
 
@@ -101,17 +101,17 @@ void LevelEditor::render()
 {
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 
-	for (int y = 0; y <= WINDOW_H; y += 64)
+	for (int y = 0; y <= WINDOW_H; y += BLOCK_SIZE)
 	{
 		SDL_RenderDrawLine(_renderer, 0, y, WINDOW_W, y);
 	}
 
-	for (int x = 0; x <= WINDOW_W; x += 64)
+	for (int x = 0; x <= WINDOW_W; x += BLOCK_SIZE)
 	{
 		SDL_RenderDrawLine(_renderer, x, 0, x, WINDOW_H);
 	}
 
-	SDL_Rect floor = { 0,704, WINDOW_W, WINDOW_H - 704 };
+	SDL_Rect floor = { 0,GROUND_Y, WINDOW_W, WINDOW_H - 704 };
 	SDL_RenderFillRect(_renderer, &floor);
 
 
@@ -139,12 +139,12 @@ void LevelEditor::renderObstacle(SDL_Rect rect, ObstacleType obstacle_type, Dire
 
 void LevelEditor::nextObstacleType()
 {
-	_obstacle_type = moduloEnum<ObstacleType>(_obstacle_type, NB_TYPE_OBSTACLE, 1);
+	_obstacle_type = moduloEnum<ObstacleType>(_obstacle_type, static_cast<int>(ObstacleType::Count), 1);
 }
 
 void LevelEditor::previousObstacleType()
 {
-	_obstacle_type = moduloEnum<ObstacleType>(_obstacle_type, NB_TYPE_OBSTACLE, -1);
+	_obstacle_type = moduloEnum<ObstacleType>(_obstacle_type, static_cast<int>(ObstacleType::Count), -1);
 }
 
 void LevelEditor::rightRotationObstacle()

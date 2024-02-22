@@ -7,6 +7,17 @@ void Genetic::setRenderer(SDL_Renderer* renderer)
 	_renderer = renderer;
 }
 
+Genetic::Genetic(std::string brain_filename)
+{
+	Brain brain_loaded = Brain(brain_filename);
+	for (int id_brain = 0; id_brain < GENETIC_NB_BRAINS; id_brain++)
+	{
+		Brain brain(brain_loaded);
+		_brains.push_back(brain);
+	}
+		_current_brain_id = 0;
+}
+
 Genetic::Genetic(int nb_cores, int nb_neurones)
 {
 	for (int id_brain = 0; id_brain < GENETIC_NB_BRAINS; id_brain++)

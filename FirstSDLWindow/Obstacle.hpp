@@ -23,6 +23,7 @@ private:
     int _relative_hitbox_y = 0;
 
     int _init_x = 0;
+    int _init_y = 0;
 public:
     static void setRenderer(SDL_Renderer* renderer);
 
@@ -30,8 +31,9 @@ public:
 
     Obstacle(int x, int y, ObstacleType type, Direction direction);
 
-    void render(ShowHitboxes hitboxes);
+    void render(ShowHitboxes hitboxes, int y);
     void setUsed(bool used) { _used = used; }
+    void setPos(int x, int y);
     void setX(int x);
 
     void setNbX(int nb_x);
@@ -39,7 +41,10 @@ public:
 
     bool isGroupable(Axe axe) const;
     bool isUsed() const { return _used; }
+
     int getInitX() { return _init_x; }
+    int getInitY() { return _init_y; }
+
     int getX() const { return _x; }
     int getY() const { return _y; }
     int getNbX() const { return _nb_x; }

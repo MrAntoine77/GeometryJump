@@ -181,11 +181,6 @@ void Game::render()
 
 		if (_gamemode != Gamemode::EDITING)
 		{
-			if (_show_hitboxes == ShowHitboxes::ON)
-			{
-				SDL_SetRenderDrawColor(_renderer, 232, 232, 232, 255);
-				SDL_RenderFillRect(_renderer, &DIABLE_ZONE);
-			}
 			_level.render(_show_hitboxes);
 		}
 		else

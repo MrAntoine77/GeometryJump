@@ -19,6 +19,7 @@ private:
 public:
 	static void setRenderer(SDL_Renderer * renderer);
 
+	Genetic(std::string brain_filename);
 	Genetic(int nb_cores, int nb_neurones);
 	Genetic();
 

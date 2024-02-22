@@ -140,6 +140,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Neurone.cpp" />
     <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticlesSpawner.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
   </ItemGroup>
@@ -152,6 +154,8 @@
     <ClInclude Include="LevelEditor.hpp" />
     <ClInclude Include="Neurone.hpp" />
     <ClInclude Include="Obstacle.hpp" />
+    <ClInclude Include="Particle.hpp" />
+    <ClInclude Include="ParticlesSpawner.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="TexturesManager.hpp" />
     <ClInclude Include="utils.hpp" />

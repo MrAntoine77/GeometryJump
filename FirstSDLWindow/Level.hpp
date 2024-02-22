@@ -21,8 +21,10 @@ private:
     std::vector<Obstacle> _obstacles;
     std::string _filename;
 
-    int _floor_y = 604;
+    int _threshold_y_up = LEVEL_Y_THRESHOLD_UP_INIT;
+    int _threshold_y_down = LEVEL_Y_THRESHOLD_DOWN_INIT;
     int _x = 0;
+    int _y = 0;
 public:
     static void setRenderer(SDL_Renderer* renderer);
 
@@ -30,7 +32,6 @@ public:
     Level();
 
     void update(); 
-    void updatePlayer();
     void render(ShowHitboxes hitboxes);
     void handleEvents(SDL_Event& event);
     int checkAllCollisions();

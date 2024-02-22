@@ -204,7 +204,6 @@ int Brain::getNbTotalNeurones() const
 
 void Brain::updateScore(int score)
 {
-	
 	_score = score;
 	if (_score < 0)
 	{

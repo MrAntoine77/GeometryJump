@@ -12,42 +12,42 @@ const int BLOCK_SIZE = 64;
 const float GRAVITY = 8523.988f;
 const int FRAMERATE = 60;
 const int LEVEL_SPEED = 13;
+const int SEED = 1234;
 
 const int WINDOW_W = 1280;
 const int WINDOW_H = 720;
 
-const SDL_Rect GROUND_RECT_TOP = { 0, -256, WINDOW_W, 28 };
-const SDL_Rect GROUND_RECT_BOTTOM = { 0, 668, WINDOW_W, 336 };
-const SDL_Rect DIABLE_ZONE = { 192, 0, 192, WINDOW_H };
+const int GROUND_Y = (WINDOW_H / BLOCK_SIZE) * BLOCK_SIZE;
 
-const int NB_BLOCKS_X_MAX = 512;
-const int NB_BLOCKS_Y_MAX = 16;
-const int NB_TYPE_OBSTACLE = 8;
+const SDL_Rect GROUND_RECT_BOTTOM = { 0, GROUND_Y, WINDOW_W, WINDOW_H };
+
 
 //Genetic
-static const int GENETIC_NB_BRAINS = 1024;
-static const int GENETIC_NB_MAX_MODIFS = 4;
-static const int GENETIC_NB_DIV = 1024;
+const int GENETIC_NB_BRAINS = 1024;
+const int GENETIC_NB_MAX_MODIFS = 5;
+const int GENETIC_NB_DIV = 1024;
 
 //Core
-static const int CORE_NB_NEURONE_MAX = 8;
+const int CORE_NB_NEURONE_MAX = 5;
 
 //Neurone
-static const int NEURONE_HITBOX_SIZE = 48;
-static const int NEURONE_ALPHA_UNSELECTED = 32;
-static const int NEURONE_DIST_MIN = 1;
-static const int NEURONE_DIST_MAX = 10 * (BLOCK_SIZE / NEURONE_HITBOX_SIZE);
+const int NEURONE_HITBOX_SIZE = 48;
+const int NEURONE_ALPHA_UNSELECTED = 32;
+const int NEURONE_DIST_MAX = 5 * (BLOCK_SIZE / NEURONE_HITBOX_SIZE);
 
 //Player
+const int PLAYER_INIT_X = 256;
+const int PLAYER_INIT_Y = 540;
 
-static const int PLAYER_INIT_X = 256;
-static const int PLAYER_INIT_Y = 384;
-
+//Level
+const int LEVEL_DELTA_THRESHOLD = 512;
+const int LEVEL_Y_THRESHOLD_UP_INIT = (WINDOW_H - LEVEL_DELTA_THRESHOLD) / 2;
+const int LEVEL_Y_THRESHOLD_DOWN_INIT = WINDOW_H - LEVEL_Y_THRESHOLD_UP_INIT;
 
 //Level Editor
-static const int EDITOR_NB_MAX_X = 512;
-static const int EDITOR_NB_DISPLAYED_X = 20;
-static const int EDITOR_NB_DISPLAYED_Y = 11;
+const int EDITOR_NB_MAX_X = 512;
+const int EDITOR_NB_DISPLAYED_Y = WINDOW_H / BLOCK_SIZE;
+const int EDITOR_NB_DISPLAYED_X = WINDOW_W / BLOCK_SIZE;
 
 
 enum class Axe {
@@ -63,7 +63,8 @@ enum class ObstacleType {
     YELLOW_ORB,
     PINK_ORB,
     BLUE_ORB,
-    SLAB_UPPER
+    SLAB_UPPER,
+    Count
 };
 
 enum class Direction {
@@ -88,6 +89,7 @@ enum class ShowHitboxes {
 enum class Rendering {
     ON,
     OFF,
+    HD
 };
 
 struct ObstacleInfo {

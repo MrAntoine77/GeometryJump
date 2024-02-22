@@ -36,7 +36,7 @@ void Level::updateHitboxes(
             int z = 0;
 
             while (((i + z + 1) < static_cast<int>(_obstacles.size())) 
-                && ((_obstacles[i + z].*get1)() == (_obstacles[i + z + 1].*get1)() - 64)
+                && ((_obstacles[i + z].*get1)() == (_obstacles[i + z + 1].*get1)() - BLOCK_SIZE)
                 && ((_obstacles[i + z].*get2)() == (_obstacles[i + z + 1].*get2)())
                 && (_obstacles[i + z].getDirection() == _obstacles[i + z + 1].getDirection())
                 && (_obstacles[i + z].getType() == _obstacles[i + z + 1].getType())
@@ -62,8 +62,8 @@ void Level::loadObstaclesFromFile(std::string filename) {
         for (int id_obstacle = 0; id_obstacle < nb_obstacles; id_obstacle++) {
             int type, direction, x, y;
             file >> type >> x >> y >> direction;
-            x = (x * BLOCK_SIZE) + 128;
-            y = _floor_y - (y * BLOCK_SIZE);
+            x = ((x + 2) * BLOCK_SIZE);
+            y = GROUND_Y - ((y + 1) * BLOCK_SIZE);
             Obstacle obstacle(x, y, static_cast<ObstacleType>(type), static_cast<Direction>(direction));
 
             _obstacles.push_back(obstacle);
@@ -85,25 +85,24 @@ void Level::loadObstaclesFromFile(std::string filename) {
 void Level::update()
 {
     _x -= LEVEL_SPEED;
+
+
     for (auto& obstacle : _obstacles) 
     {
         obstacle.setX(obstacle.getInitX() + _x);
     }
-
-    updatePlayer();
-}
-
-void Level::updatePlayer()
-{
+    
     _player->update(_obstacles);
+
     int collision_result = checkAllCollisions();
+
 
     if (collision_result == -1)
     {
         _player->setGround(false);
-        _player->setYVelocity(fmaxf(fminf(_player->getYVelocity() + (GRAVITY / FRAMERATE), 1200.0f), -2500.0f));
+        _player->setYVelocity(fmaxf(fminf(_player->getYVelocity() + (GRAVITY / FRAMERATE), 2500.0f), -2500.0f));
     }
-    else if (collision_result >= 0) 
+    else if (collision_result >= 0)
     {
         if (_player->getY() != collision_result + 1)
         {
@@ -111,33 +110,53 @@ void Level::updatePlayer()
         }
         _player->setGround(true);
         _player->setYVelocity(0.0f);
+       
+
     }
     if (collision_result == -2 && (_player->isInvincible() == false)) {
         _player->die();
         restart();
     }
+
+    _player->setY(_player->getY());
 }
 
 
 void Level::render(ShowHitboxes hitboxes)
 {
+    if (_player->getY() <= _threshold_y_up)
+    {
+        _threshold_y_up = _player->getY();
+        _threshold_y_down = _threshold_y_up + LEVEL_DELTA_THRESHOLD;
+    }
+    else if (_player->getY() >= _threshold_y_down - BLOCK_SIZE)
+    {
+        _threshold_y_down = _player->getY() + BLOCK_SIZE;
+        _threshold_y_up = _threshold_y_down - LEVEL_DELTA_THRESHOLD;
+    }
+    _y = LEVEL_Y_THRESHOLD_DOWN_INIT - _threshold_y_down;
+
     for (auto& obstacle : _obstacles)
     {
-        obstacle.render(hitboxes);
+        obstacle.render(hitboxes, _y);
     }
 
+    SDL_Rect floor = GROUND_RECT_BOTTOM;
+    floor.y += _y;
     SDL_SetRenderDrawColor(_renderer, 32, 32, 32, 255);
-    SDL_RenderFillRect(_renderer, &GROUND_RECT_TOP);
-    SDL_RenderFillRect(_renderer, &GROUND_RECT_BOTTOM);
+    SDL_RenderFillRect(_renderer, &floor);
 
     if (hitboxes == ShowHitboxes::ON)
     {
-        SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 32);
-        SDL_RenderDrawRect(_renderer, &GROUND_RECT_TOP);
-        SDL_RenderDrawRect(_renderer, &GROUND_RECT_BOTTOM);
+        SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
+
+        SDL_RenderDrawLine(_renderer, 0, _threshold_y_up + _y, WINDOW_W, _threshold_y_up + _y);
+        SDL_RenderDrawLine(_renderer, 0, _threshold_y_down + _y, WINDOW_W, _threshold_y_down + _y);
+
+        SDL_RenderDrawRect(_renderer, &floor);
     }
 
-    _player->render(hitboxes);
+    _player->render(hitboxes, _y);
 }
 
 void Level::handleEvents(SDL_Event& event)
@@ -157,13 +176,15 @@ int Level::checkAllCollisions()
 
     int replace_y = -1;
     SDL_Rect hitbox_player = _player->getHitboxMain();
+    SDL_Rect hitbox_player_floor = _player->getHitboxFloor();
+    SDL_Rect hitbox_player_death = _player->getHitboxDeath();
+
 
     for (auto& obstacle : _obstacles)
     {
         SDL_Rect hitbox_obstacle = obstacle.getHitbox();
         ObstacleType obstacle_type = obstacle.getType();
-        
-            
+                    
 
         switch (obstacle_type)
         {
@@ -177,15 +198,32 @@ int Level::checkAllCollisions()
         case ObstacleType::BLOCK:
         case ObstacleType::SLAB_UPPER:
 
-            if (checkCollision(hitbox_player, hitbox_obstacle))
+            if (checkCollision(hitbox_player_floor, hitbox_obstacle))
             {
-                if(abs(hitbox_obstacle.y - (hitbox_player.y + hitbox_player.h)) < 22)
+                if (_player->isPreObstacleDetected())
                 {
-                    replace_y = ((hitbox_obstacle.y) - BLOCK_SIZE);
+                    if (checkCollision(hitbox_player, hitbox_obstacle))
+                    {
+                        _player->setPreObstacleDetected(false);
+                        replace_y = hitbox_obstacle.y - hitbox_player.h;
+                    }
                 }
                 else
                 {
-                    return -2;
+                    if (checkCollision(hitbox_player_death, hitbox_obstacle))
+                    {
+                        return -2;
+                    }
+                    else
+                    {
+                        _player->setPreObstacleDetected(true);
+                        if (checkCollision(hitbox_player, hitbox_obstacle))
+                        {
+                            
+                            _player->setPreObstacleDetected(false);
+                            replace_y = hitbox_obstacle.y - hitbox_player.h;
+                        }
+                    }
                 }
             }
             break;
@@ -207,13 +245,11 @@ int Level::checkAllCollisions()
         default:
             break;
         }
-        
     }
 
-
-    if (hitbox_player.y > _floor_y)
+    if (hitbox_player.y + hitbox_player.h > GROUND_Y)
     {
-        replace_y = _floor_y;
+        replace_y = GROUND_Y - BLOCK_SIZE;
     }
 
 

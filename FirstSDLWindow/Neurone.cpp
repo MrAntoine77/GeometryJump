@@ -53,7 +53,7 @@ void Neurone::update(const std::vector<Obstacle>& obstacles, int brain_x, int br
 		{
 		case ObstacleType::BLOCK:
 		case ObstacleType::SLAB_UPPER:
-			if (checkCollision(_rect, obstacle.getHitbox()) || checkCollision(_rect, GROUND_RECT_BOTTOM) || checkCollision(_rect, GROUND_RECT_TOP))
+			if (checkCollision(_rect, obstacle.getHitbox()) || checkCollision(_rect, GROUND_RECT_BOTTOM))
 			{
 				block_collision = true;
 			}
