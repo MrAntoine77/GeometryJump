@@ -20,7 +20,8 @@ Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string bra
     _invincible(invincible), _gamemode(gamemode), _id_player(idPlayer), _brain_filename(brain_filename)
 {
 
-    _particles = ParticlesSpawner(_rect.x, _rect.y, static_cast<float>(- LEVEL_SPEED), 0.0f, 32.0f, 32.0f, 8, 16, 8, 1.0f);
+    _particles_slide = ParticlesSpawner(_rect.x, _rect.y, static_cast<float>(- LEVEL_SPEED), 0.0f, 32.0f, 32.0f, 8, 16, 8, 1.0f);
+    _particles_death = ParticlesSpawner(_rect.x, _rect.y, 0.0f, 0.0f, 128.0f, 128.0f, 16, 32, 16, 4.0f);
 
 
     if (_gamemode == Gamemode::TRAINING)
@@ -48,50 +49,59 @@ Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string bra
 
 void Player::update(std::vector<Obstacle> obstacles)
 {
-    if (_gamemode == Gamemode::TRAINING)
+    if (!_dying)
     {
-        _brain->addScore(1000);
-    }
-   
-
-    const int rotation_rate = 10;
-
-    if (_y_velocity != 0.0f)
-    {
-        _rotation_angle = (_rotation_angle + rotation_rate) % 360;
-        _rect.y += static_cast<int>(_y_velocity / FRAMERATE);
-    }
-    updateHitboxes();
-
-
-    if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
-    {
-        _brain->setPos(_rect.x, _rect.y);
-        _brain->update(obstacles);
-    }
-
-    if (_y_velocity == 0.0f) 
-    {
-        int angle_mod_90 = _rotation_angle % 90;
-        if (angle_mod_90 != 0) 
+        if (_gamemode == Gamemode::TRAINING)
         {
-            bool should_increase_angle = (angle_mod_90 >= 45);
-            int anc = _rotation_angle;
-            _rotation_angle += (should_increase_angle) ? rotation_rate : -rotation_rate;
-            
+            _brain->addScore(1000);
         }
-    }
 
-    _particles.setPos(_hitbox_main.x + 12, _hitbox_main.y + BLOCK_SIZE - 12);
-    if (_on_ground)
-    {
-        _particles.update(true);
+
+        const int rotation_rate = 10;
+
+        if (_y_velocity != 0.0f)
+        {
+            _rotation_angle = (_rotation_angle + rotation_rate) % 360;
+            _rect.y += static_cast<int>(_y_velocity / FRAMERATE);
+        }
+        updateHitboxes();
+
+
+        if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
+        {
+            _brain->setPos(_rect.x, _rect.y);
+            _brain->update(obstacles);
+        }
+
+        if (_y_velocity == 0.0f)
+        {
+            int angle_mod_90 = _rotation_angle % 90;
+            if (angle_mod_90 != 0)
+            {
+                bool should_increase_angle = (angle_mod_90 >= 45);
+                int anc = _rotation_angle;
+                _rotation_angle += (should_increase_angle) ? rotation_rate : -rotation_rate;
+
+            }
+        }
+
+        _particles_slide.setPos(_hitbox_main.x + 12, _hitbox_main.y + BLOCK_SIZE - 12);
+        if (_on_ground)
+        {
+            _particles_slide.update(true);
+
+        }
+        else
+        {
+            _particles_slide.update(false);
+        }
+        
     }
     else
     {
-        _particles.update(false);
+        _particles_death.update(false);
     }
-    
+   
 }
 
 void Player::handleEvents(SDL_Event& event)
@@ -166,43 +176,54 @@ void Player::handleEvents(SDL_Event& event)
 
 void Player::render(ShowHitboxes hitboxes, int y)
 {
-    _particles.render(y);
-
-    SDL_Rect rect = _rect;
-    rect.y += y;
-    SDL_RenderCopyEx(_renderer, _texture, NULL, &rect, _rotation_angle, NULL, SDL_FLIP_NONE);
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-
-    if (hitboxes == ShowHitboxes::ON)
+    if (!_dying)
     {
-        SDL_Rect hitbox_main = _hitbox_main;
-        SDL_Rect hitbox_floor = _hitbox_floor;
-        SDL_Rect hitbox_death = _hitbox_death;
+        _particles_slide.render(y);
+        
+        SDL_Rect rect = _rect;
+        rect.y += y;
+        SDL_RenderCopyEx(_renderer, _texture, NULL, &rect, _rotation_angle, NULL, SDL_FLIP_NONE);
+        SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 
-        hitbox_main.y += y;
-        hitbox_floor.y += y;
-        hitbox_death.y += y;
+        if (hitboxes == ShowHitboxes::ON)
+        {
+            SDL_Rect hitbox_main = _hitbox_main;
+            SDL_Rect hitbox_floor = _hitbox_floor;
+            SDL_Rect hitbox_death = _hitbox_death;
+
+            hitbox_main.y += y;
+            hitbox_floor.y += y;
+            hitbox_death.y += y;
 
 
-        SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
-        SDL_RenderDrawRect(_renderer, &hitbox_main);
-        SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
-        SDL_RenderDrawRect(_renderer, &hitbox_floor);
-        SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-        SDL_RenderDrawRect(_renderer, &hitbox_death);
+            SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+            SDL_RenderDrawRect(_renderer, &hitbox_main);
+            SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
+            SDL_RenderDrawRect(_renderer, &hitbox_floor);
+            SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+            SDL_RenderDrawRect(_renderer, &hitbox_death);
+        }
+
+        if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
+        {
+
+            _brain->render(hitboxes, _selected_core);
+        }
+    }
+    else
+    {
+        _particles_death.render(y);
     }
 
-    if ( (_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING) )
-    {
-
-        _brain->render(hitboxes, _selected_core);
-    }
 
    
 }
 
 void Player::die()
 {   
+    _particles_death.setPos(_hitbox_main.x + 32, _hitbox_main.y + 32);
+    _particles_death.spawnAll();
+
     _rect.x = PLAYER_INIT_X;
     _rect.y = PLAYER_INIT_Y;
     _rect.w = BLOCK_SIZE;

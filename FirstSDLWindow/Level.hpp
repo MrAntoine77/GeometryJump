@@ -25,6 +25,7 @@ private:
     int _threshold_y_down = LEVEL_Y_THRESHOLD_DOWN_INIT;
     int _x = 0;
     int _y = 0;
+    int _dying_delay = 0;
 public:
     static void setRenderer(SDL_Renderer* renderer);
 

@@ -24,7 +24,8 @@ private:
     Gamemode _gamemode;
     ObstacleType _orb_nearly = ObstacleType::AIR;
 
-    ParticlesSpawner _particles;
+    ParticlesSpawner _particles_slide;
+    ParticlesSpawner _particles_death;
 
     int _id_player = 0;
     int _rotation_angle = 0;
@@ -35,6 +36,8 @@ private:
     bool _jump_pressed = false;
     bool _invincible;
     bool _pre_obstacle_detected = false;
+
+    bool _dying = false;
 public:
     static void setRenderer(SDL_Renderer* renderer);
 
@@ -53,6 +56,8 @@ public:
     void setYVelocity(float y_velocity) { _y_velocity = y_velocity; }
     void setY(int y) { _rect.y = y; }
     void setOrbNearly(ObstacleType orb_nearly) { _orb_nearly = orb_nearly; }
+
+    void setDying(bool dying) { _dying = dying; }
 
     void setPreObstacleDetected(bool detected) { _pre_obstacle_detected = detected; }
     bool isPreObstacleDetected() const { return _pre_obstacle_detected; }

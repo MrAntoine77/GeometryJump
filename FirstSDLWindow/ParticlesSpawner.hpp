@@ -35,6 +35,7 @@ public:
 		int size_min = 0, int size_max = 0, 
 		int nb_frames = 0, float particles_density = 0.0f);
 
+	void spawnAll();
 	void update(bool spawn);
 	void render(int y);
 

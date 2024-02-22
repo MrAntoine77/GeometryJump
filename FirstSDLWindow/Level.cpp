@@ -19,7 +19,6 @@ Level::Level() : _filename(""), _player(nullptr)
 
 }
 
-
 void Level::updateHitboxes(
     int (Obstacle::* get1)() const,
     int (Obstacle::* get2)() const,
@@ -84,14 +83,18 @@ void Level::loadObstaclesFromFile(std::string filename) {
 
 void Level::update()
 {
-    _x -= LEVEL_SPEED;
-
-
-    for (auto& obstacle : _obstacles) 
+    if (_dying_delay <= 0)
     {
-        obstacle.setX(obstacle.getInitX() + _x);
+        _player->setDying(false);
+
+        _x -= LEVEL_SPEED;
+        for (auto& obstacle : _obstacles)
+        {
+            obstacle.setX(obstacle.getInitX() + _x);
+        }
     }
-    
+
+
     _player->update(_obstacles);
 
     int collision_result = checkAllCollisions();
@@ -110,15 +113,20 @@ void Level::update()
         }
         _player->setGround(true);
         _player->setYVelocity(0.0f);
-       
+
 
     }
     if (collision_result == -2 && (_player->isInvincible() == false)) {
         _player->die();
+        _dying_delay = 64;
         restart();
     }
 
-    _player->setY(_player->getY());
+    if (_dying_delay > 0)
+    {
+        _player->setDying(true);
+        _dying_delay--;
+    }
 }
 
 

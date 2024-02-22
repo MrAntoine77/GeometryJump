@@ -32,6 +32,19 @@ ParticlesSpawner::ParticlesSpawner(int x, int y,
 
 
 
+void ParticlesSpawner::spawnAll()
+{
+	for (auto& element : _elements)
+	{
+
+		float x_speed = _x_speed + (generateRandomFloat(0, 2 * _x_max_gap) - _x_max_gap) / _nb_frames;
+		float y_speed = _y_speed + (generateRandomFloat(0, 2 * _y_max_gap) - _y_max_gap) / _nb_frames;
+		int size = generateRandomInt(_size_min, _size_max);
+
+		element = Particle(_x, _y, x_speed, y_speed, size, 0.0f, _nb_frames);
+	}
+}
+
 void ParticlesSpawner::update(bool spawn)
 {
 	for (auto& element : _elements)
