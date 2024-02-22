@@ -63,6 +63,8 @@ public:
     bool isPreObstacleDetected() const { return _pre_obstacle_detected; }
     bool isOnGround() const { return _on_ground; }
 
+    bool isDying() const { return _dying; }
+
     SDL_Rect getHitboxMain() const { return _hitbox_main; }
     SDL_Rect getHitboxFloor() const { return _hitbox_floor; }
     SDL_Rect getHitboxDeath() const { return _hitbox_death; }

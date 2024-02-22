@@ -221,33 +221,37 @@ void Player::render(ShowHitboxes hitboxes, int y)
 
 void Player::die()
 {   
-    _particles_death.setPos(_hitbox_main.x + 32, _hitbox_main.y + 32);
-    _particles_death.spawnAll();
-
-    _rect.x = PLAYER_INIT_X;
-    _rect.y = PLAYER_INIT_Y;
-    _rect.w = BLOCK_SIZE;
-    _rect.h = BLOCK_SIZE;
-
-    _y_velocity = 0.0f;
-    updateHitboxes();
-
-
-    if (_gamemode == Gamemode::TRAINING)
+    if (_dying == false)
     {
-        _brain->updateScore(_brain->getScore() -_brain->getNbTotalNeurones() - _brain->getNbCores());
+        _dying = true;
+        _particles_death.setPos(_hitbox_main.x + 32, _hitbox_main.y + 32);
+        _particles_death.spawnAll();
 
-        if (_IA.nextExp() == 0) 
+        _rect.x = PLAYER_INIT_X;
+        _rect.y = PLAYER_INIT_Y;
+        _rect.w = BLOCK_SIZE;
+        _rect.h = BLOCK_SIZE;
+
+        _y_velocity = 0.0f;
+        updateHitboxes();
+
+
+        if (_gamemode == Gamemode::TRAINING)
         {
+            _brain->updateScore(_brain->getScore() - _brain->getNbTotalNeurones() - _brain->getNbCores());
+
+            if (_IA.nextExp() == 0)
+            {
 
 
-            _generation++;
-            std::cout << "[" << _generation << "] generation " << std::endl;
-            _IA.update();
+                _generation++;
+                std::cout << "[" << _generation << "] generation " << std::endl;
+                _IA.update();
+            }
+
+            _brain = _IA.getCurrentBrain();
+            _brain->updateScore(0);
         }
-
-        _brain = _IA.getCurrentBrain();
-        _brain->updateScore(0);
     }
 }
 

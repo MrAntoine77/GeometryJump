@@ -86,7 +86,6 @@ void Level::update()
     if (_dying_delay <= 0)
     {
         _player->setDying(false);
-
         _x -= LEVEL_SPEED;
         for (auto& obstacle : _obstacles)
         {
@@ -117,14 +116,16 @@ void Level::update()
 
     }
     if (collision_result == -2 && (_player->isInvincible() == false)) {
+        if (_player->isDying() == false)
+        {
+            _dying_delay = LEVEL_RESTART_DELAY;
+            restart();
+        }
         _player->die();
-        _dying_delay = 64;
-        restart();
     }
 
     if (_dying_delay > 0)
     {
-        _player->setDying(true);
         _dying_delay--;
     }
 }
