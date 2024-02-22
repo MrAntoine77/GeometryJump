@@ -164,7 +164,7 @@ void Game::update() {
 	{
 		if (!_pause) 
 		{
-			_level.update();
+			_level.updateHD();
 		}
 	} 
 	else
@@ -181,7 +181,7 @@ void Game::render()
 
 		if (_gamemode != Gamemode::EDITING)
 		{
-			_level.render(_show_hitboxes);
+			_level.renderHD(_show_hitboxes);
 		}
 		else
 		{
@@ -196,7 +196,6 @@ void Game::render()
 			SDL_Delay(_speed);
 		}
 	}
-
 }
 
 void Game::clean()

@@ -130,6 +130,54 @@ void Level::update()
     }
 }
 
+void Level::updateHD()
+{
+    if (_dying_delay <= 0)
+    {
+        _player->setDying(false);
+        _x -= LEVEL_SPEED;
+        for (auto& obstacle : _obstacles)
+        {
+            obstacle.setX(obstacle.getInitX() + _x);
+        }
+    }
+
+    _player->updateHD(_obstacles);
+
+    int collision_result = checkAllCollisions();
+
+
+    if (collision_result == -1)
+    {
+        _player->setGround(false);
+        _player->setYVelocity(fmaxf(fminf(_player->getYVelocity() + (GRAVITY / FRAMERATE), 2500.0f), -2500.0f));
+    }
+    else if (collision_result >= 0)
+    {
+        if (_player->getY() != collision_result + 1)
+        {
+            _player->setY(collision_result + 1);
+        }
+        _player->setGround(true);
+        _player->setYVelocity(0.0f);
+
+
+    }
+    if (collision_result == -2 && (_player->isInvincible() == false)) {
+        if (_player->isDying() == false)
+        {
+            _dying_delay = LEVEL_RESTART_DELAY;
+            restart();
+        }
+        _player->die();
+    }
+
+    if (_dying_delay > 0)
+    {
+        _dying_delay--;
+    }
+}
+
 
 void Level::render(ShowHitboxes hitboxes)
 {
@@ -150,6 +198,8 @@ void Level::render(ShowHitboxes hitboxes)
         obstacle.render(hitboxes, _y);
     }
 
+    _player->render(hitboxes, _y);
+
     SDL_Rect floor = GROUND_RECT_BOTTOM;
     floor.y += _y;
     SDL_SetRenderDrawColor(_renderer, 32, 32, 32, 255);
@@ -164,8 +214,43 @@ void Level::render(ShowHitboxes hitboxes)
 
         SDL_RenderDrawRect(_renderer, &floor);
     }
+}
 
-    _player->render(hitboxes, _y);
+void Level::renderHD(ShowHitboxes hitboxes)
+{
+    if (_player->getY() <= _threshold_y_up)
+    {
+        _threshold_y_up = _player->getY();
+        _threshold_y_down = _threshold_y_up + LEVEL_DELTA_THRESHOLD;
+    }
+    else if (_player->getY() >= _threshold_y_down - BLOCK_SIZE)
+    {
+        _threshold_y_down = _player->getY() + BLOCK_SIZE;
+        _threshold_y_up = _threshold_y_down - LEVEL_DELTA_THRESHOLD;
+    }
+    _y = LEVEL_Y_THRESHOLD_DOWN_INIT - _threshold_y_down;
+
+    for (auto& obstacle : _obstacles)
+    {
+        obstacle.render(hitboxes, _y);
+    }
+    
+    _player->renderHD(hitboxes, _y);
+
+    SDL_Rect floor = GROUND_RECT_BOTTOM;
+    floor.y += _y;
+    SDL_SetRenderDrawColor(_renderer, 32, 32, 32, 255);
+    SDL_RenderFillRect(_renderer, &floor);
+
+    if (hitboxes == ShowHitboxes::ON)
+    {
+        SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
+
+        SDL_RenderDrawLine(_renderer, 0, _threshold_y_up + _y, WINDOW_W, _threshold_y_up + _y);
+        SDL_RenderDrawLine(_renderer, 0, _threshold_y_down + _y, WINDOW_W, _threshold_y_down + _y);
+
+        SDL_RenderDrawRect(_renderer, &floor);
+    }
 }
 
 void Level::handleEvents(SDL_Event& event)

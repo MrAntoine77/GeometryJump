@@ -32,6 +32,7 @@ public:
     void handleEvents(SDL_Event& event);
     void update();
     void render();
+
     void renderObstacle(SDL_Rect rect, ObstacleType obstacle_type, Direction direction_obstacle);
 private:
     void nextObstacleType();

@@ -45,9 +45,12 @@ public:
     Player(bool invincible, Gamemode gamemode, int id_player, std::string brain_filename, std::string texture_filename);
 
     void update(std::vector<Obstacle>);
+    void updateHD(std::vector<Obstacle>);
     void updateHitboxes();
     void handleEvents(SDL_Event& event);
     void render(ShowHitboxes hitboxes, int y);
+    void renderHD(ShowHitboxes hitboxes, int y);
+
     void die();
     void jump();
 

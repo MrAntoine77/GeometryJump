@@ -33,7 +33,10 @@ public:
     Level();
 
     void update(); 
+    void updateHD();
     void render(ShowHitboxes hitboxes);
+    void renderHD(ShowHitboxes hitboxes);
+
     void handleEvents(SDL_Event& event);
     int checkAllCollisions();
 private:
