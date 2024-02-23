@@ -110,14 +110,11 @@ void Brain::update(std::vector<Obstacle> obstacles)
 	}
 }
 
-void Brain::render(ShowHitboxes hitboxes, int id_highlighted_core)
+void Brain::render(int id_highlighted_core)
 {
-	if (hitboxes == ShowHitboxes::ON)
+	for (int id_core = 0; id_core < static_cast<int>(_cores.size()); id_core++)
 	{
-		for (int id_core = 0; id_core < static_cast<int>(_cores.size()); id_core++)
-		{
-			_cores[id_core].render((id_core == id_highlighted_core));
-		}
+		_cores[id_core].render((id_core == id_highlighted_core));
 	}
 }
 

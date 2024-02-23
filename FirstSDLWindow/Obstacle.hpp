@@ -32,6 +32,8 @@ public:
     Obstacle(int x, int y, ObstacleType type, Direction direction);
 
     void render(ShowHitboxes hitboxes, int y);
+    void renderHitboxes(int y);
+
     void setUsed(bool used) { _used = used; }
     void setPos(int x, int y);
     void setX(int x);

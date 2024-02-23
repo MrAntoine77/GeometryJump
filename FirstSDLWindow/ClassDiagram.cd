@@ -1,70 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Brain">
-    <Position X="6.5" Y="6.25" Width="1.5" />
+  <Class Name="Brain" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACEAKoAAQDCgAAAgAAAACgEQEgAACAAAWgAAAUAAA=</HashCode>
+      <HashCode>AAACEAK4AAQDCgAAAgAAAACgEQEgAACAAASgAAAUAAA=</HashCode>
       <FileName>Brain.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Core">
-    <Position X="4.75" Y="6" Width="1.5" />
+  <Class Name="Core" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEAIAgAAAJAAAAgAggAAAEAAgBBAAAAQgggBUBAA=</HashCode>
+      <HashCode>AAAAEAIAAAAAIAAAAgAggAAAEAAgAAAAAAQgAgBUBAA=</HashCode>
       <FileName>Core.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Game">
-    <Position X="17.5" Y="0.75" Width="1.5" />
+  <Class Name="Game" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAIAAAgBEABBAAgAAC0gAEAgAIAIABARAAAAUAQA=</HashCode>
       <FileName>Game.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Genetic">
-    <Position X="6.5" Y="2.5" Width="1.5" />
+  <Class Name="Genetic" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAAIAAAAAAEAAQAAAgAAABACEAAAAAABAAAAAAAkBAA=</HashCode>
+      <HashCode>AAAAAAAAAAEAAQAAAgAAABAAEAAAAAABAAAAAAAkBAA=</HashCode>
       <FileName>Genetic.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Level">
-    <Position X="10" Y="4.75" Width="1.5" />
+  <Class Name="Level" Collapsed="true">
+    <Position X="3" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gAAAABAIAAAAABQAAgAACAEAGAAAAAABAAAAQAA0QAA=</HashCode>
+      <HashCode>gAAAABAIAQQAABQAAgAACAAAGAAAAAABAAAAQABURAA=</HashCode>
       <FileName>Level.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LevelEditor">
-    <Position X="21.5" Y="4.5" Width="1.5" />
+  <Class Name="LevelEditor" Collapsed="true">
+    <Position X="4.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gAAAIAAAIBBAARQAQgAAgEAAGBAAIBEAEAgAAEAUAWA=</HashCode>
+      <HashCode>gAAAIAAAIBAAARQAQgAAgEAAGBAAIBEAEAgAAEAUAGA=</HashCode>
       <FileName>LevelEditor.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Neurone">
-    <Position X="3" Y="6" Width="1.5" />
+  <Class Name="Neurone" Collapsed="true">
+    <Position X="6.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAJgCSABwQAAgIAgAAAEQAABBQAAAAAgGAUAEA=</HashCode>
+      <HashCode>AAAAAAAJACSAAwQAAgIAgAAAEQAAAAQAAAAAAGAUAEA=</HashCode>
       <FileName>Neurone.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Obstacle">
-    <Position X="16" Y="9.5" Width="1.5" />
+  <Class Name="Obstacle" Collapsed="true">
+    <Position X="8.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgAAABwIQAQCCAQASjCEAQAAEQAAAAAABAAIAGwQAAA=</HashCode>
+      <HashCode>AgAAAByIQAQCCAQASjCEAQAAFQAAAAAABAAIAGwQAAA=</HashCode>
       <FileName>Obstacle.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Player">
-    <Position X="8.25" Y="2.5" Width="1.5" />
+  <Class Name="Player" Collapsed="true">
+    <Position X="3" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAgGAMAAASAAQTDmAgACAEIQECAAAgMBAAgAQSAUOQA=</HashCode>
+      <HashCode>AAoGAsAAASAAYTCGAgECAEJQECAAkgNAIAgQYSgUOQA=</HashCode>
       <FileName>Player.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TexturesManager">
-    <Position X="13.75" Y="0.5" Width="1.5" />
+  <Class Name="TexturesManager" Collapsed="true">
+    <Position X="4.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAgEKAAAgQQggAAgCCAEgAAAAKEQAgAABAAIAI=</HashCode>
       <FileName>TexturesManager.hpp</FileName>

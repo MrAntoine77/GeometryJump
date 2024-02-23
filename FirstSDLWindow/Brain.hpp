@@ -31,7 +31,7 @@ public:
 	Brain(std::string filename);
 
 	void update(std::vector<Obstacle> obstacles);
-	void render(ShowHitboxes hitboxes, int id_highlighted_core);
+	void render(int id_highlighted_core);
 
 	void deleteRandomNeurone(int nb_neurones);
 	void addRandomNeurone(int nb_neurones);

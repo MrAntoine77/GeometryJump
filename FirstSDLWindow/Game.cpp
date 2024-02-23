@@ -34,7 +34,7 @@ void Game::init(std::string title, int x, int y, int w, int h, bool fullscreen)
 		TexturesManager::init(_renderer);
 		std::cout << "Textures loaded" << std::endl;
 
-		std::string level_filename = "Levels/created_level.txt";
+		std::string level_filename = "Levels/created_level3.txt";
 
 		if (_gamemode != Gamemode::EDITING)
 		{
@@ -122,7 +122,7 @@ void Game::handleEvents()
 				_pause = !_pause;
 				break;
 			case SDLK_r:
-				if (_rendering == Rendering::ON)
+				if (_rendering == Rendering::ON || _rendering == Rendering::HD)
 				{
 					SDL_RenderClear(_renderer);
 					SDL_Rect mask = { 0, 0, WINDOW_W, WINDOW_H };
@@ -138,6 +138,18 @@ void Game::handleEvents()
 				else
 				{
 					std::cout << "Render shown" << std::endl;
+					_rendering = Rendering::ON;
+				}
+				break;
+			case SDLK_t:
+				if (_rendering == Rendering::ON)
+				{
+					std::cout << "Render HD" << std::endl;
+					_rendering = Rendering::HD;
+				}
+				else if (_rendering == Rendering::HD)
+				{
+					std::cout << "Render LD" << std::endl;
 					_rendering = Rendering::ON;
 				}
 				break;
@@ -164,7 +176,15 @@ void Game::update() {
 	{
 		if (!_pause) 
 		{
-			_level.updateHD();
+			if (_rendering == Rendering::HD)
+			{
+				_level.updateHD();
+			}
+			else
+			{
+				_level.update();
+			}
+			
 		}
 	} 
 	else
@@ -175,13 +195,25 @@ void Game::update() {
 
 void Game::render()
 {
-	if (_rendering == Rendering::ON)
+	if (_rendering == Rendering::ON || _rendering == Rendering::HD)
 	{
 		SDL_RenderClear(_renderer);
 
 		if (_gamemode != Gamemode::EDITING)
 		{
-			_level.renderHD(_show_hitboxes);
+			if (_rendering == Rendering::HD)
+			{
+				_level.renderHD(_show_hitboxes);
+			}
+			else
+			{
+				_level.render(_show_hitboxes);
+			}
+
+			if (_show_hitboxes == ShowHitboxes::ON)
+			{
+				_level.renderHitboxes();
+			}
 		}
 		else
 		{

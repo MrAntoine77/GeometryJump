@@ -18,7 +18,7 @@ private:
     std::string _brain_filename;
     SDL_Rect _rect = { 0, 0, BLOCK_SIZE, BLOCK_SIZE };
     SDL_Rect _hitbox_main = { 0, 0, BLOCK_SIZE, BLOCK_SIZE };
-    SDL_Rect _hitbox_floor = { 0, 0, BLOCK_SIZE, 3 * BLOCK_SIZE + 8 };
+    SDL_Rect _hitbox_floor = { 0, 0, BLOCK_SIZE, BLOCK_SIZE + 8 };
     SDL_Rect _hitbox_death = { 0, 0, BLOCK_SIZE, BLOCK_SIZE - 8 };
     Genetic _IA;
     Gamemode _gamemode;
@@ -46,10 +46,13 @@ public:
 
     void update(std::vector<Obstacle>);
     void updateHD(std::vector<Obstacle>);
+
     void updateHitboxes();
     void handleEvents(SDL_Event& event);
+
     void render(ShowHitboxes hitboxes, int y);
     void renderHD(ShowHitboxes hitboxes, int y);
+    void renderHitboxes(int y);
 
     void die();
     void jump();

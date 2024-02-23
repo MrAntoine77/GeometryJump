@@ -87,14 +87,21 @@ void Obstacle::render(ShowHitboxes hitboxes, int y)
         {
             const SDL_Rect rect = { _x + BLOCK_SIZE * id_x, _y + BLOCK_SIZE * id_y + y, BLOCK_SIZE, BLOCK_SIZE };
             SDL_RenderCopyEx(_renderer, TexturesManager::getBlockTexture(_type), NULL, &rect, static_cast<double>(_direction), NULL, SDL_FLIP_NONE);
+        }
+    }
+}
 
-            if (hitboxes == ShowHitboxes::ON)
-            {
-                SDL_Rect hitbox = _hitbox;
-                hitbox.y += y;
-                SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-                SDL_RenderDrawRect(_renderer, &hitbox);
-            }
+void Obstacle::renderHitboxes(int y)
+{
+    for (int id_x = 0; id_x < _nb_x; id_x++)
+    {
+        for (int id_y = 0; id_y < _nb_y; id_y++)
+        {
+            const SDL_Rect rect = { _x + BLOCK_SIZE * id_x, _y + BLOCK_SIZE * id_y + y, BLOCK_SIZE, BLOCK_SIZE };
+            SDL_Rect hitbox = _hitbox;
+            hitbox.y += y;
+            SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+            SDL_RenderDrawRect(_renderer, &hitbox);
         }
     }
 }

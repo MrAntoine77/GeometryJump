@@ -9,90 +9,111 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Fichiers sources\IA">
+      <UniqueIdentifier>{8f784e7b-0176-48d3-9014-59463b5cfb5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Particles">
+      <UniqueIdentifier>{d8bba2fb-322e-400f-a851-cd3d1a6267f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Level">
+      <UniqueIdentifier>{46833b11-5255-4712-92e3-12173672b758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Game">
+      <UniqueIdentifier>{0efcdbc5-8939-4d1a-bdbc-218946f78504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\IA">
+      <UniqueIdentifier>{7e66362e-edc9-4a49-9383-d3b03cae33b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Level">
+      <UniqueIdentifier>{aa33ca75-608d-4637-b8b8-fc62eaea0a71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Game">
+      <UniqueIdentifier>{f943b8a9-f549-4b8a-825c-f738765b21ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Particles">
+      <UniqueIdentifier>{4e99045a-51cd-40fd-9e00-46c9d4022b41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Brain.cpp">
+      <Filter>Fichiers sources\IA</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>Fichiers sources\IA</Filter>
+    </ClCompile>
+    <ClCompile Include="Genetic.cpp">
+      <Filter>Fichiers sources\IA</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticlesSpawner.cpp">
+      <Filter>Fichiers sources\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Neurone.cpp">
+      <Filter>Fichiers sources\IA</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEditor.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Obstacle.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Fichiers sources\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Fichiers sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Fichiers sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturesManager.cpp">
+      <Filter>Fichiers sources\Game</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Level.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Brain.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Genetic.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Core.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelEditor.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="TexturesManager.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Obstacle.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Neurone.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticlesSpawner.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Level.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Brain.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="utils.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Genetic.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="Brain.hpp">
+      <Filter>Fichiers d%27en-tête\IA</Filter>
     </ClInclude>
     <ClInclude Include="Core.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\IA</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.hpp">
+      <Filter>Fichiers d%27en-tête\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Genetic.hpp">
+      <Filter>Fichiers d%27en-tête\IA</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.hpp">
+      <Filter>Fichiers d%27en-tête\Level</Filter>
     </ClInclude>
     <ClInclude Include="LevelEditor.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="TexturesManager.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Obstacle.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Level</Filter>
     </ClInclude>
     <ClInclude Include="Neurone.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\IA</Filter>
+    </ClInclude>
+    <ClInclude Include="Obstacle.hpp">
+      <Filter>Fichiers d%27en-tête\Level</Filter>
     </ClInclude>
     <ClInclude Include="ParticlesSpawner.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Particles</Filter>
     </ClInclude>
     <ClInclude Include="Particle.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Particles</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <ClInclude Include="Player.hpp">
+      <Filter>Fichiers d%27en-tête\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturesManager.hpp">
+      <Filter>Fichiers d%27en-tête\Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

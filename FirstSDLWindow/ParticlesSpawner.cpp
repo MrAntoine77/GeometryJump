@@ -68,4 +68,15 @@ void ParticlesSpawner::render(int y)
 	{
 		element.render(y);
 	}
+
+
+	SDL_Rect rect;
+	rect.x = (_x_max_gap / 2) * _nb_frames;
+	rect.y = _y;
+	rect.w = _size_max;
+	rect.h = _size_max;
+
+
+	SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+	SDL_RenderDrawRect(_renderer, &rect);
 }

@@ -56,16 +56,14 @@ void Player::update(std::vector<Obstacle> obstacles)
             _brain->addScore(1000);
         }
 
-
         const int rotation_rate = 10;
-
         if (_y_velocity != 0.0f)
         {
             _rotation_angle = (_rotation_angle + rotation_rate) % 360;
             _rect.y += static_cast<int>(_y_velocity / FRAMERATE);
         }
-        updateHitboxes();
 
+        
 
         if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
         {
@@ -83,7 +81,9 @@ void Player::update(std::vector<Obstacle> obstacles)
                 _rotation_angle += (should_increase_angle) ? rotation_rate : -rotation_rate;
 
             }
-        }   
+        } 
+
+        updateHitboxes();
     }
 }
 
@@ -136,6 +136,10 @@ void Player::updateHD(std::vector<Obstacle> obstacles)
         {
             _particles_slide.update(false);
         }
+    }
+    else
+    {
+        _particles_death.update(false);
     }
 }
 
@@ -202,7 +206,6 @@ void Player::handleEvents(SDL_Event& event)
         }
     }
 
-
     if (_jump_pressed || (((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING)) && _brain->anyCoreActivated()))
     {
         jump();
@@ -217,31 +220,6 @@ void Player::render(ShowHitboxes hitboxes, int y)
         rect.y += y;
         SDL_RenderCopyEx(_renderer, _texture, NULL, &rect, _rotation_angle, NULL, SDL_FLIP_NONE);
         SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-
-        if (hitboxes == ShowHitboxes::ON)
-        {
-            SDL_Rect hitbox_main = _hitbox_main;
-            SDL_Rect hitbox_floor = _hitbox_floor;
-            SDL_Rect hitbox_death = _hitbox_death;
-
-            hitbox_main.y += y;
-            hitbox_floor.y += y;
-            hitbox_death.y += y;
-
-
-            SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
-            SDL_RenderDrawRect(_renderer, &hitbox_main);
-            SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
-            SDL_RenderDrawRect(_renderer, &hitbox_floor);
-            SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-            SDL_RenderDrawRect(_renderer, &hitbox_death);
-        }
-
-        if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
-        {
-
-            _brain->render(hitboxes, _selected_core);
-        }
     }
    
 }
@@ -256,39 +234,36 @@ void Player::renderHD(ShowHitboxes hitboxes, int y)
         rect.y += y;
         SDL_RenderCopyEx(_renderer, _texture, NULL, &rect, _rotation_angle, NULL, SDL_FLIP_NONE);
         SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-
-        if (hitboxes == ShowHitboxes::ON)
-        {
-            SDL_Rect hitbox_main = _hitbox_main;
-            SDL_Rect hitbox_floor = _hitbox_floor;
-            SDL_Rect hitbox_death = _hitbox_death;
-
-            hitbox_main.y += y;
-            hitbox_floor.y += y;
-            hitbox_death.y += y;
-
-
-            SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
-            SDL_RenderDrawRect(_renderer, &hitbox_main);
-            SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
-            SDL_RenderDrawRect(_renderer, &hitbox_floor);
-            SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-            SDL_RenderDrawRect(_renderer, &hitbox_death);
-        }
-
-        if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
-        {
-
-            _brain->render(hitboxes, _selected_core);
-        }
-
-
-        
     }
     else
     {
-        _particles_death.update(false);
         _particles_death.render(y);
+    }
+}
+
+void Player::renderHitboxes(int y)
+{
+    if (!_dying)
+    {
+        SDL_Rect hitbox_main = _hitbox_main;
+        SDL_Rect hitbox_floor = _hitbox_floor;
+        SDL_Rect hitbox_death = _hitbox_death;
+
+        hitbox_main.y += y;
+        hitbox_floor.y += y;
+        hitbox_death.y += y;
+
+        SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+        SDL_RenderDrawRect(_renderer, &hitbox_main);
+        SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
+        SDL_RenderDrawRect(_renderer, &hitbox_floor);
+        SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+        SDL_RenderDrawRect(_renderer, &hitbox_death);
+
+        if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
+        {
+            _brain->render(_selected_core);
+        }
     }
 }
 
@@ -317,8 +292,6 @@ void Player::die()
 
             if (_IA.nextExp() == 0)
             {
-
-
                 _generation++;
                 std::cout << "[" << _generation << "] generation " << std::endl;
                 _IA.update();

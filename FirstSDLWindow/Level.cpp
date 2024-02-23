@@ -204,16 +204,6 @@ void Level::render(ShowHitboxes hitboxes)
     floor.y += _y;
     SDL_SetRenderDrawColor(_renderer, 32, 32, 32, 255);
     SDL_RenderFillRect(_renderer, &floor);
-
-    if (hitboxes == ShowHitboxes::ON)
-    {
-        SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
-
-        SDL_RenderDrawLine(_renderer, 0, _threshold_y_up + _y, WINDOW_W, _threshold_y_up + _y);
-        SDL_RenderDrawLine(_renderer, 0, _threshold_y_down + _y, WINDOW_W, _threshold_y_down + _y);
-
-        SDL_RenderDrawRect(_renderer, &floor);
-    }
 }
 
 void Level::renderHD(ShowHitboxes hitboxes)
@@ -241,16 +231,25 @@ void Level::renderHD(ShowHitboxes hitboxes)
     floor.y += _y;
     SDL_SetRenderDrawColor(_renderer, 32, 32, 32, 255);
     SDL_RenderFillRect(_renderer, &floor);
+}
 
-    if (hitboxes == ShowHitboxes::ON)
+void Level::renderHitboxes()
+{
+    _player->renderHitboxes(_y);
+
+    for (auto& obstacle : _obstacles)
     {
-        SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
-
-        SDL_RenderDrawLine(_renderer, 0, _threshold_y_up + _y, WINDOW_W, _threshold_y_up + _y);
-        SDL_RenderDrawLine(_renderer, 0, _threshold_y_down + _y, WINDOW_W, _threshold_y_down + _y);
-
-        SDL_RenderDrawRect(_renderer, &floor);
+        obstacle.renderHitboxes(_y);
     }
+
+    SDL_Rect floor = GROUND_RECT_BOTTOM;
+    floor.y += _y;
+    SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
+
+    SDL_RenderDrawLine(_renderer, 0, _threshold_y_up + _y, WINDOW_W, _threshold_y_up + _y);
+    SDL_RenderDrawLine(_renderer, 0, _threshold_y_down + _y, WINDOW_W, _threshold_y_down + _y);
+
+    SDL_RenderDrawRect(_renderer, &floor);
 }
 
 void Level::handleEvents(SDL_Event& event)
