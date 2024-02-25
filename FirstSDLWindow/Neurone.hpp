@@ -22,7 +22,7 @@ public:
     Neurone(const Neurone& src);
     Neurone();
 
-    void render(bool highlight);
+    void render(bool highlight, int y);
     void update(const std::vector<Obstacle>& obstacles, int brain_x, int brain_y);
 
     void setValues(float x, float y, ObstacleType type, bool reversed);

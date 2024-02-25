@@ -31,7 +31,7 @@ public:
 	Brain(std::string filename);
 
 	void update(std::vector<Obstacle> obstacles);
-	void render(int id_highlighted_core);
+	void render(int id_highlighted_core, int y);
 
 	void deleteRandomNeurone(int nb_neurones);
 	void addRandomNeurone(int nb_neurones);
@@ -47,7 +47,7 @@ public:
 	int getScore() const { return _score; }
 	int getNbTotalNeurones() const;
 	std::vector<Core> getCores() const { return _cores; }
-	int getNbCores() const { return static_cast<int>(_cores.size()); }
+	std::size_t getNbCores() const { return _cores.size(); }
 	bool anyCoreActivated() const;
 
 	bool operator>(const Brain& other) const { return _score > other._score; }

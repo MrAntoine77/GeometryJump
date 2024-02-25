@@ -43,7 +43,7 @@ void Core::update(std::vector<Obstacle> obstacles, int brain_x, int brain_y)
 	}
 }
 
-void Core::render(bool highlight)
+void Core::render(bool highlight, int y)
 {
 	if (_neurones.size() > 0)
 	{
@@ -54,8 +54,7 @@ void Core::render(bool highlight)
 		{
 			center_x += neurone.getRect().x + static_cast<int>(NEURONE_HITBOX_SIZE / 2);
 			center_y += neurone.getRect().y + static_cast<int>(NEURONE_HITBOX_SIZE / 2);
-
-			neurone.render(highlight);
+			neurone.render(highlight, y);
 		}
 		center_x = static_cast<int>(center_x / _neurones.size());
 		center_y = static_cast<int>(center_y / _neurones.size());
@@ -65,7 +64,7 @@ void Core::render(bool highlight)
 			for (auto& neurone : _neurones)
 			{
 				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-				SDL_RenderDrawLine(_renderer, neurone.getRect().x + static_cast<int>(NEURONE_HITBOX_SIZE / 2), neurone.getRect().y + static_cast<int>(NEURONE_HITBOX_SIZE / 2), center_x, center_y);
+				SDL_RenderDrawLine(_renderer, neurone.getRect().x + static_cast<int>(NEURONE_HITBOX_SIZE / 2), neurone.getRect().y + y + static_cast<int>(NEURONE_HITBOX_SIZE / 2), center_x, center_y + y);
 			}
 		}
 	}

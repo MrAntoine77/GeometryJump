@@ -20,8 +20,8 @@ Player::Player(bool invincible, Gamemode gamemode, int idPlayer, std::string bra
     _invincible(invincible), _gamemode(gamemode), _id_player(idPlayer), _brain_filename(brain_filename)
 {
 
-    _particles_slide = ParticlesSpawner(_rect.x, _rect.y, static_cast<float>(- LEVEL_SPEED), 0.0f, 32.0f, 32.0f, 8, 16, 8, 1.0f);
-    _particles_death = ParticlesSpawner(_rect.x, _rect.y, 0.0f, 0.0f, 128.0f, 128.0f, 16, 32, 16, 4.0f);
+    _particles_slide = ParticlesSpawner(_rect.x, _rect.y, static_cast<float>(- LEVEL_SPEED), 0.0f, 32, 32, 8, 16, 8, 1.0f);
+    _particles_death = ParticlesSpawner(_rect.x, _rect.y, 0.0f, 0.0f, 128, 128, 16, 32, 16, 4.0f);
 
 
     if (_gamemode == Gamemode::TRAINING)
@@ -262,7 +262,7 @@ void Player::renderHitboxes(int y)
 
         if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
         {
-            _brain->render(_selected_core);
+            _brain->render(_selected_core, y);
         }
     }
 }
@@ -276,7 +276,7 @@ void Player::die()
         _particles_death.setPos(_hitbox_main.x + 32, _hitbox_main.y + 32);
         _particles_death.spawnAll();
 
-        _rotation_angle = 0.0f;
+        _rotation_angle = 0;
         _rect.x = PLAYER_INIT_X;
         _rect.y = PLAYER_INIT_Y;
         _rect.w = BLOCK_SIZE;
@@ -288,7 +288,7 @@ void Player::die()
 
         if (_gamemode == Gamemode::TRAINING)
         {
-            _brain->updateScore(_brain->getScore() - _brain->getNbTotalNeurones() - _brain->getNbCores());
+            _brain->updateScore(_brain->getScore() - _brain->getNbTotalNeurones() - static_cast<int>(_brain->getNbCores()));
 
             if (_IA.nextExp() == 0)
             {
@@ -311,7 +311,7 @@ void Player::updateHitboxes()
     _hitbox_death.x = _rect.x;
     _hitbox_death.y = _rect.y;
 
-    _hitbox_floor.x = _rect.x;
+    _hitbox_floor.x = _rect.x + 4;
     _hitbox_floor.y = _rect.y + BLOCK_SIZE - 8;
 }
 
@@ -346,7 +346,7 @@ void Player::showNextBrain()
 {
     if ((_gamemode == Gamemode::TRAINING) || (_gamemode == Gamemode::TESTING))
     {
-        _selected_core = (_selected_core + 1) % static_cast<int>(_brain->getNbCores());
+        _selected_core = (_selected_core + 1) % _brain->getNbCores();
         std::cout << "Core " << _selected_core << " selected" << std::endl;
     }   
 }

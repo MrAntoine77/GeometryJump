@@ -24,18 +24,21 @@ Neurone::Neurone()
 	_activated = false;
 }
 
-void Neurone::render(bool highlight)
+void Neurone::render(bool highlight, int y)
 {
 	SDL_Texture* pt_texture = TexturesManager::getNeuroneTexture(_type, _activated, _reversed);
+	SDL_Rect rect = _rect;
+	rect.y += y;
+
 	if (!highlight)
 	{
 		SDL_SetTextureAlphaMod(pt_texture, NEURONE_ALPHA_UNSELECTED);
-		SDL_RenderCopyEx(_renderer, pt_texture, NULL, &_rect, 0, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(_renderer, pt_texture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
 		SDL_SetTextureAlphaMod(pt_texture, 255);
 	}
 	else
 	{
-		SDL_RenderCopyEx(_renderer, pt_texture, NULL, &_rect, 0, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(_renderer, pt_texture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
 	}
 }
 

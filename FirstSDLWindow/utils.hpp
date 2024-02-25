@@ -37,8 +37,7 @@ const int NEURONE_DIST_MAX = 5 * (BLOCK_SIZE / NEURONE_HITBOX_SIZE);
 
 //Player
 const int PLAYER_INIT_X = 256;
-const int PLAYER_INIT_Y = 256;
-//const int PLAYER_INIT_Y = GROUND_RECT_BOTTOM.y - BLOCK_SIZE + 1;
+const int PLAYER_INIT_Y = GROUND_RECT_BOTTOM.y - BLOCK_SIZE + 1;
 
 //Level
 const int LEVEL_RESTART_DELAY = 64;
@@ -80,7 +79,7 @@ enum class Gamemode {
     TRAINING,
     TESTING,
     PLAYING,
-    EDITING
+    EDITING,
 };
 
 enum class ShowHitboxes {

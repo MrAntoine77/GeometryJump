@@ -22,7 +22,7 @@ public:
 	Core(int nb_neurones, int dist_neurone);
 
 	void update(std::vector<Obstacle> obstacles, int brain_x, int brain_y);
-	void render(bool highlight);
+	void render(bool highlight, int y);
 
 	void deleteRandomNeurone();
 	void addRandomNeurone();

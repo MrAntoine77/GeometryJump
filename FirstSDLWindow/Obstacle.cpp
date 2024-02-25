@@ -153,19 +153,19 @@ bool Obstacle::compareByY(const Obstacle& obstacle1, const Obstacle& obstacle2)
 
 bool Obstacle::isGroupable(Axe axe) const
 {
-    switch (_type) {
+    switch (_type) 
+    {
     case ObstacleType::BLOCK:
     case ObstacleType::SLAB_UPPER:
     case ObstacleType::SPIKE:
     case ObstacleType::SPIKE_SMALL:
         return true;
         break;
+    case ObstacleType::AIR:
     case ObstacleType::YELLOW_ORB:
     case ObstacleType::BLUE_ORB:
     case ObstacleType::PINK_ORB:
-        return false;
-        break;
-    default:
+    case ObstacleType::Count:
         return false;
         break;
     }

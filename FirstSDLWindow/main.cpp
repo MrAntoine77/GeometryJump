@@ -3,28 +3,16 @@
 #include "Game.hpp" 
 
 int main(int argc, char* argv[]) {
-    time_t currentTime = time(0);
-    struct tm now;
+    Game game (ShowHitboxes::ON, Rendering::OFF, Gamemode::TRAINING, 0); 
+    game.init("Geometry Jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, false);
 
-    if (localtime_s(&now, &currentTime) == 0) {
-        std::cout << "Heure actuelle : " << now.tm_hour << ":" << now.tm_min << ":" << now.tm_sec << std::endl;
-    }
-    else 
+    while (game.isRunning()) 
     {
-        std::cerr << "Error getting local time" << std::endl;
-        return 1; 
+        game.handleEvents();
+        game.update();
+        game.render();
     }
 
-    Game* game = new Game(ShowHitboxes::ON, Rendering::HD, Gamemode::PLAYING, 17); 
-    game->init("Geometry Jump", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_W, WINDOW_H, false);
-
-    while (game->isRunning()) 
-    {
-        game->handleEvents();
-        game->update();
-        game->render();
-    }
-
-    game->clean();
+    game.clean();
     return 0;
 }

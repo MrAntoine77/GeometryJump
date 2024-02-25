@@ -10,8 +10,8 @@ void ParticlesSpawner::setRenderer(SDL_Renderer* renderer) {
 ParticlesSpawner::ParticlesSpawner(int x, int y, 
 	float x_speed, float y_speed,
 	int x_max_gap, int y_max_gap, 
-	int size_min, int size_max, int 
-	nb_frames, float particles_density) : 
+	int size_min, int size_max, 
+	int nb_frames, float particles_density) : 
 	_x(x), _y(y), 
 	_x_speed(x_speed), _y_speed(y_speed), 
 	_x_max_gap(x_max_gap), _y_max_gap(y_max_gap),
@@ -68,15 +68,4 @@ void ParticlesSpawner::render(int y)
 	{
 		element.render(y);
 	}
-
-
-	SDL_Rect rect;
-	rect.x = (_x_max_gap / 2) * _nb_frames;
-	rect.y = _y;
-	rect.w = _size_max;
-	rect.h = _size_max;
-
-
-	SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
-	SDL_RenderDrawRect(_renderer, &rect);
 }
