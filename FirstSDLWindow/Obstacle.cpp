@@ -10,8 +10,12 @@ void Obstacle::setRenderer(SDL_Renderer* renderer)
 
 ObstacleType Obstacle::generateRandomNeuroneType()
 {
-	ObstacleType neurone_types[] = { ObstacleType::AIR, ObstacleType::BLOCK, ObstacleType::SPIKE };
-	int random = generateRandomInt(0, 2);
+	ObstacleType neurone_types[] = { 
+        ObstacleType::AIR, 
+        ObstacleType::BLOCK, 
+        ObstacleType::SPIKE , 
+        ObstacleType::YELLOW_ORB };
+	int random = generateRandomInt(0, 3);
 
     return neurone_types[random];
 }
@@ -132,6 +136,7 @@ void Obstacle::setNbY(int nb_y)
     _nb_y = nb_y;
     _hitbox.h += BLOCK_SIZE * (_nb_y - 1);
 }
+
 
 bool Obstacle::compareByX(const Obstacle& obstacle1, const Obstacle& obstacle2)
 {

@@ -34,7 +34,7 @@ void Game::init(std::string title, int x, int y, int w, int h, bool fullscreen)
 		TexturesManager::init(_renderer);
 		std::cout << "Textures loaded" << std::endl;
 
-		std::string level_filename = "Levels/created_level.txt";
+		std::string level_filename = "Levels/training_yellow_orb.txt";
 
 		if (_gamemode != Gamemode::EDITING)
 		{

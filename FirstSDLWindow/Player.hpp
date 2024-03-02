@@ -18,7 +18,7 @@ private:
     std::string _brain_filename;
     SDL_Rect _rect = { 0, 0, BLOCK_SIZE, BLOCK_SIZE };
     SDL_Rect _hitbox_main = { 0, 0, BLOCK_SIZE, BLOCK_SIZE };
-    SDL_Rect _hitbox_floor = { 0, 0, BLOCK_SIZE, BLOCK_SIZE + 8 };
+    SDL_Rect _hitbox_floor = { 0, 0, BLOCK_SIZE - 8, BLOCK_SIZE + 8 };
     SDL_Rect _hitbox_death = { 0, 0, BLOCK_SIZE, BLOCK_SIZE - 8 };
     Genetic _IA;
     Gamemode _gamemode;

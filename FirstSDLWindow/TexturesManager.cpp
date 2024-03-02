@@ -24,6 +24,11 @@ SDL_Texture* TexturesManager::_texture_neurone_block_reverse_off = nullptr;
 SDL_Texture* TexturesManager::_texture_neurone_air_reverse_on = nullptr;
 SDL_Texture* TexturesManager::_texture_neurone_air_reverse_off = nullptr;
 
+SDL_Texture* TexturesManager::_texture_neurone_orb_yellow_on = nullptr;
+SDL_Texture* TexturesManager::_texture_neurone_orb_yellow_off = nullptr;
+SDL_Texture* TexturesManager::_texture_neurone_orb_yellow_reverse_on = nullptr;
+SDL_Texture* TexturesManager::_texture_neurone_orb_yellow_reverse_off = nullptr;
+
 SDL_Texture* TexturesManager::_texture_player = nullptr;
 
 
@@ -39,18 +44,25 @@ void TexturesManager::init(SDL_Renderer* renderer)
 	_texture_blue_orb		= loadTexture("Textures/Obstacles/blue_orb.png", _renderer);
 	_texture_slab_upper		= loadTexture("Textures/Obstacles/slab_upper.png", _renderer);
 
+
 	_texture_neurone_spike_on			= loadTexture("Textures/Neurones/neurone_spike_on.png", _renderer);
 	_texture_neurone_spike_off			= loadTexture("Textures/Neurones/neurone_spike_off.png", _renderer);
 	_texture_neurone_block_on			= loadTexture("Textures/Neurones/neurone_block_on.png", _renderer);
 	_texture_neurone_block_off			= loadTexture("Textures/Neurones/neurone_block_off.png", _renderer);
 	_texture_neurone_air_on				= loadTexture("Textures/Neurones/neurone_air_on.png", _renderer);
 	_texture_neurone_air_off			= loadTexture("Textures/Neurones/neurone_air_off.png", _renderer);
+	_texture_neurone_air_reverse_on = loadTexture("Textures/Neurones/neurone_air_reverse_on.png", _renderer);
+	_texture_neurone_air_reverse_off = loadTexture("Textures/Neurones/neurone_air_reverse_off.png", _renderer);
 	_texture_neurone_spike_reverse_on	= loadTexture("Textures/Neurones/neurone_spike_reverse_on.png", _renderer);
 	_texture_neurone_spike_reverse_off	= loadTexture("Textures/Neurones/neurone_spike_reverse_off.png", _renderer);
 	_texture_neurone_block_reverse_on	= loadTexture("Textures/Neurones/neurone_block_reverse_on.png", _renderer);
 	_texture_neurone_block_reverse_off	= loadTexture("Textures/Neurones/neurone_block_reverse_off.png", _renderer);
-	_texture_neurone_air_reverse_on		= loadTexture("Textures/Neurones/neurone_air_reverse_on.png", _renderer);
-	_texture_neurone_air_reverse_off	= loadTexture("Textures/Neurones/neurone_air_reverse_off.png", _renderer);
+
+	_texture_neurone_orb_yellow_on = loadTexture("Textures/Neurones/neurone_orb_yellow_on.png", _renderer);
+	_texture_neurone_orb_yellow_off = loadTexture("Textures/Neurones/neurone_orb_yellow_off.png", _renderer);
+	_texture_neurone_orb_yellow_reverse_on = loadTexture("Textures/Neurones/neurone_orb_yellow_reverse_on.png", _renderer);
+	_texture_neurone_orb_yellow_reverse_off = loadTexture("Textures/Neurones/neurone_orb_yellow_reverse_off.png", _renderer);
+
 
 	_texture_player = loadTexture("Textures/icon1.png", _renderer);
 }
@@ -76,6 +88,11 @@ SDL_Texture* TexturesManager::getNeuroneTexture(ObstacleType type, bool activate
 		pt_texture = (activated) ?
 			(reversed ? _texture_neurone_air_reverse_on : _texture_neurone_air_on) :
 			(reversed ? _texture_neurone_air_reverse_off : _texture_neurone_air_off);
+		break;
+	case ObstacleType::YELLOW_ORB:
+		pt_texture = (activated) ?
+			(reversed ? _texture_neurone_orb_yellow_reverse_on : _texture_neurone_orb_yellow_on) :
+			(reversed ? _texture_neurone_orb_yellow_reverse_off : _texture_neurone_orb_yellow_off);
 		break;
 
 	default:

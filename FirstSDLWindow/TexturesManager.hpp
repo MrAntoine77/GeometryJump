@@ -27,6 +27,11 @@ private:
     static SDL_Texture* _texture_neurone_air_reverse_on;
     static SDL_Texture* _texture_neurone_air_reverse_off;
 
+    static SDL_Texture* _texture_neurone_orb_yellow_on;
+    static SDL_Texture* _texture_neurone_orb_yellow_off;
+    static SDL_Texture* _texture_neurone_orb_yellow_reverse_on;
+    static SDL_Texture* _texture_neurone_orb_yellow_reverse_off;
+
     static SDL_Texture* _texture_player;
 
 public:

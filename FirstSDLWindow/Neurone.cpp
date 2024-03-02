@@ -48,7 +48,7 @@ void Neurone::update(const std::vector<Obstacle>& obstacles, int brain_x, int br
 	int neurone_y = static_cast<int>(static_cast<float>(NEURONE_HITBOX_SIZE) * _y);
 	_rect = { neurone_x + brain_x, neurone_y + brain_y, NEURONE_HITBOX_SIZE, NEURONE_HITBOX_SIZE };
 
-	bool collision = false, spike_collision = false, block_collision = false;
+	bool collision = false, spike_collision = false, block_collision = false, orb_collision = false;
 
 	for (auto& obstacle : obstacles)
 	{
@@ -61,7 +61,6 @@ void Neurone::update(const std::vector<Obstacle>& obstacles, int brain_x, int br
 				block_collision = true;
 			}
 			break;
-
 		case ObstacleType::SPIKE:
 		case ObstacleType::SPIKE_SMALL:
 			if (checkCollision(_rect, obstacle.getHitbox()))
@@ -69,11 +68,13 @@ void Neurone::update(const std::vector<Obstacle>& obstacles, int brain_x, int br
 				spike_collision = true;
 			}
 			break;
-		default:
+		case ObstacleType::YELLOW_ORB:
+			if (checkCollision(_rect, obstacle.getHitbox()))
+			{
+				orb_collision = true;
+			}
 			break;
-		}
-
-		if (spike_collision && block_collision) {
+		default:
 			break;
 		}
 	}
@@ -82,6 +83,9 @@ void Neurone::update(const std::vector<Obstacle>& obstacles, int brain_x, int br
 	{
 	case ObstacleType::BLOCK:
 		collision = block_collision;
+		break;	
+	case ObstacleType::YELLOW_ORB:
+		collision = orb_collision;
 		break;
 	case ObstacleType::SPIKE:
 		collision = spike_collision;
