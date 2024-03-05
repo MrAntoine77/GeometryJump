@@ -2,7 +2,7 @@
 
 SDL_Renderer* LevelEditor::_renderer = nullptr;
 
-void LevelEditor::setRenderer(SDL_Renderer* renderer)
+void LevelEditor::init(SDL_Renderer* renderer)
 {
 	_renderer = renderer;
 }

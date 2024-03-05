@@ -1,12 +1,5 @@
 #include "Genetic.hpp"
 
-SDL_Renderer* Genetic::_renderer = nullptr;
-
-void Genetic::setRenderer(SDL_Renderer* renderer)
-{
-	_renderer = renderer;
-}
-
 Genetic::Genetic(std::string brain_filename)
 {
 	Brain brain_loaded = Brain(brain_filename);

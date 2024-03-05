@@ -18,7 +18,7 @@ private:
     float _x = 0.0f;
     float _y = 0.0f;
 public:
-    static void setRenderer(SDL_Renderer* renderer);
+    static void init(SDL_Renderer* renderer);
     Neurone(const Neurone& src);
     Neurone();
 

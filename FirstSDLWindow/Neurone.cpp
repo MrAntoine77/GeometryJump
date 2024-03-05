@@ -2,7 +2,7 @@
 
 SDL_Renderer* Neurone::_renderer = nullptr;
 
-void Neurone::setRenderer(SDL_Renderer* renderer) {
+void Neurone::init(SDL_Renderer* renderer) {
 	_renderer = renderer;
 }
 

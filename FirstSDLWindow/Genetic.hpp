@@ -11,14 +11,10 @@
 class Genetic
 {
 private:
-	static SDL_Renderer* _renderer;
-
 	std::vector<Brain> _brains;
 	
 	int _current_brain_id = 0;
 public:
-	static void setRenderer(SDL_Renderer * renderer);
-
 	Genetic(std::string brain_filename);
 	Genetic(int nb_cores, int nb_neurones);
 	Genetic();

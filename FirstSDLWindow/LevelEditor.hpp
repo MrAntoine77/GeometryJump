@@ -24,7 +24,7 @@ private:
     int _nb_blocks = 0;
     int _step = 0;
 public:
-    static void setRenderer(SDL_Renderer* renderer);
+    static void init(SDL_Renderer* renderer);
 
     LevelEditor(std::string filename);
     LevelEditor();

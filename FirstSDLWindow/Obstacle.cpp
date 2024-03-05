@@ -3,7 +3,7 @@
 
 SDL_Renderer* Obstacle::_renderer = nullptr;
 
-void Obstacle::setRenderer(SDL_Renderer* renderer)
+void Obstacle::init(SDL_Renderer* renderer)
 {
     _renderer = renderer;
 }
@@ -166,11 +166,7 @@ bool Obstacle::isGroupable(Axe axe) const
     case ObstacleType::SPIKE_SMALL:
         return true;
         break;
-    case ObstacleType::AIR:
-    case ObstacleType::YELLOW_ORB:
-    case ObstacleType::BLUE_ORB:
-    case ObstacleType::PINK_ORB:
-    case ObstacleType::Count:
+    default:
         return false;
         break;
     }

@@ -93,6 +93,13 @@ enum class Rendering {
     HD
 };
 
+struct GameInfo {
+    Gamemode gamemode = Gamemode::PLAYING;
+    ShowHitboxes show_hitboxes = ShowHitboxes::ON;
+    Rendering rendering = Rendering::ON;
+    int speed = 17;
+};
+
 struct ObstacleInfo {
     ObstacleType type = ObstacleType::AIR;
     Direction direction = Direction::UP;

@@ -3,9 +3,8 @@
 
 SDL_Renderer* Core::_renderer = nullptr;
 
-void Core::setRenderer(SDL_Renderer* renderer) {
+void Core::init(SDL_Renderer* renderer) {
 	_renderer = renderer;
-	Neurone::setRenderer(_renderer);
 }
 
 Core::Core(int nb_neurones)

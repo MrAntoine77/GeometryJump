@@ -11,6 +11,7 @@ class Player
 {
 private:   
     static SDL_Renderer* _renderer;
+    static GameInfo* _game_info;
 
     SDL_Texture* _texture = nullptr;
     Brain * _brain = nullptr;
@@ -21,9 +22,7 @@ private:
     SDL_Rect _hitbox_floor = { 0, 0, BLOCK_SIZE - 8, BLOCK_SIZE + 8 };
     SDL_Rect _hitbox_death = { 0, 0, BLOCK_SIZE, BLOCK_SIZE - 8 };
     Genetic _IA;
-    Gamemode _gamemode;
     ObstacleType _orb_nearly = ObstacleType::AIR;
-
     ParticlesSpawner _particles_slide;
     ParticlesSpawner _particles_death;
 
@@ -39,20 +38,17 @@ private:
 
     bool _dying = false;
 public:
-    static void setRenderer(SDL_Renderer* renderer);
+    static void init(SDL_Renderer* renderer, GameInfo* game_info);
 
     Player();
-    Player(bool invincible, Gamemode gamemode, int id_player, std::string brain_filename, std::string texture_filename);
+    Player(bool invincible, int id_player, std::string brain_filename, std::string texture_filename);
 
     void update(std::vector<Obstacle>);
-    void updateHD(std::vector<Obstacle>);
 
     void updateHitboxes();
     void handleEvents(SDL_Event& event);
 
     void render(ShowHitboxes hitboxes, int y);
-    void renderHD(ShowHitboxes hitboxes, int y);
-    void renderHitboxes(int y);
 
     void die();
     void jump();
@@ -78,7 +74,6 @@ public:
     float getYVelocity() const { return _y_velocity; }
     int getY() const { return _rect.y; }
     bool isInvincible() const { return _invincible; }
-    Gamemode getMode() const { return _gamemode; }
 private:
     void showNextBrain();
 };

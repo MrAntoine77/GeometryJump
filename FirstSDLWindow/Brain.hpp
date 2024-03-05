@@ -14,7 +14,6 @@
 class Brain
 {
 private:
-	static SDL_Renderer* _renderer;
 	static int _best_score;
 
 	std::vector<Core> _cores;
@@ -23,7 +22,6 @@ private:
 	int _x = 0;
 	int _y = 0;
 public:
-	static void setRenderer(SDL_Renderer* renderer);
 	static int getBestScore() { return _best_score; }
 
 	Brain(int nb_cores = 0, int nb_neurones = 1);

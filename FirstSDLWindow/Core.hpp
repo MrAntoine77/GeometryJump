@@ -15,7 +15,7 @@ private:
 
 	int _dist_neurone;
 public:
-	static void setRenderer(SDL_Renderer* renderer);
+	static void init(SDL_Renderer* renderer);
 
 	Core(int nb_neurones = 1);
 	Core(const Core& src);

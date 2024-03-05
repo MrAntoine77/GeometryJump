@@ -1,12 +1,12 @@
 #include "Level.hpp"
 
 SDL_Renderer* Level::_renderer = nullptr;
+GameInfo* Level::_game_info = nullptr;
 
-void Level::setRenderer(SDL_Renderer* renderer)
+void Level::init(SDL_Renderer* renderer, GameInfo* game_info)
 {
     _renderer = renderer;
-    Obstacle::setRenderer(_renderer);
-
+    _game_info = game_info;
 }
 
 Level::Level(std::string filename, Player* player) : _filename(filename), _player(player)
@@ -85,6 +85,7 @@ void Level::update()
 {
     if (_dying_delay <= 0)
     {
+        _dying_delay = 0;
         _player->setDying(false);
         _x -= LEVEL_SPEED;
         for (auto& obstacle : _obstacles)
@@ -130,55 +131,6 @@ void Level::update()
     }
 }
 
-void Level::updateHD()
-{
-    if (_dying_delay <= 0)
-    {
-        _player->setDying(false);
-        _x -= LEVEL_SPEED;
-        for (auto& obstacle : _obstacles)
-        {
-            obstacle.setX(obstacle.getInitX() + _x);
-        }
-    }
-
-    _player->updateHD(_obstacles);
-
-    int collision_result = checkAllCollisions();
-
-
-    if (collision_result == -1)
-    {
-        _player->setGround(false);
-        _player->setYVelocity(fmaxf(fminf(_player->getYVelocity() + (GRAVITY / FRAMERATE), 2500.0f), -2500.0f));
-    }
-    else if (collision_result >= 0)
-    {
-        if (_player->getY() != collision_result + 1)
-        {
-            _player->setY(collision_result + 1);
-        }
-        _player->setGround(true);
-        _player->setYVelocity(0.0f);
-
-
-    }
-    if (collision_result == -2 && (_player->isInvincible() == false)) {
-        if (_player->isDying() == false)
-        {
-            _dying_delay = LEVEL_RESTART_DELAY;
-            restart();
-        }
-        _player->die();
-    }
-
-    if (_dying_delay > 0)
-    {
-        _dying_delay--;
-    }
-}
-
-
 void Level::render(ShowHitboxes hitboxes)
 {
     if (_player->getY() <= _threshold_y_up)
@@ -204,52 +156,24 @@ void Level::render(ShowHitboxes hitboxes)
     floor.y += _y;
     SDL_SetRenderDrawColor(_renderer, 32, 32, 32, 255);
     SDL_RenderFillRect(_renderer, &floor);
-}
 
-void Level::renderHD(ShowHitboxes hitboxes)
-{
-    if (_player->getY() <= _threshold_y_up)
+    if (_game_info->show_hitboxes == ShowHitboxes::ON)
     {
-        _threshold_y_up = _player->getY();
-        _threshold_y_down = _threshold_y_up + LEVEL_DELTA_THRESHOLD;
-    }
-    else if (_player->getY() >= _threshold_y_down - BLOCK_SIZE)
-    {
-        _threshold_y_down = _player->getY() + BLOCK_SIZE;
-        _threshold_y_up = _threshold_y_down - LEVEL_DELTA_THRESHOLD;
-    }
-    _y = LEVEL_Y_THRESHOLD_DOWN_INIT - _threshold_y_down;
+        for (auto& obstacle : _obstacles)
+        {
+            obstacle.renderHitboxes(_y);
+        }
 
-    for (auto& obstacle : _obstacles)
-    {
-        obstacle.render(hitboxes, _y);
-    }
-    
-    _player->renderHD(hitboxes, _y);
+        SDL_Rect floor = GROUND_RECT_BOTTOM;
+        floor.y += _y;
+        SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
 
-    SDL_Rect floor = GROUND_RECT_BOTTOM;
-    floor.y += _y;
-    SDL_SetRenderDrawColor(_renderer, 32, 32, 32, 255);
-    SDL_RenderFillRect(_renderer, &floor);
-}
+        SDL_RenderDrawLine(_renderer, 0, _threshold_y_up + _y, WINDOW_W, _threshold_y_up + _y);
+        SDL_RenderDrawLine(_renderer, 0, _threshold_y_down + _y, WINDOW_W, _threshold_y_down + _y);
 
-void Level::renderHitboxes()
-{
-    _player->renderHitboxes(_y);
-
-    for (auto& obstacle : _obstacles)
-    {
-        obstacle.renderHitboxes(_y);
+        SDL_RenderDrawRect(_renderer, &floor);
     }
 
-    SDL_Rect floor = GROUND_RECT_BOTTOM;
-    floor.y += _y;
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
-
-    SDL_RenderDrawLine(_renderer, 0, _threshold_y_up + _y, WINDOW_W, _threshold_y_up + _y);
-    SDL_RenderDrawLine(_renderer, 0, _threshold_y_down + _y, WINDOW_W, _threshold_y_down + _y);
-
-    SDL_RenderDrawRect(_renderer, &floor);
 }
 
 void Level::handleEvents(SDL_Event& event)

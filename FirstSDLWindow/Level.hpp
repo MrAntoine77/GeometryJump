@@ -15,6 +15,7 @@ class Level
 {
 private:
     static SDL_Renderer* _renderer;
+    static GameInfo* _game_info;
 
     Player* _player;
 
@@ -27,17 +28,13 @@ private:
     int _y = 0;
     int _dying_delay = 0;
 public:
-    static void setRenderer(SDL_Renderer* renderer);
+    static void init(SDL_Renderer* renderer, GameInfo* game_info);
 
     Level(std::string filename, Player* player);
     Level();
 
     void update(); 
-    void updateHD();
-
     void render(ShowHitboxes hitboxes);
-    void renderHD(ShowHitboxes hitboxes);
-    void renderHitboxes();
 
     void handleEvents(SDL_Event& event);
     int checkAllCollisions();

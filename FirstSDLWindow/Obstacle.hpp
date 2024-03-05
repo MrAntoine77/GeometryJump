@@ -25,7 +25,7 @@ private:
     int _init_x = 0;
     int _init_y = 0;
 public:
-    static void setRenderer(SDL_Renderer* renderer);
+    static void init(SDL_Renderer* renderer);
 
     static ObstacleType generateRandomNeuroneType();
 

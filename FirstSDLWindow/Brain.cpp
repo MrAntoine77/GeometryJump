@@ -3,13 +3,7 @@
 #include <iostream>
 #include <random>
 
-SDL_Renderer* Brain::_renderer = nullptr;
 int Brain::_best_score = 0;
-
-void Brain::setRenderer(SDL_Renderer* renderer) {
-	_renderer = renderer;
-	Core::setRenderer(_renderer);
-}
 
 Brain::Brain(int nb_cores, int nb_neurones)
 {

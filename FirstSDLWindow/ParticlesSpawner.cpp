@@ -1,12 +1,5 @@
 #include "ParticlesSpawner.hpp"
 
-SDL_Renderer* ParticlesSpawner::_renderer = nullptr;
-
-void ParticlesSpawner::setRenderer(SDL_Renderer* renderer) {
-	_renderer = renderer;
-	Particle::setRenderer(_renderer);
-}
-
 ParticlesSpawner::ParticlesSpawner(int x, int y, 
 	float x_speed, float y_speed,
 	int x_max_gap, int y_max_gap, 
@@ -29,8 +22,6 @@ ParticlesSpawner::ParticlesSpawner(int x, int y,
 		_elements.push_back(element);
 	}
 }
-
-
 
 void ParticlesSpawner::spawnAll()
 {

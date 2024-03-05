@@ -2,11 +2,11 @@
 
 SDL_Renderer* Particle::_renderer = nullptr;
 
-void Particle::setRenderer(SDL_Renderer* renderer) {
+void Particle::init(SDL_Renderer* renderer) {
 	_renderer = renderer;
 }
 
-Particle::Particle(int x, int y, float x_speed, float y_speed, int size, float id_particle, float nb_frames)
+Particle::Particle(int x, int y, float x_speed, float y_speed, int size, float id_particle, int nb_frames)
 {
 	_rect.x = x;
 	_rect.y = y;
