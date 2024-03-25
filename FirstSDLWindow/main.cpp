@@ -3,7 +3,7 @@
 #include "Game.hpp" 
 
 int main(int argc, char* argv[]) {
-    Game game(ShowHitboxes::ON, Rendering::HD, Gamemode::PLAYING, 17);
+    Game game(ShowHitboxes::ON, Rendering::HD, Gamemode::TRAINING, 17);
     game.init();
 
     while (game.isRunning()) 

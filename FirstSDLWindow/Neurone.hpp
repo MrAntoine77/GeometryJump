@@ -10,11 +10,9 @@ class Neurone
 private:
     static SDL_Renderer* _renderer;
 
-    ObstacleType _type = ObstacleType::AIR;
     SDL_Rect _rect = { 0,0,0,0 };
+    NeuroneInfo _info;
 
-    bool _reversed = false;
-    bool _activated = false;
     float _x = 0.0f;
     float _y = 0.0f;
 public:
@@ -27,13 +25,12 @@ public:
 
     void setValues(float x, float y, ObstacleType type, bool reversed);
     void setRect(SDL_Rect rect) { _rect = rect; }
-    void setActivated(bool activated) { _activated = activated; }
+    void setActivated(bool activated) { _info.activated = activated; }
 
     float getX() const { return _x; }
     float getY() const { return _y; }
-    bool isActivated() const { return _activated; }
-    bool isReversed() const { return _reversed; }
-    ObstacleType getType() const { return _type; }
+    bool isActivated() const { return _info.activated; }
+    bool isReversed() const { return _info.reversed; }
+    ObstacleType getType() const { return _info.type; }
     SDL_Rect getRect() const { return _rect; }
 };
-

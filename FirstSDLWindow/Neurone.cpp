@@ -10,23 +10,23 @@ Neurone::Neurone(const Neurone& src)
 {
 	_x = src._x;
 	_y = src._y;
-	_type = src._type;
-	_reversed = src._reversed;
-	_activated = false;
+	_info.type = src._info.type;
+	_info.reversed = src._info.reversed;
+	_info.activated = false;
 }
 
 Neurone::Neurone()
 {
 	_x = generateRandomFloat(0, NEURONE_DIST_MAX);
 	_y = generateRandomFloat(-NEURONE_DIST_MAX / 2, NEURONE_DIST_MAX / 2);
-	_type = Obstacle::generateRandomNeuroneType();
-	_reversed = (generateRandomInt(0, 1) == 0);
-	_activated = false;
+	_info.type = Obstacle::generateRandomNeuroneType();
+	_info.reversed = (generateRandomInt(0, 1) == 0);
+	_info.activated = false;
 }
 
 void Neurone::render(bool highlight, int y)
 {
-	SDL_Texture* pt_texture = TexturesManager::getNeuroneTexture(_type, _activated, _reversed);
+	SDL_Texture* pt_texture = TexturesManager::getNeuroneTexture(_info);
 	SDL_Rect rect = _rect;
 	rect.y += y;
 
@@ -79,7 +79,7 @@ void Neurone::update(const std::vector<Obstacle>& obstacles, int brain_x, int br
 		}
 	}
 
-	switch (_type)
+	switch (_info.type)
 	{
 	case ObstacleType::BLOCK:
 		collision = block_collision;
@@ -97,14 +97,14 @@ void Neurone::update(const std::vector<Obstacle>& obstacles, int brain_x, int br
 		break;
 	}
 
-	_activated = collision ^ _reversed;
+	_info.activated = collision ^ _info.reversed;
 }
 
 void Neurone::setValues(float x, float y, ObstacleType type, bool reversed)
 {
 	_x = x;
 	_y = y;
-	_type = type;
-	_reversed = reversed;
+	_info.type = type;
+	_info.reversed = reversed;
 }
 

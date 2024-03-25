@@ -105,6 +105,16 @@ struct ObstacleInfo {
     Direction direction = Direction::UP;
 };
 
+struct NeuroneInfo {
+    ObstacleType type = ObstacleType::AIR;
+    bool activated = false;
+    bool reversed = false;
+
+    bool operator<(const NeuroneInfo& other) const {
+        return (static_cast<int>(type)*100 + static_cast<int>(activated)*10 + static_cast<int>(reversed)) < (static_cast<int>(other.type) * 100 + static_cast<int>(other.activated) * 10 + static_cast<int>(other.reversed));
+    }
+};
+
 struct Position {
     int x = 0;
     int y = 0;
@@ -153,41 +163,6 @@ inline bool checkCollision(const SDL_Rect& rect_a, const SDL_Rect& rect_b) {
         return false;
     }
     return true;
-}
-
-inline int trouverIndexMax(const int tableau[], int taille) {
-    if (taille <= 0) {
-        return -1;
-    }
-
-    int id_max = 0;  
-    for (int i = 1; i < taille; ++i) {
-        if (tableau[i] > tableau[id_max]) {
-            id_max = i;
-        }
-    }
-
-    return id_max;
-}
-
-inline int trouverIndexMin(const int tableau[], int taille) {
-    if (taille <= 0) {
-        return -1;
-    }
-
-    int id_min = 0; 
-    for (int i = 1; i < taille; ++i) {
-        if (tableau[i] < tableau[id_min]) {
-            id_min = i;
-        }
-    }
-
-    return id_min;
-}
-
-inline void displayRect(SDL_Rect& rect)
-{
-    std::cout << "x :  " << rect.x << ", y : " << rect.y << ", w : " << rect.w << ", h : " << rect.h << std::endl;
 }
 
 template <typename Enum>

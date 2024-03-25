@@ -71,8 +71,9 @@ void Level::loadObstaclesFromFile(std::string filename) {
         std::cout << "Level " << filename << " loaded" << std::endl;
         std::cout << "Optimizing... ";
         int nb_blocks = static_cast<int>(_obstacles.size());
-        updateHitboxes(&Obstacle::getY, &Obstacle::getX, &Obstacle::setNbY, Obstacle::compareByX, Axe::Y);
         updateHitboxes(&Obstacle::getX, &Obstacle::getY, &Obstacle::setNbX, Obstacle::compareByY, Axe::X);
+
+        updateHitboxes(&Obstacle::getY, &Obstacle::getX, &Obstacle::setNbY, Obstacle::compareByX, Axe::Y);
         std::cout << "finished ! " << nb_blocks << " => " << static_cast<int>(_obstacles.size()) << std::endl;
 
     }
