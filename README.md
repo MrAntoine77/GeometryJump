@@ -1,8 +1,8 @@
-# 🧠 Geometry Jump
+# Geometry Jump
 
 Un mini-jeu inspiré du jeu Geometry Dash de RobTop, développé en **C++ avec SDL2**, où une **IA génétique** apprend à jouer toute seule. Ce projet explore l’apprentissage évolutif dans un environnement simple.
 
-## 🎮 Fonctionnalités
+## Fonctionnalités
 
 - Gameplay de type "runner" : sauts, obstacles, vitesse constante
 - IA génétique qui évolue génération après génération
@@ -10,7 +10,7 @@ Un mini-jeu inspiré du jeu Geometry Dash de RobTop, développé en **C++ avec S
 - Mode manuel pour jouer soi-même
 - Editeur de niveau simple
 
-## 🧬 IA Génétique
+## IA Génétique
 
 L’intelligence artificielle joue le niveau des centaines de fois à travers une population d’agents. Chaque agent est équipé de **plusieurs ensembles de capteurs virtuels** répartis autour de lui. Ces capteurs peuvent détecter différents types d’informations, la **présence d'un obstacle**, un block, un pique, une orbe..., ou l'**absence d'un obstacle**.
 
@@ -23,7 +23,7 @@ Chaque ensemble de capteurs fonctionne comme une unité de décision. 👉 **Le 
 
 Ce système favorise l’émergence de comportements intelligents sans avoir à coder explicitement les règles du jeu.
 
-## 🛠️ Technologies utilisées
+## Technologies utilisées
 
 - **C++**
 - **SDL2** pour le rendu graphique et les entrées clavier
