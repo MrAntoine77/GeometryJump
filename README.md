@@ -1,6 +1,6 @@
 # 🧠 Geometry Jump
 
-Un mini-jeu inspiré du jeu Geometry Dash de RobTop, développé en **C++ avec SDL2**, où une **IA génétique** apprend à jouer toute seule. Ce projet explore l’apprentissage évolutif dans un environnement simple mais stimulant.
+Un mini-jeu inspiré du jeu Geometry Dash de RobTop, développé en **C++ avec SDL2**, où une **IA génétique** apprend à jouer toute seule. Ce projet explore l’apprentissage évolutif dans un environnement simple.
 
 ## 🎮 Fonctionnalités
 
